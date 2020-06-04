@@ -1,0 +1,12 @@
+{
+  "imports": {
+      "oak": "https://deno.land/x/oak/mod.ts",
+      "dotenv": "https://deno.land/x/dotenv/mod.ts",
+      "value_schema": "https://deno.land/x/value_schema/mod.ts",
+      "mongo": "https://deno.land/x/mongo@v0.7.0/mod.ts",
+      "bcrypt": "https://deno.land/x/bcrypt/mod.ts",
+      "djwt/validate": "https://deno.land/x/djwt/validate.ts",
+      "djwt/create": "https://deno.land/x/djwt/create.ts",
+      "dejs": "https://deno.land/x/dejs@0.7.0/mod.ts"
+  }
+}

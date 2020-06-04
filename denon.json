@@ -1,0 +1,17 @@
+{
+  "scripts": {
+    "start": {
+      "cmd": "deno run --importmap=package.json main.ts",
+      "desc": "Run the main server.",
+      "allow": [
+        "env",
+        "write",
+        "read",
+        "net",
+        "plugin",
+        "run"
+      ],
+      "unstable": true
+    }
+  }
+}
