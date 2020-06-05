@@ -1,0 +1,5 @@
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: 'Home' }) %>
+<div class="container" style="max-width: 30rem">
+  <h1>Welcome to Deno CMS!</h1>
+</div>
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>
