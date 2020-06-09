@@ -1,0 +1,22 @@
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: 'Home' }) %>
+<div class="container">
+  <h1 class="text-center mb-3">Login</h1>
+  <form action="/login" method=post>
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" name="username" class="form-control" required>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" name="password" class="form-control" required>
+    </div>
+    <div class="d-flex justify-content-between">
+      <button type="submit" class="btn btn-primary">Login</button>
+      <div>
+        <a href="/register">Create new account</a>
+      </div>
+    </div>
+
+  </form>
+</div>
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>
