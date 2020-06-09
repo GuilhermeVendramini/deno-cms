@@ -1,6 +1,6 @@
 {
   "imports": {
-      "oak": "https://deno.land/x/oak/mod.ts",
+      "oak": "https://deno.land/x/oak@v5.1.0/mod.ts",
       "dotenv": "https://deno.land/x/dotenv/mod.ts",
       "dotenv/load": "https://deno.land/x/dotenv/load.ts",
       "value_schema": "https://deno.land/x/value_schema/mod.ts",
