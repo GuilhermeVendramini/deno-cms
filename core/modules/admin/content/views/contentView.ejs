@@ -1,0 +1,44 @@
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: 'Content' }) %>
+<% if (currentUser) { %>
+  <%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/menus/adminMenu.ejs`, { currentUser: currentUser}) %>
+<% } %>
+<div class="container h-100 pt-4">
+  <h1 class="text-center mb-3">Content</h1>
+  <div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Title</th>
+          <th scope="col">Author</th>
+          <th scope="col">Created</th>
+          <th scope="col">Updated</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">1</th>
+          <td>My title</td>
+          <td>Guilherme</td>
+          <td>01-01-2020</td>
+          <td>01-01-2020</td>
+        </tr>
+        <tr>
+          <th scope="row">2</th>
+          <td>My title</td>
+          <td>Sophia</td>
+          <td>01-01-2020</td>
+          <td>01-01-2020</td>
+        </tr>
+        <tr>
+          <th scope="row">3</th>
+          <td>My title</td>
+          <td>Carol</td>
+          <td>01-01-2020</td>
+          <td>01-01-2020</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>
