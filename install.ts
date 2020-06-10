@@ -1,4 +1,5 @@
 import database from "./database.ts";
+import * as Colors from "https://deno.land/std/fmt/colors.ts";
 
 try {
   await database.execute(`
@@ -10,9 +11,13 @@ try {
       password VARCHAR(255) NOT NULL
   )`);
 } catch (error) {
-  console.log(error);
+  console.error(Colors.green(error));
 }
 
 await database.close();
 
-console.log("Installation completed. Press Ctrl + c");
+console.info(
+  Colors.green(
+    "🦕 Installation completed. Press 'Ctrl + c' and run 'denon start' 🦕",
+  ),
+);
