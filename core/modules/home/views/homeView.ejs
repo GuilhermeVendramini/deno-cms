@@ -1,16 +1,21 @@
 <%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: 'Home' }) %>
-<div class="container h-100">
+<% if (currentUser) { %>
+  <%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/menus/adminMenu.ejs`, { currentUser: currentUser}) %>
+<% } %>
+<div class="container h-100 pt-4">
   <div class="text-center display-1 mb-3">
     🦕
   </div>
   <h1 class="text-center mb-3">Welcome to Deno CMS!</h1>
-  <div class="d-flex justify-content-center">
-    <div class="mr-2">
-      <a href="/login" class="btn btn-lg btn-primary mb-3">Login</a>
+  <% if (!currentUser) { %>
+    <div class="d-flex justify-content-center">
+      <div class="mr-2">
+        <a href="/login" class="btn btn-lg btn-primary mb-3">Login</a>
+      </div>
+      <div class="mr-2">
+        <a href="/register" class="btn btn-lg btn-outline-secondary mb-3">Register</a>
+      </div>
     </div>
-    <div class="mr-2">
-      <a href="/register" class="btn btn-lg btn-outline-secondary mb-3">Register</a>
-    </div>
-  </div>
+  <% } %>
 </div>
 <%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>

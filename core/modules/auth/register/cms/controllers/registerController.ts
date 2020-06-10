@@ -1,10 +1,9 @@
 import { renderFileToString } from "dejs";
-import { userModel } from "../../../../../../shared/models/user/userModel.ts";
+import userModel from "../../../../../../shared/models/user/userModel.ts";
 import userService from "../../../../../../services/sqlite/user/userService.ts";
 import hash from "../../../../../../shared/utils/hashes/bcryptHash.ts";
-import userSchema from "../../../../../../shared/utils/validators/schemas/userSchema.ts";
+import { userRegisterSchema } from "../../../../../../shared/utils/validators/schemas/userSchema.ts";
 import vs from "value_schema";
-
 import {
   Status,
 } from "oak";
@@ -34,7 +33,10 @@ export default {
       let name = body.value.get("name");
       let email = body.value.get("email");
       let password = body.value.get("password");
-      user = vs.applySchemaObject(userSchema, { name, email, password }) as {
+      user = vs.applySchemaObject(
+        userRegisterSchema,
+        { name, email, password },
+      ) as {
         username: string;
         password: string;
       };

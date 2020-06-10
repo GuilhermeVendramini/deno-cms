@@ -1,6 +1,6 @@
 import vs from "value_schema";
 
-const userSchema = {
+const userRegisterSchema = {
   name: vs.string({
     minLength: 2,
     maxLength: {
@@ -14,4 +14,11 @@ const userSchema = {
   }),
 };
 
-export default userSchema;
+const userLoginSchema = {
+  email: vs.email(),
+  password: vs.string({
+    minLength: 8,
+  }),
+};
+
+export { userRegisterSchema, userLoginSchema };
