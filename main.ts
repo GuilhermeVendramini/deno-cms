@@ -3,7 +3,12 @@ import homeRouter from "./core/modules/home/routes/homeRoute.ts";
 import loginRouter from "./core/modules/auth/login/cms/routes/loginRoute.ts";
 import registerRouter from "./core/modules/auth/register/cms/routes/registerRoute.ts";
 import recoveryPasswordRouter from "./core/modules/auth/recovery_password/cms/routes/recoveryPasswordRoute.ts";
+import { Session } from "session";
 
+const session = new Session({ framework: "oak" });
+await session.init();
+
+app.use(session.use()(session));
 app.use(homeRouter.routes());
 app.use(loginRouter.routes());
 app.use(registerRouter.routes());

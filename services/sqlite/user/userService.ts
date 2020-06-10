@@ -10,7 +10,7 @@ export default {
       )`,
     );
   },
-  async selectOneByEmail(email: string): Promise<any> {
+  async selectOneByEmail(email: string): Promise<{}> {
     let result: any = await database.execute(
       `SELECT id, name, email, password FROM users WHERE email = '${email}' LIMIT 1`,
     );
@@ -25,6 +25,6 @@ export default {
 
       return user;
     }
-    return [];
+    return {};
   },
 };

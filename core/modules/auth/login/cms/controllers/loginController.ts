@@ -8,6 +8,7 @@ import {
 import userToken from "../../../../../../shared/utils/tokens/userToken.ts";
 import hash from "../../../../../../shared/utils/hashes/bcryptHash.ts";
 import userService from "../../../../../../services/sqlite/user/userService.ts";
+import currentUserSession from "../../../../../../shared/utils/sessions/currentUserSession.ts";
 
 export default {
   async login(context: Record<string, any>) {
@@ -45,7 +46,7 @@ export default {
       let user: Partial<userModel> | undefined;
 
       if (value?.email && value?.password) {
-        user = await userService.selectOneByEmail(value.email);
+        user = await userService.selectOneByEmail(value.email) as userModel;
 
         if (user) {
           logged = await hash.verify(
@@ -59,6 +60,7 @@ export default {
         let token: string = userToken.generate(user.id);
 
         context.cookies.set("jwt", token);
+        currentUserSession.setSession(context, user);
         context.response.redirect('/');
         return;
       }
