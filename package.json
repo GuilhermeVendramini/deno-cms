@@ -8,6 +8,7 @@
       "bcrypt": "https://deno.land/x/bcrypt/mod.ts",
       "djwt/validate": "https://deno.land/x/djwt/validate.ts",
       "djwt/create": "https://deno.land/x/djwt/create.ts",
-      "dejs": "https://deno.land/x/dejs@0.7.0/mod.ts"
+      "dejs": "https://deno.land/x/dejs@0.7.0/mod.ts",
+      "dexecutor": "https://deno.land/x/dexecutor/mod.ts"
   }
 }

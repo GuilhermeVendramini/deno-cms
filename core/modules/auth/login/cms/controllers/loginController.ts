@@ -5,7 +5,7 @@ export default {
     context.response.body = await renderFileToString(
       `${Deno.cwd()}/core/modules/auth/login/cms/views/loginView.ejs`,
       {
-        error: false,
+        message: false,
       },
     );
   },

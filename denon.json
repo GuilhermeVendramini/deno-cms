@@ -12,6 +12,19 @@
         "run"
       ],
       "unstable": true
+    },
+    "install": {
+      "cmd": "deno run --importmap=package.json install.ts",
+      "desc": "Run the install file.",
+      "allow": [
+        "env",
+        "write",
+        "read",
+        "net",
+        "plugin",
+        "run"
+      ],
+      "unstable": true
     }
   }
 }
