@@ -60,8 +60,8 @@ export default {
         let token: string = userToken.generate(user._id.$oid);
 
         context.cookies.set("jwt", token);
-        currentUserSession.setSession(context, user);
-        context.response.redirect('/');
+        currentUserSession.set(context, user);
+        context.response.redirect("/");
         return;
       }
 
@@ -82,5 +82,11 @@ export default {
       );
       return;
     }
+  },
+
+  async logout(context: Record<string, any>) {
+    context.cookies.delete("jwt");
+    await currentUserSession.reset(context);
+    context.response.redirect("/");
   },
 };

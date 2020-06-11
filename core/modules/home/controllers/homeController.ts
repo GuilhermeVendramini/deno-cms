@@ -6,7 +6,7 @@ export default {
     context.response.body = await renderFileToString(
       `${Deno.cwd()}/core/modules/home/views/homeView.ejs`,
       {
-        currentUser: await currentUserSession.getSession(context),
+        currentUser: await currentUserSession.get(context),
       },
     );
   },

@@ -1,7 +1,7 @@
 import userModel from "../../models/user/userModel.ts";
 
 export default {
-  async getSession(context: Record<string, any>) {
+  async get(context: Record<string, any>) {
     let currentUser: userModel | undefined;
 
     if (
@@ -13,7 +13,12 @@ export default {
 
     return null;
   },
-  async setSession(context: Record<string, any>, currentUser: userModel) {
+
+  async set(context: Record<string, any>, currentUser: userModel) {
     await context.state.session.set("currentUser", currentUser);
+  },
+
+  async reset(context: Record<string, any>) {
+    await context.state.session.set("currentUser", null);
   },
 };

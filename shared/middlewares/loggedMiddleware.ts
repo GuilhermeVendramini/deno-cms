@@ -5,16 +5,17 @@ export default {
     context: Record<string, any>,
     next: Function,
   ) {
-    if (!await currentUserSession.getSession(context)) {
+    if (!await currentUserSession.get(context)) {
       context.response.redirect("/login");
     }
     await next();
   },
+
   async alreadyLogged(
     context: Record<string, any>,
     next: Function,
   ) {
-    if (await currentUserSession.getSession(context)) {
+    if (await currentUserSession.get(context)) {
       context.response.redirect("/");
     }
     await next();

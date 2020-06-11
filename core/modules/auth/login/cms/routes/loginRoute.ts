@@ -4,6 +4,7 @@ import loggedMiddleware from "../../../../../../shared/middlewares/loggedMiddlew
 
 router
   .get("/login", loggedMiddleware.alreadyLogged, loginController.login)
+  .get("/logout", loggedMiddleware.needToBeLogged, loginController.logout)
   .post("/login", loginController.loginPost);
 
 export default router;
