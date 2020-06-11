@@ -2,7 +2,7 @@ import { renderFileToString } from "dejs";
 import userModel from "../../../../../../shared/models/user/userModel.ts";
 import userService from "../../../../../../repositories/mongodb/user/userRepository.ts";
 import hash from "../../../../../../shared/utils/hashes/bcryptHash.ts";
-import { userRegisterSchema } from "../../../../../../shared/utils/validators/schemas/userSchema.ts";
+import registerSchema from "../../schemas/registerSchema.ts";
 import vs from "value_schema";
 import {
   Status,
@@ -34,7 +34,7 @@ export default {
       let email = body.value.get("email");
       let password = body.value.get("password");
       user = vs.applySchemaObject(
-        userRegisterSchema,
+        registerSchema,
         { name, email, password },
       ) as {
         username: string;

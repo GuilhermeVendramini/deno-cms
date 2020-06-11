@@ -1,7 +1,7 @@
 import { renderFileToString } from "dejs";
 import vs from "value_schema";
 import userModel from "../../../../../../shared/models/user/userModel.ts";
-import { userLoginSchema } from "../../../../../../shared/utils/validators/schemas/userSchema.ts";
+import loginSchema from "../../schemas/loginSchema.ts";
 import {
   Status,
 } from "oak";
@@ -39,7 +39,7 @@ export default {
       let password = body.value.get("password");
 
       value = vs.applySchemaObject(
-        userLoginSchema,
+        loginSchema,
         { email, password },
       ) as userLogin;
 
