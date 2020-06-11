@@ -10,7 +10,7 @@ const header: Jose = {
 };
 
 export default {
-  generate(userId: number): string {
+  generate(userId: string): string {
     const payload: Payload = {
       uid: userId,
       exp: setExpiration(new Date().getTime() + 60000 * 60),

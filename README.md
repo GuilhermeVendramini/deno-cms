@@ -3,9 +3,5 @@
 ### RUN
 
 ```shell
-denon install
-```
-
-```shell
 denon start
 ```
