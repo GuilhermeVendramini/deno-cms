@@ -46,7 +46,7 @@ export default {
       let user: Partial<userModel> | undefined;
 
       if (value?.email && value?.password) {
-        user = await userService.selectOneByEmail(value.email);
+        user = await userService.findOneByEmail(value.email);
 
         if (user) {
           logged = await hash.verify(

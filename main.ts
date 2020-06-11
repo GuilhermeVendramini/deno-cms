@@ -7,12 +7,13 @@ import contentRouter from "./core/modules/admin/content/routes/contentRoute.ts";
 import themeBoostrapRouter from "./core/themes/bootstrap/routes/boostrapRoute.ts";
 import { Session } from "session";
 import unknownPages from "./core/modules/unknownPages/routes/unknownPagesRoute.ts";
+import registerAPIRouter from "./core/modules/auth/register/api/routes/registerRoute.ts";
 
 const session = new Session({ framework: "oak" });
 await session.init();
 
 /**
- * Public routes
+ * Public CMS routes
  */
 
 app.use(session.use()(session));
@@ -20,6 +21,12 @@ app.use(homeRouter.routes());
 app.use(loginRouter.routes());
 app.use(registerRouter.routes());
 app.use(recoveryPasswordRouter.routes());
+
+/**
+ * API routes
+ */
+
+app.use(registerAPIRouter.routes());
 
 /**
  * Themes routes
@@ -30,6 +37,7 @@ app.use(themeBoostrapRouter.routes());
 /**
  * Admin routes
  */
+
 app.use(contentRouter.routes());
 
 /**

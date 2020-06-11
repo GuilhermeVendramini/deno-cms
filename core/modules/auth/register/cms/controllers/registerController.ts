@@ -44,7 +44,7 @@ export default {
       if (user) {
         user.password = await hash.bcrypt(user?.password as string);
 
-        await userService.insert(user);
+        await userService.insertOne(user);
 
         context.response.body = await renderFileToString(
           `${Deno.cwd()}/core/modules/auth/login/cms/views/loginView.ejs`,
