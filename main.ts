@@ -12,6 +12,7 @@ import themeBoostrapRouter from "./core/themes/bootstrap/routes/boostrapRoute.ts
 import { Session } from "session";
 import unknownPages from "./core/modules/unknownPages/routes/unknownPagesRoute.ts";
 import basicPageRouter from "./core/modules/admin/basic_page/cms/routes/basicPageRoute.ts";
+import librariesRoute from "./libraries/librariesRoute.ts";
 
 const session = new Session({ framework: "oak" });
 await session.init();
@@ -52,6 +53,12 @@ app.use(usersRouter.routes());
  */
 
 app.use(basicPageRouter.routes());
+
+/**
+ * Libraries
+ */
+
+app.use(librariesRoute.routes());
 
 /**
  * Unknown routes
