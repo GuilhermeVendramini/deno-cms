@@ -16,11 +16,11 @@ export default {
     return {};
   },
 
-  async find(): Promise<{}> {
+  async find(): Promise<[]> {
     let result = await data.find();
 
     if (result) return result;
 
-    return {};
+    return [];
   },
 };

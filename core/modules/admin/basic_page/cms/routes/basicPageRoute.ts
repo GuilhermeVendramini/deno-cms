@@ -8,6 +8,10 @@ router
     loggedMiddleware.needToBeLogged,
     basicPageController.add,
   )
+  .get(
+    "/basic-page/:id",
+    basicPageController.view,
+  )
   .post(
     "/admin/content/basic-page/add",
     loggedMiddleware.needToBeLogged,

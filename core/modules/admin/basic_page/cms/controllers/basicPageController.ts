@@ -11,7 +11,7 @@ import contentRepository from "../../../../../../repositories/mongodb/content/co
 export default {
   async add(context: Record<string, any>) {
     context.response.body = await renderFileToString(
-      `${Deno.cwd()}/core/modules/admin/basic_page/cms/views/basicPageView.ejs`,
+      `${Deno.cwd()}/core/modules/admin/basic_page/cms/views/basicPageFormView.ejs`,
       {
         currentUser: await currentUserSession.get(context),
         message: false,
@@ -32,32 +32,70 @@ export default {
       }
 
       let content: ContentEntity | undefined;
-      let data: { title: string };
+      let values: { title: string };
       let title = body.value.get("title");
+      let data: {} = {
+        body: body.value.get("data[body]"),
+      };
 
-      data = vs.applySchemaObject(
+      values = vs.applySchemaObject(
         basicPageSchema,
         { title },
       );
 
-      if (data) {
+      if (values) {
         content = new ContentEntity(
-          data.title,
+          values.title,
+          data,
+          "basic_page",
           await currentUserSession.get(context),
           Date.now(),
         );
       }
 
       if (content) {
-        await contentRepository.insertOne(content);
-        context.response.body = "ok";
+        let result = await contentRepository.insertOne(content);
+        context.response.redirect(`/basic-page/${result.$oid}`);
         return;
       }
-      context.response.body = "error";
+
+      context.response.body = await renderFileToString(
+        `${Deno.cwd()}/core/modules/admin/basic_page/cms/views/basicPageFormView.ejs`,
+        {
+          currentUser: await currentUserSession.get(context),
+          message: "Error saving content. Please try again.",
+        },
+      );
       return;
     } catch (error) {
-      console.log(error);
-      context.response.body = error.message;
+      context.response.body = await renderFileToString(
+        `${Deno.cwd()}/core/modules/admin/basic_page/cms/views/basicPageFormView.ejs`,
+        {
+          currentUser: await currentUserSession.get(context),
+          message: error.message,
+        },
+      );
+    }
+  },
+
+  async view(context: Record<string, any>) {
+    try {
+      const id: string = context.params.id;
+      let content: {} | undefined;
+      content = await contentRepository.findOneByID(id);
+      context.response.body = await renderFileToString(
+        `${Deno.cwd()}/core/modules/admin/basic_page/cms/views/basicPageView.ejs`,
+        {
+          currentUser: await currentUserSession.get(context),
+          content: content,
+        },
+      );
+    } catch (error) {
+      context.response.status = Status.NotFound;
+      context.response.body = await renderFileToString(
+        `${Deno.cwd()}/core/modules/unknownPages/views/notFound.ejs`,
+        {},
+      );
     }
   },
 };

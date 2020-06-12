@@ -1,26 +1,17 @@
 export class BaseEntity {
+  protected type: string;
   protected author: {};
   protected created: number;
   protected updated: number;
 
   constructor(
+    type: string,
     author: {},
     created: number,
   ) {
+    this.type = type;
     this.author = author;
     this.created = created;
     this.updated = Date.now();
-  }
-
-  getAuthor(): {} {
-    return this.author;
-  }
-
-  getCreated(): number {
-    return this.created;
-  }
-
-  getUpdated(): number {
-    return this.updated;
   }
 }
