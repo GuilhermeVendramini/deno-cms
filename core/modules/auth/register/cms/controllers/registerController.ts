@@ -1,6 +1,6 @@
 import { renderFileToString } from "dejs";
 import userModel from "../../../../../../shared/models/user/userModel.ts";
-import userService from "../../../../../../repositories/mongodb/user/userRepository.ts";
+import userRepository from "../../../../../../repositories/mongodb/user/userRepository.ts";
 import hash from "../../../../../../shared/utils/hashes/bcryptHash.ts";
 import registerSchema from "../../schemas/registerSchema.ts";
 import vs from "value_schema";
@@ -44,7 +44,7 @@ export default {
       if (user) {
         user.password = await hash.bcrypt(user?.password as string);
 
-        await userService.insertOne(user);
+        await userRepository.insertOne(user);
 
         context.response.body = await renderFileToString(
           `${Deno.cwd()}/core/modules/auth/login/cms/views/loginView.ejs`,

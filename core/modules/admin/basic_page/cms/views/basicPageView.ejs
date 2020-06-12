@@ -1,0 +1,21 @@
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: 'Basic Page' }) %>
+<div class="container">
+  <h1 class="text-center mb-3">Basic Page</h1>
+  <% if (message) { %>
+    <div class="alert alert-danger">
+      <%= message %>
+    </div>
+  <% } %>
+  <form action="/admin/content/basic-page/add" method=post>
+    <div class="form-group">
+      <label>Title</label>
+      <input type="text" required name="title" class="form-control">
+    </div>
+    <div class="d-flex justify-content-between">
+      <div class="mr-2">
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </div>
+  </form>
+</div>
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>
