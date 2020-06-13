@@ -1,6 +1,9 @@
 import { renderFileToString } from "dejs";
 import currentUserSession from "../../../../../../shared/utils/sessions/currentUserSession.ts";
-import { ContentEntity } from "../../../../../entities/ContentEntity.ts";
+import {
+  ContentEntity,
+  TContentEntity,
+} from "../../../../../entities/ContentEntity.ts";
 import {
   Status,
 } from "oak";
@@ -32,21 +35,25 @@ export default {
       }
 
       let content: ContentEntity | undefined;
-      let values: { title: string };
-      let title = body.value.get("title");
-      let data: {} = {
-        body: body.value.get("data[body]"),
-      };
+      let validated: { title: string };
+      let data: any = {};
+      let properties: any = [
+        "title",
+        "body",
+      ];
 
-      values = vs.applySchemaObject(
+      properties.forEach(function (field: string) {
+        data[field] = body.value.get(field);
+      });
+
+      validated = vs.applySchemaObject(
         basicPageSchema,
-        { title },
+        { title: data.title },
       );
 
-      if (values) {
+      if (validated) {
         content = new ContentEntity(
-          values.title,
-          data,
+          data as TContentEntity,
           "basic_page",
           await currentUserSession.get(context),
           Date.now(),

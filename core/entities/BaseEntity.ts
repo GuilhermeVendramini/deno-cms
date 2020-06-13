@@ -1,4 +1,4 @@
-export class BaseEntity {
+export abstract class BaseEntity {
   protected type: string;
   protected author: {};
   protected created: number;

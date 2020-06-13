@@ -33,7 +33,7 @@
         <% for(var i=0; i < content.length; i++) { %>
         <tr>
           <th scope="row"><%= content[i]._id.$oid %></th>
-          <td><a href='/basic-page/<%= content[i]._id.$oid %>'><%= content[i].title %></a></td>
+          <td><a href='/basic-page/<%= content[i]._id.$oid %>'><%= content[i].data.title %></a></td>
           <td><%= content[i].type %></td>
           <td><%= content[i].author.name %></td>
           <td><%= content[i].created %></td>

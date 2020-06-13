@@ -1,12 +1,15 @@
 import { BaseEntity } from "./BaseEntity.ts";
 
+export type TContentEntity = {
+  title: string;
+  body: string;
+};
+
 export class ContentEntity extends BaseEntity {
-  protected title: string;
-  protected data: {};
+  protected data: TContentEntity;
 
   constructor(
-    title: string,
-    data: {},
+    data: TContentEntity,
     type: string,
     author: {},
     created: number,
@@ -16,7 +19,6 @@ export class ContentEntity extends BaseEntity {
       author,
       created,
     );
-    this.title = title;
     this.data = data;
   }
 }
