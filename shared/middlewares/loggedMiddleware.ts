@@ -11,6 +11,7 @@ export default {
   ) {
     if (!await currentUserSession.get(context)) {
       context.response.redirect("/login");
+      return;
     }
     await next();
   },

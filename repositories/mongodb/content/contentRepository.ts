@@ -19,8 +19,22 @@ export default {
   async find(): Promise<[]> {
     let result = await data.find();
 
-    if (result) return result;
+    if (result) {
+      return result.sort((d1: any, d2: any) => {
+        if (d1.updated > d2.updated) {
+          return -1;
+        }
+        if (d1.updated < d2.updated) {
+          return 1;
+        }
+        return 0;
+      });
+    }
 
     return [];
+  },
+
+  async deleteOne(id: string): Promise<any> {
+    return await data.deleteOne({ _id: ObjectId(id) });
   },
 };

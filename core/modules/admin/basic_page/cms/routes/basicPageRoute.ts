@@ -16,6 +16,16 @@ router
     "/admin/content/basic-page/add",
     loggedMiddleware.needToBeLogged,
     basicPageController.addPost,
+  )
+  .get(
+    "/admin/content/basic-page/delete/:id",
+    loggedMiddleware.needToBeLogged,
+    basicPageController.delete,
+  )
+  .post(
+    "/admin/content/basic-page/delete",
+    loggedMiddleware.needToBeLogged,
+    basicPageController.deletePost,
   );
 
 export default router;

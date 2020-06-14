@@ -82,6 +82,7 @@ export default {
           message: error.message,
         },
       );
+      return;
     }
   },
 
@@ -90,19 +91,91 @@ export default {
       const id: string = context.params.id;
       let content: {} | undefined;
       content = await contentRepository.findOneByID(id);
+      if (content) {
+        context.response.body = await renderFileToString(
+          `${Deno.cwd()}/core/modules/admin/basic_page/cms/views/basicPageView.ejs`,
+          {
+            currentUser: await currentUserSession.get(context),
+            content: content,
+          },
+        );
+        return;
+      }
+
+      context.response.status = Status.NotFound;
       context.response.body = await renderFileToString(
-        `${Deno.cwd()}/core/modules/admin/basic_page/cms/views/basicPageView.ejs`,
-        {
-          currentUser: await currentUserSession.get(context),
-          content: content,
-        },
+        `${Deno.cwd()}/core/modules/unknownPages/views/notFound.ejs`,
+        {},
       );
+      return;
     } catch (error) {
       context.response.status = Status.NotFound;
       context.response.body = await renderFileToString(
         `${Deno.cwd()}/core/modules/unknownPages/views/notFound.ejs`,
         {},
       );
+      return;
+    }
+  },
+
+  async delete(context: Record<string, any>) {
+    try {
+      const id: string = context.params.id;
+      let content: {} | undefined;
+      content = await contentRepository.findOneByID(id);
+
+      if (content && Object.keys(content).length != 0) {
+        context.response.body = await renderFileToString(
+          `${Deno.cwd()}/core/modules/admin/basic_page/cms/views/basicPageFormConfirm.ejs`,
+          {
+            currentUser: await currentUserSession.get(context),
+            content: content,
+          },
+        );
+        return;
+      }
+
+      context.response.status = Status.NotFound;
+      context.response.body = await renderFileToString(
+        `${Deno.cwd()}/core/modules/unknownPages/views/notFound.ejs`,
+        {},
+      );
+      return;
+    } catch (error) {
+      context.response.status = Status.NotFound;
+      context.response.body = await renderFileToString(
+        `${Deno.cwd()}/core/modules/unknownPages/views/notFound.ejs`,
+        {},
+      );
+      return;
+    }
+  },
+
+  async deletePost(context: Record<string, any>) {
+    try {
+      if (!context.request.hasBody) {
+        context.throw(Status.BadRequest, "Bad Request");
+      }
+
+      const body = await context.request.body();
+
+      if (body.type !== "form") {
+        context.throw(Status.BadRequest, "Bad Request");
+      }
+
+      let id: string | undefined;
+      id = body.value.get("id");
+
+      if (id) {
+        await contentRepository.deleteOne(id);
+      }
+
+      context.response.redirect(`/admin/content`);
+      return;
+    } catch (error) {
+      console.log(error);
+      context.response.redirect(`/admin/content`);
+      return;
     }
   },
 };

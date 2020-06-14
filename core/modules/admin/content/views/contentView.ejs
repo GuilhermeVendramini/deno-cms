@@ -11,7 +11,7 @@
         <a href="/admin/content/basic-page/add" class="btn btn-outline-secondary">Basic page</a>
       </div>
       <div class="mr-2">
-        <a href="/admin/content/article/add" class="btn btn-outline-secondary">Article</a>
+        <a href="#" class="btn btn-outline-secondary">Article</a>
       </div>
     </div>
   </fieldset>
@@ -38,7 +38,7 @@
           <td><%= content[i].author.name %></td>
           <td><%= content[i].created %></td>
           <td><%= content[i].updated %></td>
-          <td><a href="#">edit</a> | <a href="#">delete</a></td>
+          <td><a href="#">edit</a> | <a href='/admin/content/basic-page/delete/<%= content[i]._id.$oid %>'>delete</a></td>
         </tr>
         <% } %>
       </tbody>
