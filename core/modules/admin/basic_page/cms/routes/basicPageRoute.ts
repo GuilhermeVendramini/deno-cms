@@ -9,6 +9,11 @@ router
     basicPageController.add,
   )
   .get(
+    "/admin/content/basic-page/edit/:id",
+    loggedMiddleware.needToBeLogged,
+    basicPageController.add,
+  )
+  .get(
     "/basic-page/:id",
     basicPageController.view,
   )

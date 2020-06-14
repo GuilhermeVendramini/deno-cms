@@ -8,6 +8,13 @@ export default {
     return await data.insertOne(content);
   },
 
+  async updateOne(id: string, content: any): Promise<any> {
+    return await data.updateOne(
+      { _id: ObjectId(id) },
+      { $set: { data: content.data, updated: content.updated } },
+    );
+  },
+
   async findOneByID(id: string): Promise<{}> {
     let result = await data.findOne({ _id: ObjectId(id) });
 

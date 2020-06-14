@@ -41,7 +41,7 @@
           <td><%= content[i].author.name %></td>
           <td><%= content[i].created %></td>
           <td><%= content[i].updated %></td>
-          <td><a href="#">edit</a> | <a href='/admin/content/basic-page/delete/<%= content[i]._id.$oid %>'>delete</a></td>
+          <td><a href='/admin/content/basic-page/edit/<%= content[i]._id.$oid %>'>edit</a> | <a href='/admin/content/basic-page/delete/<%= content[i]._id.$oid %>'>delete</a></td>
         </tr>
         <% } %>
       </tbody>

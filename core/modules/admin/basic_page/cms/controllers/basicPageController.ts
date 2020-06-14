@@ -13,13 +13,26 @@ import contentRepository from "../../../../../../repositories/mongodb/content/co
 
 export default {
   async add(context: Record<string, any>) {
-    context.response.body = await renderFileToString(
-      `${Deno.cwd()}/core/modules/admin/basic_page/cms/views/basicPageFormView.ejs`,
-      {
-        currentUser: await currentUserSession.get(context),
-        message: false,
-      },
-    );
+    try {
+      let id: string = context.params?.id;
+      let content: {} | undefined;
+
+      if (id) {
+        content = await contentRepository.findOneByID(id);
+      }
+
+      context.response.body = await renderFileToString(
+        `${Deno.cwd()}/core/modules/admin/basic_page/cms/views/basicPageFormView.ejs`,
+        {
+          currentUser: await currentUserSession.get(context),
+          message: false,
+          content: content,
+        },
+      );
+    } catch (error) {
+      context.throw(Status.BadRequest, "Bad Request");
+      return;
+    }
   },
 
   async addPost(context: Record<string, any>) {
@@ -38,6 +51,7 @@ export default {
       let validated: { title: string };
       let data: any = {};
       let properties: any = [
+        "id",
         "title",
         "body",
       ];
@@ -61,8 +75,18 @@ export default {
       }
 
       if (content) {
-        let result = await contentRepository.insertOne(content);
-        context.response.redirect(`/basic-page/${result.$oid}`);
+        let result: any;
+        let id: string;
+
+        if (data?.id) {
+          result = await contentRepository.updateOne(data.id, content);
+          id = data.id;
+        } else {
+          result = await contentRepository.insertOne(content);
+          id = result?.$oid;
+        }
+
+        context.response.redirect(`/basic-page/${id}`);
         return;
       }
 
@@ -80,6 +104,7 @@ export default {
         {
           currentUser: await currentUserSession.get(context),
           message: error.message,
+          content: false,
         },
       );
       return;
