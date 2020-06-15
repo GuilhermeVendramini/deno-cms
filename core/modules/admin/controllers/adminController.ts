@@ -7,10 +7,19 @@ export default {
     let content: [] | undefined;
     content = await contentRepository.find();
     context.response.body = await renderFileToString(
-      `${Deno.cwd()}/core/modules/content/views/contentView.ejs`,
+      `${Deno.cwd()}/core/modules/admin/views/contentView.ejs`,
       {
         currentUser: await currentUserSession.get(context),
         content: content,
+      },
+    );
+  },
+
+  async taxonomy(context: Record<string, any>) {
+    context.response.body = await renderFileToString(
+      `${Deno.cwd()}/core/modules/admin/views/taxonomyView.ejs`,
+      {
+        currentUser: await currentUserSession.get(context),
       },
     );
   },

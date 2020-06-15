@@ -5,7 +5,7 @@ import loginAPIRouter from "./core/modules/auth/login/api/routes/loginRoute.ts";
 import registerRouter from "./core/modules/auth/register/cms/routes/registerRoute.ts";
 import registerAPIRouter from "./core/modules/auth/register/api/routes/registerRoute.ts";
 import recoveryPasswordRouter from "./core/modules/auth/recovery_password/cms/routes/recoveryPasswordRoute.ts";
-import contentRouter from "./core/modules/content/routes/contentRoute.ts";
+import adminRouter from "./core/modules/admin/routes/adminRoute.ts";
 import usersRouter from "./core/modules/users/cms/routes/usersRoute.ts";
 import usersAPIRouter from "./core/modules/users/api/routes/usersRoute.ts";
 import themeBoostrapRouter from "./core/themes/bootstrap/routes/boostrapRoute.ts";
@@ -50,7 +50,7 @@ app.use(themeBoostrapRouter.routes());
  * Admin routes
  */
 
-app.use(contentRouter.routes());
+app.use(adminRouter.routes());
 app.use(usersRouter.routes());
 
 /**
