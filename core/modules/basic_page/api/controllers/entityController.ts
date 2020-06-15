@@ -1,7 +1,7 @@
 import {
   Status,
 } from "oak";
-import contentRepository from "../../../../../../repositories/mongodb/content/contentRepository.ts";
+import contentRepository from "../../../../../repositories/mongodb/content/contentRepository.ts";
 
 export default {
   async view(context: Record<string, any>) {
@@ -11,9 +11,9 @@ export default {
       let content: any | undefined;
 
       if (id) {
-        content = await contentRepository.findOneByID(id);
+        content = await contentRepository.findOneByID(id, "basic_page");
       } else {
-        content = await contentRepository.find();
+        content = await contentRepository.find("basic_page");
       }
 
       if (content && Object.keys(content).length != 0) {

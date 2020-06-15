@@ -11,7 +11,7 @@
         <a href="/admin/content/basic-page/add" class="btn btn-outline-secondary">Basic page</a>
       </div>
       <div class="mr-2">
-        <a href="#" class="btn btn-outline-secondary">Article</a>
+        <a href="/admin/content/article/add" class="btn btn-outline-secondary">Article</a>
       </div>
       <div class="mr-2">
         <a href="#" class="btn btn-outline-secondary">Landing page</a>
@@ -37,7 +37,7 @@
         <% for(var i=0; i < content.length; i++) { %>
         <tr>
           <th scope="row"><%= content[i]._id.$oid %></th>
-          <td><a href='/basic-page/<%= content[i]._id.$oid %>'><%= content[i].data.title %></a></td>
+          <td><a href='/<%= content[i].type.replace("_", "-") %>/<%= content[i]._id.$oid %>'><%= content[i].data.title %></a></td>
           <td><%= content[i].type %></td>
           <td><%= content[i].author.name %></td>
           <td><%= content[i].created %></td>
@@ -45,7 +45,7 @@
           <td><%= content[i].published %></td>
           <td>
             <% if (currentUser._id.$oid == content[i].author._id.$oid || currentUser.roles.includes(0)) { %>
-              <a href='/admin/content/basic-page/edit/<%= content[i]._id.$oid %>'>edit</a> | <a href='/admin/content/basic-page/delete/<%= content[i]._id.$oid %>'>delete</a>
+              <a href='/admin/content/<%= content[i].type.replace("_", "-") %>/edit/<%= content[i]._id.$oid %>'>edit</a> | <a href='/admin/content/<%= content[i].type.replace("_", "-") %>/delete/<%= content[i]._id.$oid %>'>delete</a>
             <% } %>
           </td>
         </tr>

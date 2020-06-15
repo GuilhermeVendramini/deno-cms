@@ -11,8 +11,10 @@ import usersAPIRouter from "./core/modules/users/api/routes/usersRoute.ts";
 import themeBoostrapRouter from "./core/themes/bootstrap/routes/boostrapRoute.ts";
 import { Session } from "session";
 import unknownPages from "./core/modules/unknownPages/routes/unknownPagesRoute.ts";
-import basicPageRouter from "./core/modules/basic_page/cms/routes/basicPageRoute.ts";
-import basicPageAPIRouter from "./core/modules/basic_page/api/routes/basicPageRoute.ts";
+import basicPageRouter from "./core/modules/basic_page/cms/routes/entityRoute.ts";
+import basicPageAPIRouter from "./core/modules/basic_page/api/routes/entityRoute.ts";
+import articleRouter from "./core/modules/article/cms/routes/entityRoute.ts";
+import articleAPIRouter from "./core/modules/article/api/routes/entityRoute.ts";
 import librariesRoute from "./libraries/librariesRoute.ts";
 
 const session = new Session({ framework: "oak" });
@@ -36,6 +38,7 @@ app.use(registerAPIRouter.routes());
 app.use(usersAPIRouter.routes());
 app.use(loginAPIRouter.routes());
 app.use(basicPageAPIRouter.routes());
+app.use(articleAPIRouter.routes());
 
 /**
  * Themes routes
@@ -55,6 +58,7 @@ app.use(usersRouter.routes());
  */
 
 app.use(basicPageRouter.routes());
+app.use(articleRouter.routes());
 
 /**
  * Libraries

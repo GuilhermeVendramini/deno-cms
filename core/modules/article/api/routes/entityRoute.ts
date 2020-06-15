@@ -1,17 +1,17 @@
 import router from "../../../../router.ts";
-import basicPageController from "../controllers/basicPageController.ts";
+import entityController from "../controllers/entityController.ts";
 import loggedMiddleware from "../../../../../shared/middlewares/loggedMiddleware.ts";
 
 router
   .get(
-    "/api/content/basic-page/:id",
+    "/api/content/article/:id",
     loggedMiddleware.tokenValidated,
-    basicPageController.view,
+    entityController.view,
   )
   .get(
-    "/api/content/basic-page",
+    "/api/content/article",
     loggedMiddleware.tokenValidated,
-    basicPageController.view,
+    entityController.view,
   );
 
 export default router;

@@ -11,9 +11,9 @@ export default {
       let content: any | undefined;
 
       if (id) {
-        content = await contentRepository.findOneByID(id);
+        content = await contentRepository.findOneByID(id, "article");
       } else {
-        content = await contentRepository.find();
+        content = await contentRepository.find("article");
       }
 
       if (content && Object.keys(content).length != 0) {

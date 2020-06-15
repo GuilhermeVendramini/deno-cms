@@ -1,36 +1,36 @@
 import router from "../../../../router.ts";
-import basicPageController from "../controllers/basicPageController.ts";
+import entityController from "../controllers/entityController.ts";
 import loggedMiddleware from "../../../../../shared/middlewares/loggedMiddleware.ts";
 
 router
   .get(
     "/admin/content/basic-page/add",
     loggedMiddleware.needToBeLogged,
-    basicPageController.add,
+    entityController.add,
   )
   .get(
     "/admin/content/basic-page/edit/:id",
     loggedMiddleware.needToBeLogged,
-    basicPageController.add,
+    entityController.add,
   )
   .get(
     "/basic-page/:id",
-    basicPageController.view,
+    entityController.view,
   )
   .post(
     "/admin/content/basic-page/add",
     loggedMiddleware.needToBeLogged,
-    basicPageController.addPost,
+    entityController.addPost,
   )
   .get(
     "/admin/content/basic-page/delete/:id",
     loggedMiddleware.needToBeLogged,
-    basicPageController.delete,
+    entityController.delete,
   )
   .post(
     "/admin/content/basic-page/delete",
     loggedMiddleware.needToBeLogged,
-    basicPageController.deletePost,
+    entityController.deletePost,
   );
 
 export default router;

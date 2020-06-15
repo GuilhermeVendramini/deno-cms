@@ -21,16 +21,28 @@ export default {
     );
   },
 
-  async findOneByID(id: string): Promise<{}> {
-    let result = await data.findOne({ _id: ObjectId(id) });
+  async findOneByID(id: string, type: string = ""): Promise<{}> {
+    let result: any;
+
+    if (type != "") {
+      result = await data.findOne({ _id: ObjectId(id), type: type });
+    } else {
+      result = await data.findOne({ _id: ObjectId(id) });
+    }
 
     if (result) return result;
 
     return {};
   },
 
-  async find(): Promise<[]> {
-    let result = await data.find();
+  async find(type: string = ""): Promise<[]> {
+    let result: any;
+
+    if (type != "") {
+      result = await data.find({ type: type });
+    } else {
+      result = await data.find();
+    }
 
     if (result) {
       return result.sort((d1: any, d2: any) => {

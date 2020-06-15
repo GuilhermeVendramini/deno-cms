@@ -1,6 +1,6 @@
 import vs from "value_schema";
 
-const basicPageSchema = {
+const entitySchema = {
   title: vs.string({
     maxLength: {
       length: 255,
@@ -10,4 +10,4 @@ const basicPageSchema = {
   published: vs.boolean(),
 };
 
-export default basicPageSchema;
+export default entitySchema;
