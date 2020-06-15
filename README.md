@@ -4,7 +4,7 @@
 * Denon
 * Mongodb
 
-### RUN
+### Run:
 
 ```shell
 denon install
