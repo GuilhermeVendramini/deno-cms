@@ -77,7 +77,7 @@ curl -H "Authorization: Bearer <LOGGED-USER-TOKEN>" http://localhost:8000/api/co
 
 - [ ] Article content type
 - [ ] Blocks (basic block)
-- [ ] Menus ( header and footer)
+- [ ] Menus (header and footer)
 - [ ] Taxonomies (tags)
 - [ ] Media types (image and video)
 - [ ] Tests
