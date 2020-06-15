@@ -38,6 +38,41 @@ denon start
 	* GET ONE
 	* GET ALL
 
+## API
+
+### Users
+**Register**
+```shell
+curl -d '{"name":"Name", "password": 12345678, "email":"test@test.com"}' -H "Content-Type: application/json" -X POST http://localhost:8000/api/register
+```
+
+**Login**
+```shell
+curl -d '{"password": 12345678, "email":"test@test.com"}' -H "Content-Type: application/json" -X POST http://localhost:8000/api/login
+```
+
+**Get all user**
+```shell
+curl -H "Authorization: Bearer <LOGGED-USER-TOKEN>" http://localhost:8000/api/users
+```
+
+**Get one user**
+```shell
+curl -H "Authorization: Bearer <LOGGED-USER-TOKEN>" http://localhost:8000/api/users/<USER-ID>
+```
+
+### Basic page
+
+**Get all Basic page**
+```shell
+curl -H "Authorization: Bearer <LOGGED-USER-TOKEN>" http://localhost:8000/api/content/basic-page
+```
+
+**Get one Basic page**
+```shell
+curl -H "Authorization: Bearer <LOGGED-USER-TOKEN>" http://localhost:8000/api/content/basic-page/<CONTENT-ID>
+```
+
 ## TODO
 
 - [ ] Article content type
