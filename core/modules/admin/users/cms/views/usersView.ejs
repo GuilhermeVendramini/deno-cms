@@ -11,6 +11,9 @@
         <tr>
           <th scope="col">ID</th>
           <th scope="col">Name</th>
+          <th scope="col">Roles <br> 
+            <span class="small">(0 = admin, 1 = writer)</span>
+          </th>
           <th scope="col">Email</th>
         </tr>
       </thead>
@@ -19,6 +22,7 @@
         <tr>
           <td><%= users[i]._id.$oid %></td>
           <td><%= users[i].name %></td>
+          <td><%= users[i].roles %></td>
           <td><%= users[i].email %></td>
         </tr>
       <% } %>

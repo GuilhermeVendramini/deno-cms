@@ -1,11 +1,12 @@
-import userModel from "../../../../../../shared/models/user/userModel.ts";
-import userService from "../../../../../../repositories/mongodb/user/userRepository.ts";
+import userRepository from "../../../../../../repositories/mongodb/user/userRepository.ts";
 import hash from "../../../../../../shared/utils/hashes/bcryptHash.ts";
 import registerSchema from "../../schemas/registerSchema.ts";
 import vs from "value_schema";
 import {
   Status,
 } from "oak";
+import { UserBaseEntity } from "../../../../admin/users/entities/UserBaseEntity.ts";
+import { UserRoles } from "../../../../admin/users/roles/UserRoles.ts";
 
 export default {
   async register(context: Record<string, any>) {
@@ -20,13 +21,34 @@ export default {
         context.throw(Status.BadRequest, "Bad Request");
       }
 
-      let user: Partial<userModel> | undefined;
-      user = vs.applySchemaObject(registerSchema, body.value);
+      let userAlreadyExists = await userRepository.findOneByEmail(
+        body.value?.email,
+      );
 
-      if (user) {
-        user.password = await hash.bcrypt(user?.password as string);
+      if (Object.keys(userAlreadyExists).length !== 0) {
+        context.response.body = {
+          error: "We already have a user with this email.",
+        };
+        context.response.status = Status.BadRequest;
+        context.response.type = "json";
+        return;
+      }
 
-        await userService.insertOne(user);
+      let user: UserBaseEntity | undefined;
+      let validated: { name: string; email: string; password: string };
+      validated = vs.applySchemaObject(registerSchema, body.value);
+
+      if (validated) {
+        validated.password = await hash.bcrypt(validated.password as string);
+        user = new UserBaseEntity(
+          validated.name,
+          validated.email,
+          validated.password,
+          [UserRoles.writer],
+          Date.now(),
+        );
+
+        await userRepository.insertOne(user);
 
         context.response.body = user;
         context.response.type = "json";

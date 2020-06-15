@@ -1,12 +1,14 @@
+import { UserBaseEntity } from "../modules/admin/users/entities/UserBaseEntity.ts";
+
 export abstract class BaseEntity {
   protected type: string;
-  protected author: {};
+  protected author: UserBaseEntity | undefined;
   protected created: number;
   protected updated: number;
 
   constructor(
     type: string,
-    author: {},
+    author: UserBaseEntity | undefined,
     created: number,
   ) {
     this.type = type;

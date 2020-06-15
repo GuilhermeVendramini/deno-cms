@@ -1,6 +1,5 @@
 import { renderFileToString } from "dejs";
 import vs from "value_schema";
-import userModel from "../../../../../../shared/models/user/userModel.ts";
 import loginSchema from "../../schemas/loginSchema.ts";
 import {
   Status,
@@ -43,7 +42,7 @@ export default {
         { email, password },
       ) as userLogin;
 
-      let user: Partial<userModel> | undefined;
+      let user: any | undefined;
 
       if (value?.email && value?.password) {
         user = await userService.findOneByEmail(value.email);

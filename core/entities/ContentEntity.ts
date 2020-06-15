@@ -1,4 +1,5 @@
 import { BaseEntity } from "./BaseEntity.ts";
+import { UserBaseEntity } from "../modules/admin/users/entities/UserBaseEntity.ts";
 
 export type TContentEntity = {
   title: string;
@@ -11,7 +12,7 @@ export class ContentEntity extends BaseEntity {
   constructor(
     data: TContentEntity,
     type: string,
-    author: {},
+    author: UserBaseEntity | undefined,
     created: number,
   ) {
     super(

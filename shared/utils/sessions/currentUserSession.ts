@@ -1,8 +1,8 @@
-import userModel from "../../models/user/userModel.ts";
+import { UserBaseEntity } from "../../../core/modules/admin/users/entities/UserBaseEntity.ts";
 
 export default {
   async get(context: Record<string, any>) {
-    let currentUser: userModel | undefined;
+    let currentUser: UserBaseEntity | undefined;
 
     if (
       context.state.session !== undefined &&
@@ -11,10 +11,10 @@ export default {
       return currentUser;
     }
 
-    return null;
+    return undefined;
   },
 
-  async set(context: Record<string, any>, currentUser: userModel) {
+  async set(context: Record<string, any>, currentUser: UserBaseEntity) {
     await context.state.session.set("currentUser", currentUser);
   },
 

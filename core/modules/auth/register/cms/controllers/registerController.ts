@@ -1,5 +1,4 @@
 import { renderFileToString } from "dejs";
-import userModel from "../../../../../../shared/models/user/userModel.ts";
 import userRepository from "../../../../../../repositories/mongodb/user/userRepository.ts";
 import hash from "../../../../../../shared/utils/hashes/bcryptHash.ts";
 import registerSchema from "../../schemas/registerSchema.ts";
@@ -7,6 +6,8 @@ import vs from "value_schema";
 import {
   Status,
 } from "oak";
+import { UserBaseEntity } from "../../../../admin/users/entities/UserBaseEntity.ts";
+import { UserRoles } from "../../../../admin/users/roles/UserRoles.ts";
 
 export default {
   async register(context: Record<string, any>) {
@@ -29,20 +30,40 @@ export default {
         context.throw(Status.BadRequest, "Bad Request");
       }
 
-      let user: Partial<userModel> | undefined;
-      let name = body.value.get("name");
       let email = body.value.get("email");
+
+      let userAlreadyExists = await userRepository.findOneByEmail(
+        email,
+      );
+
+      if (Object.keys(userAlreadyExists).length !== 0) {
+        context.response.body = await renderFileToString(
+          `${Deno.cwd()}/core/modules/auth/register/cms/views/registerView.ejs`,
+          {
+            message: "We already have a user with this email.",
+          },
+        );
+        return;
+      }
+
+      let user: UserBaseEntity | undefined;
+      let validated: { name: string; email: string; password: string };
+      let name = body.value.get("name");
       let password = body.value.get("password");
-      user = vs.applySchemaObject(
+      validated = vs.applySchemaObject(
         registerSchema,
         { name, email, password },
-      ) as {
-        username: string;
-        password: string;
-      };
+      );
 
-      if (user) {
-        user.password = await hash.bcrypt(user?.password as string);
+      if (validated) {
+        validated.password = await hash.bcrypt(validated.password);
+        user = new UserBaseEntity(
+          validated.name,
+          validated.email,
+          validated.password,
+          [UserRoles.writer],
+          Date.now(),
+        );
 
         await userRepository.insertOne(user);
 
