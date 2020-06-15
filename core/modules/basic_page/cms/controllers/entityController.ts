@@ -12,6 +12,7 @@ import entitySchema from "../../schemas/entitySchema.ts";
 import contentRepository from "../../../../../repositories/mongodb/content/contentRepository.ts";
 import baseEntityMiddleware from "../../../../../shared/middlewares/baseEntityMiddleware.ts";
 import { UserBaseEntity } from "../../../../../core/modules/users/entities/UserBaseEntity.ts";
+import entity from "../../entity.ts";
 
 export default {
   async add(context: Record<string, any>, next: Function) {
@@ -38,11 +39,12 @@ export default {
       }
 
       context.response.body = await renderFileToString(
-        `${Deno.cwd()}/core/modules/basic_page/cms/views/entityFormView.ejs`,
+        `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormView.ejs`,
         {
           currentUser: currentUser,
           message: false,
           content: content,
+          entity: entity,
         },
       );
     } catch (error) {
@@ -98,7 +100,7 @@ export default {
       if (validated) {
         content = new ContentEntity(
           data as TContentEntity,
-          "basic_page",
+          entity.type,
           currentUser,
           Date.now(),
           published,
@@ -123,12 +125,12 @@ export default {
           id = result?.$oid;
         }
 
-        context.response.redirect(`/basic-page/${id}`);
+        context.response.redirect(`/${entity.type.replace("_", "-")}/${id}`);
         return;
       }
 
       context.response.body = await renderFileToString(
-        `${Deno.cwd()}/core/modules/basic_page/cms/views/entityFormView.ejs`,
+        `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormView.ejs`,
         {
           currentUser: currentUser,
           message: "Error saving content. Please try again.",
@@ -137,7 +139,7 @@ export default {
       return;
     } catch (error) {
       context.response.body = await renderFileToString(
-        `${Deno.cwd()}/core/modules/basic_page/cms/views/entityFormView.ejs`,
+        `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormView.ejs`,
         {
           currentUser: await currentUserSession.get(context),
           message: error.message,
@@ -166,7 +168,7 @@ export default {
         );
 
         context.response.body = await renderFileToString(
-          `${Deno.cwd()}/core/modules/basic_page/cms/views/entityView.ejs`,
+          `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityView.ejs`,
           {
             currentUser: currentUser,
             content: content,
@@ -213,7 +215,7 @@ export default {
         );
 
         context.response.body = await renderFileToString(
-          `${Deno.cwd()}/core/modules/basic_page/cms/views/entityFormConfirm.ejs`,
+          `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormConfirm.ejs`,
           {
             currentUser: await currentUserSession.get(context),
             content: content,

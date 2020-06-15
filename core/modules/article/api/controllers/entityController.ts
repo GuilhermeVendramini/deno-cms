@@ -2,6 +2,7 @@ import {
   Status,
 } from "oak";
 import contentRepository from "../../../../../repositories/mongodb/content/contentRepository.ts";
+import entity from "../../entity.ts";
 
 export default {
   async view(context: Record<string, any>) {
@@ -11,9 +12,9 @@ export default {
       let content: any | undefined;
 
       if (id) {
-        content = await contentRepository.findOneByID(id, "article");
+        content = await contentRepository.findOneByID(id, entity.type);
       } else {
-        content = await contentRepository.find("article");
+        content = await contentRepository.find(entity.type);
       }
 
       if (content && Object.keys(content).length != 0) {

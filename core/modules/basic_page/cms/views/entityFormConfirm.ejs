@@ -4,7 +4,7 @@
 <% } %>
 <div class="container h-100 pt-4">
   <h1 class="text-center mb-3">Confirm delete <%= content.data.title %></h1>
-  <form action='/admin/content/basic-page/delete' method=post>
+  <form action='/admin/content/<%= content.type.replace("_", "-") %>/delete' method=post>
     <input type="hidden" id="id" name="id" value="<%= content._id.$oid %>">
     <div class="d-flex justify-content-center">
       <div class="mr-2">
