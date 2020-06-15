@@ -12,6 +12,7 @@ import themeBoostrapRouter from "./core/themes/bootstrap/routes/boostrapRoute.ts
 import { Session } from "session";
 import unknownPages from "./core/modules/unknownPages/routes/unknownPagesRoute.ts";
 import basicPageRouter from "./core/modules/admin/basic_page/cms/routes/basicPageRoute.ts";
+import basicPageAPIRouter from "./core/modules/admin/basic_page/api/routes/basicPageRoute.ts";
 import librariesRoute from "./libraries/librariesRoute.ts";
 
 const session = new Session({ framework: "oak" });
@@ -34,6 +35,7 @@ app.use(recoveryPasswordRouter.routes());
 app.use(registerAPIRouter.routes());
 app.use(usersAPIRouter.routes());
 app.use(loginAPIRouter.routes());
+app.use(basicPageAPIRouter.routes());
 
 /**
  * Themes routes

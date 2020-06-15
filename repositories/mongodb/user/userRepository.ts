@@ -1,4 +1,5 @@
 import DB from "../db.ts";
+import { ObjectId } from "mongo";
 
 const data = DB.collection("users");
 
@@ -9,6 +10,14 @@ export default {
 
   async findOneByEmail(email: string): Promise<{}> {
     let result = await data.findOne({ email: email });
+
+    if (result) return result;
+
+    return {};
+  },
+
+  async findOneById(id: string): Promise<{}> {
+    let result = await data.findOne({ _id: ObjectId(id) });
 
     if (result) return result;
 

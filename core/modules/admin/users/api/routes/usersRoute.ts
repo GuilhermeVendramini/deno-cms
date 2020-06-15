@@ -7,6 +7,10 @@ router
     "/api/users",
     loggedMiddleware.tokenValidated,
     usersController.users,
+  ) .get(
+    "/api/users/:id",
+    loggedMiddleware.tokenValidated,
+    usersController.users,
   );
 
 export default router;
