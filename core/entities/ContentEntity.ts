@@ -1,5 +1,5 @@
 import { BaseEntity } from "./BaseEntity.ts";
-import { UserBaseEntity } from "../modules/admin/users/entities/UserBaseEntity.ts";
+import { UserBaseEntity } from "../modules/users/entities/UserBaseEntity.ts";
 
 export type TContentEntity = {
   title: string;

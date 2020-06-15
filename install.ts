@@ -1,5 +1,5 @@
-import { UserBaseEntity } from "./core/modules/admin/users/entities/UserBaseEntity.ts";
-import { UserRoles } from "./core/modules/admin/users/roles/UserRoles.ts";
+import { UserBaseEntity } from "./core/modules/users/entities/UserBaseEntity.ts";
+import { UserRoles } from "./core/modules/users/roles/UserRoles.ts";
 import userRepository from "./repositories/mongodb/user/userRepository.ts";
 import * as Colors from "https://deno.land/std/fmt/colors.ts";
 import hash from "./shared/utils/hashes/bcryptHash.ts";

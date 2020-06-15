@@ -5,8 +5,8 @@ import vs from "value_schema";
 import {
   Status,
 } from "oak";
-import { UserBaseEntity } from "../../../../admin/users/entities/UserBaseEntity.ts";
-import { UserRoles } from "../../../../admin/users/roles/UserRoles.ts";
+import { UserBaseEntity } from "../../../../users/entities/UserBaseEntity.ts";
+import { UserRoles } from "../../../../users/roles/UserRoles.ts";
 
 export default {
   async register(context: Record<string, any>) {

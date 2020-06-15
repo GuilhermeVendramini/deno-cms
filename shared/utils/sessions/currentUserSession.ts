@@ -1,4 +1,4 @@
-import { UserBaseEntity } from "../../../core/modules/admin/users/entities/UserBaseEntity.ts";
+import { UserBaseEntity } from "../../../core/modules/users/entities/UserBaseEntity.ts";
 
 export default {
   async get(context: Record<string, any>) {
