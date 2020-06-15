@@ -1,4 +1,4 @@
-# Deno CRUD API Example
+# Deno CMS AND API
 
 ### Requirements:
 * Denon
@@ -17,4 +17,5 @@ denon start
 ### Default user login:
 
 **email**: admin@admin.com
+
 **password**: 12345678
