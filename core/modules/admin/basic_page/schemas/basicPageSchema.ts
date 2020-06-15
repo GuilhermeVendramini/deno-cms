@@ -7,6 +7,7 @@ const basicPageSchema = {
       trims: false,
     },
   }),
+  published: vs.boolean(),
 };
 
 export default basicPageSchema;

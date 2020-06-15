@@ -10,32 +10,52 @@ import {
 import vs from "value_schema";
 import basicPageSchema from "../../schemas/basicPageSchema.ts";
 import contentRepository from "../../../../../../repositories/mongodb/content/contentRepository.ts";
+import basicPageMiddleware from "../middlewares/basicPageMiddleware.ts";
+import { UserBaseEntity } from "../../../../../../core/modules/admin/users/entities/UserBaseEntity.ts";
 
 export default {
-  async add(context: Record<string, any>) {
+  async add(context: Record<string, any>, next: Function) {
     try {
+      let currentUser: UserBaseEntity | undefined;
+
+      currentUser = await currentUserSession.get(context);
+
+      if (!currentUser) {
+        context.throw(Status.BadRequest, "Bad Request");
+      }
+
       let id: string = context.params?.id;
       let content: {} | undefined;
 
       if (id) {
         content = await contentRepository.findOneByID(id);
+        await basicPageMiddleware.needToBeAuthor(
+          context,
+          next,
+          currentUser as UserBaseEntity,
+          content,
+        );
       }
 
       context.response.body = await renderFileToString(
         `${Deno.cwd()}/core/modules/admin/basic_page/cms/views/basicPageFormView.ejs`,
         {
-          currentUser: await currentUserSession.get(context),
+          currentUser: currentUser,
           message: false,
           content: content,
         },
       );
     } catch (error) {
-      context.throw(Status.BadRequest, "Bad Request");
+      context.response.status = Status.NotFound;
+      context.response.body = await renderFileToString(
+        `${Deno.cwd()}/core/modules/unknownPages/views/notFound.ejs`,
+        {},
+      );
       return;
     }
   },
 
-  async addPost(context: Record<string, any>) {
+  async addPost(context: Record<string, any>, next: Function) {
     try {
       if (!context.request.hasBody) {
         context.throw(Status.BadRequest, "Bad Request");
@@ -47,7 +67,6 @@ export default {
         context.throw(Status.BadRequest, "Bad Request");
       }
 
-      let content: ContentEntity | undefined;
       let validated: { title: string };
       let data: any = {};
       let properties: any = [
@@ -55,6 +74,8 @@ export default {
         "title",
         "body",
       ];
+      let published: boolean;
+      published = body.value.get("published") ? true : false;
 
       properties.forEach(function (field: string) {
         data[field] = body.value.get(field);
@@ -62,25 +83,41 @@ export default {
 
       validated = vs.applySchemaObject(
         basicPageSchema,
-        { title: data.title },
+        { title: data.title, published: published },
       );
+
+      let currentUser: UserBaseEntity | undefined;
+      currentUser = await currentUserSession.get(context);
+
+      if (!currentUser) {
+        context.throw(Status.BadRequest, "Bad Request");
+      }
+
+      let content: ContentEntity | undefined;
 
       if (validated) {
         content = new ContentEntity(
           data as TContentEntity,
           "basic_page",
-          await currentUserSession.get(context),
+          currentUser,
           Date.now(),
+          published,
         );
       }
 
-      if (content) {
+      if (content && Object.keys(content).length != 0) {
         let result: any;
         let id: string;
 
         if (data?.id) {
-          result = await contentRepository.updateOne(data.id, content);
           id = data.id;
+          await basicPageMiddleware.needToBeAuthor(
+            context,
+            next,
+            currentUser as UserBaseEntity,
+            content,
+          );
+          result = await contentRepository.updateOne(data.id, content);
         } else {
           result = await contentRepository.insertOne(content);
           id = result?.$oid;
@@ -93,7 +130,7 @@ export default {
       context.response.body = await renderFileToString(
         `${Deno.cwd()}/core/modules/admin/basic_page/cms/views/basicPageFormView.ejs`,
         {
-          currentUser: await currentUserSession.get(context),
+          currentUser: currentUser,
           message: "Error saving content. Please try again.",
         },
       );
@@ -111,16 +148,27 @@ export default {
     }
   },
 
-  async view(context: Record<string, any>) {
+  async view(context: Record<string, any>, next: Function) {
     try {
+      let currentUser: UserBaseEntity | undefined;
+      currentUser = await currentUserSession.get(context);
+
       const id: string = context.params.id;
-      let content: {} | undefined;
+      let content: any | undefined;
       content = await contentRepository.findOneByID(id);
-      if (content) {
+
+      if (content && Object.keys(content).length != 0) {
+        await basicPageMiddleware.needToBePublished(
+          context,
+          next,
+          currentUser,
+          content,
+        );
+
         context.response.body = await renderFileToString(
           `${Deno.cwd()}/core/modules/admin/basic_page/cms/views/basicPageView.ejs`,
           {
-            currentUser: await currentUserSession.get(context),
+            currentUser: currentUser,
             content: content,
           },
         );
@@ -143,13 +191,27 @@ export default {
     }
   },
 
-  async delete(context: Record<string, any>) {
+  async delete(context: Record<string, any>, next: Function) {
     try {
+      let currentUser: UserBaseEntity | undefined;
+      currentUser = await currentUserSession.get(context);
+
+      if (!currentUser) {
+        context.throw(Status.BadRequest, "Bad Request");
+      }
+
       const id: string = context.params.id;
-      let content: {} | undefined;
+      let content: any | undefined;
       content = await contentRepository.findOneByID(id);
 
       if (content && Object.keys(content).length != 0) {
+        await basicPageMiddleware.needToBeAuthor(
+          context,
+          next,
+          currentUser as UserBaseEntity,
+          content,
+        );
+
         context.response.body = await renderFileToString(
           `${Deno.cwd()}/core/modules/admin/basic_page/cms/views/basicPageFormConfirm.ejs`,
           {
@@ -176,7 +238,7 @@ export default {
     }
   },
 
-  async deletePost(context: Record<string, any>) {
+  async deletePost(context: Record<string, any>, next: Function) {
     try {
       if (!context.request.hasBody) {
         context.throw(Status.BadRequest, "Bad Request");
@@ -188,13 +250,28 @@ export default {
         context.throw(Status.BadRequest, "Bad Request");
       }
 
-      let id: string | undefined;
-      id = body.value.get("id");
+      let currentUser: UserBaseEntity | undefined;
+      currentUser = await currentUserSession.get(context);
 
-      if (id) {
-        await contentRepository.deleteOne(id);
+      if (!currentUser) {
+        context.throw(Status.BadRequest, "Bad Request");
       }
 
+      let id: string;
+      id = body.value.get("id");
+
+      let content: any | undefined;
+      content = await contentRepository.findOneByID(id);
+
+      if (content && Object.keys(content).length != 0) {
+        await basicPageMiddleware.needToBeAuthor(
+          context,
+          next,
+          currentUser as UserBaseEntity,
+          content,
+        );
+        await contentRepository.deleteOne(id);
+      }
       context.response.redirect(`/admin/content`);
       return;
     } catch (error) {

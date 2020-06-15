@@ -11,7 +11,13 @@ export default {
   async updateOne(id: string, content: any): Promise<any> {
     return await data.updateOne(
       { _id: ObjectId(id) },
-      { $set: { data: content.data, updated: content.updated } },
+      {
+        $set: {
+          data: content.data,
+          updated: content.updated,
+          published: content.published,
+        },
+      },
     );
   },
 

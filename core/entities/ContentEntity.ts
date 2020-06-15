@@ -14,11 +14,13 @@ export class ContentEntity extends BaseEntity {
     type: string,
     author: UserBaseEntity | undefined,
     created: number,
+    published: boolean,
   ) {
     super(
       type,
       author,
       created,
+      published,
     );
     this.data = data;
   }

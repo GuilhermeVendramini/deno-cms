@@ -29,6 +29,7 @@
           <th scope="col">Author</th>
           <th scope="col">Created</th>
           <th scope="col">Updated</th>
+          <th scope="col">Published</th>
           <th scope="col">Operations</th>
         </tr>
       </thead>
@@ -41,7 +42,12 @@
           <td><%= content[i].author.name %></td>
           <td><%= content[i].created %></td>
           <td><%= content[i].updated %></td>
-          <td><a href='/admin/content/basic-page/edit/<%= content[i]._id.$oid %>'>edit</a> | <a href='/admin/content/basic-page/delete/<%= content[i]._id.$oid %>'>delete</a></td>
+          <td><%= content[i].published %></td>
+          <td>
+            <% if (currentUser._id.$oid == content[i].author._id.$oid || currentUser.roles.includes(0)) { %>
+              <a href='/admin/content/basic-page/edit/<%= content[i]._id.$oid %>'>edit</a> | <a href='/admin/content/basic-page/delete/<%= content[i]._id.$oid %>'>delete</a>
+            <% } %>
+          </td>
         </tr>
         <% } %>
       </tbody>
