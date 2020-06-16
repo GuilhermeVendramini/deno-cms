@@ -20,6 +20,7 @@ import tagsAPIRouter from "./core/modules/tags/api/routes/entityRoute.ts";
 import categoriesRouter from "./core/modules/categories/cms/routes/entityRoute.ts";
 import categoriesAPIRouter from "./core/modules/categories/api/routes/entityRoute.ts";
 import librariesRoute from "./libraries/librariesRoute.ts";
+import entityReferenceRouter from "./core/modules/entity_reference/routes/entityReferenceRoute.ts";
 
 const session = new Session({ framework: "oak" });
 await session.init();
@@ -78,6 +79,12 @@ app.use(categoriesRouter.routes());
  */
 
 app.use(librariesRoute.routes());
+
+/**
+ * Entity Reference
+ */
+
+app.use(entityReferenceRouter.routes());
 
 /**
  * Unknown routes
