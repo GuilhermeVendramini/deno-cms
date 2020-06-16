@@ -15,6 +15,10 @@ import basicPageRouter from "./core/modules/basic_page/cms/routes/entityRoute.ts
 import basicPageAPIRouter from "./core/modules/basic_page/api/routes/entityRoute.ts";
 import articleRouter from "./core/modules/article/cms/routes/entityRoute.ts";
 import articleAPIRouter from "./core/modules/article/api/routes/entityRoute.ts";
+import tagsRouter from "./core/modules/tags/cms/routes/entityRoute.ts";
+import tagsAPIRouter from "./core/modules/tags/api/routes/entityRoute.ts";
+import categoriesRouter from "./core/modules/categories/cms/routes/entityRoute.ts";
+import categoriesAPIRouter from "./core/modules/categories/api/routes/entityRoute.ts";
 import librariesRoute from "./libraries/librariesRoute.ts";
 
 const session = new Session({ framework: "oak" });
@@ -39,6 +43,8 @@ app.use(usersAPIRouter.routes());
 app.use(loginAPIRouter.routes());
 app.use(basicPageAPIRouter.routes());
 app.use(articleAPIRouter.routes());
+app.use(tagsAPIRouter.routes());
+app.use(categoriesAPIRouter.routes());
 
 /**
  * Themes routes
@@ -59,6 +65,13 @@ app.use(usersRouter.routes());
 
 app.use(basicPageRouter.routes());
 app.use(articleRouter.routes());
+
+/**
+ * Taxonomy types
+ */
+
+app.use(tagsRouter.routes());
+app.use(categoriesRouter.routes());
 
 /**
  * Libraries

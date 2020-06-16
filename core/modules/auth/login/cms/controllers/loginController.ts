@@ -57,7 +57,7 @@ export default {
 
       if (user && logged) {
         let token: string = userToken.generate(user._id.$oid);
-
+        delete user.password;
         context.cookies.set("jwt", token);
         currentUserSession.set(context, user);
         context.response.redirect("/");

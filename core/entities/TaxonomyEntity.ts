@@ -5,7 +5,7 @@ export type TTaxonomyEntity = {
   title: string;
 };
 
-export class ContentEntity extends BaseEntity {
+export class TaxonomyEntity extends BaseEntity {
   protected data: TTaxonomyEntity;
 
   constructor(

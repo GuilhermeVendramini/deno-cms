@@ -1,20 +1,33 @@
 import { renderFileToString } from "dejs";
 import currentUserSession from "../../../../../shared/utils/sessions/currentUserSession.ts";
 import {
-  ContentEntity,
-  TContentEntity,
-} from "../../../../entities/ContentEntity.ts";
+  TaxonomyEntity,
+  TTaxonomyEntity,
+} from "../../../../entities/TaxonomyEntity.ts";
 import {
   Status,
 } from "oak";
 import vs from "value_schema";
 import entitySchema from "../../schemas/entitySchema.ts";
-import contentRepository from "../../../../../repositories/mongodb/content/contentRepository.ts";
+import taxonomyRepository from "../../../../../repositories/mongodb/taxonomy/taxonomyRepository.ts";
 import baseEntityMiddleware from "../../../../../shared/middlewares/baseEntityMiddleware.ts";
 import { UserBaseEntity } from "../../../../../core/modules/users/entities/UserBaseEntity.ts";
 import entity from "../../entity.ts";
 
 export default {
+  async list(context: Record<string, any>) {
+    let term: [] | undefined;
+    term = await taxonomyRepository.find(entity.type);
+    context.response.body = await renderFileToString(
+      `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityListView.ejs`,
+      {
+        currentUser: await currentUserSession.get(context),
+        term: term,
+        entity: entity,
+      },
+    );
+  },
+
   async add(context: Record<string, any>, next: Function) {
     try {
       let currentUser: UserBaseEntity | undefined;
@@ -26,15 +39,15 @@ export default {
       }
 
       let id: string = context.params?.id;
-      let content: {} | undefined;
+      let term: {} | undefined;
 
       if (id) {
-        content = await contentRepository.findOneByID(id);
+        term = await taxonomyRepository.findOneByID(id);
         await baseEntityMiddleware.needToBeAuthor(
           context,
           next,
           currentUser as UserBaseEntity,
-          content,
+          term,
         );
       }
 
@@ -43,7 +56,7 @@ export default {
         {
           currentUser: currentUser,
           message: false,
-          content: content,
+          term: term,
           entity: entity,
         },
       );
@@ -74,7 +87,6 @@ export default {
       let properties: any = [
         "id",
         "title",
-        "body",
       ];
       let published: boolean;
       published = body.value.get("published") ? true : false;
@@ -88,18 +100,18 @@ export default {
         { title: data.title, published: published },
       );
 
-      let currentUser: any | undefined;
+      let currentUser: UserBaseEntity | undefined;
       currentUser = await currentUserSession.get(context);
 
       if (!currentUser) {
         context.throw(Status.BadRequest, "Bad Request");
       }
 
-      let content: ContentEntity | undefined;
+      let term: TaxonomyEntity | undefined;
 
       if (validated) {
-        content = new ContentEntity(
-          data as TContentEntity,
+        term = new TaxonomyEntity(
+          data as TTaxonomyEntity,
           entity.type,
           currentUser,
           Date.now(),
@@ -107,7 +119,7 @@ export default {
         );
       }
 
-      if (content && Object.keys(content).length != 0) {
+      if (term && Object.keys(term).length != 0) {
         let result: any;
         let id: string;
 
@@ -117,15 +129,15 @@ export default {
             context,
             next,
             currentUser as UserBaseEntity,
-            content,
+            term,
           );
-          result = await contentRepository.updateOne(data.id, content);
+          result = await taxonomyRepository.updateOne(data.id, term);
         } else {
-          result = await contentRepository.insertOne(content);
+          result = await taxonomyRepository.insertOne(term);
           id = result?.$oid;
         }
 
-        context.response.redirect(`/${entity.type.replace("_", "-")}/${id}`);
+        context.response.redirect(`/admin/taxonomy/${entity.type.replace("_", "-")}`);
         return;
       }
 
@@ -133,7 +145,7 @@ export default {
         `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormView.ejs`,
         {
           currentUser: currentUser,
-          message: "Error saving content. Please try again.",
+          message: "Error saving term. Please try again.",
         },
       );
       return;
@@ -143,7 +155,7 @@ export default {
         {
           currentUser: await currentUserSession.get(context),
           message: error.message,
-          content: false,
+          term: false,
         },
       );
       return;
@@ -156,22 +168,22 @@ export default {
       currentUser = await currentUserSession.get(context);
 
       const id: string = context.params.id;
-      let content: any | undefined;
-      content = await contentRepository.findOneByID(id);
+      let term: any | undefined;
+      term = await taxonomyRepository.findOneByID(id);
 
-      if (content && Object.keys(content).length != 0) {
+      if (term && Object.keys(term).length != 0) {
         await baseEntityMiddleware.needToBePublished(
           context,
           next,
           currentUser,
-          content,
+          term,
         );
 
         context.response.body = await renderFileToString(
           `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityView.ejs`,
           {
             currentUser: currentUser,
-            content: content,
+            term: term,
           },
         );
         return;
@@ -203,22 +215,22 @@ export default {
       }
 
       const id: string = context.params.id;
-      let content: any | undefined;
-      content = await contentRepository.findOneByID(id);
+      let term: any | undefined;
+      term = await taxonomyRepository.findOneByID(id);
 
-      if (content && Object.keys(content).length != 0) {
+      if (term && Object.keys(term).length != 0) {
         await baseEntityMiddleware.needToBeAuthor(
           context,
           next,
           currentUser as UserBaseEntity,
-          content,
+          term,
         );
 
         context.response.body = await renderFileToString(
           `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormConfirm.ejs`,
           {
             currentUser: await currentUserSession.get(context),
-            content: content,
+            term: term,
           },
         );
         return;
@@ -262,23 +274,27 @@ export default {
       let id: string;
       id = body.value.get("id");
 
-      let content: any | undefined;
-      content = await contentRepository.findOneByID(id);
+      let term: any | undefined;
+      term = await taxonomyRepository.findOneByID(id);
 
-      if (content && Object.keys(content).length != 0) {
+      if (term && Object.keys(term).length != 0) {
         await baseEntityMiddleware.needToBeAuthor(
           context,
           next,
           currentUser as UserBaseEntity,
-          content,
+          term,
         );
-        await contentRepository.deleteOne(id);
+        await taxonomyRepository.deleteOne(id);
       }
-      context.response.redirect(`/admin/content`);
+      context.response.redirect(
+        `/admin/taxonomy/${entity.type.replace("_", "-")}`,
+      );
       return;
     } catch (error) {
       console.log(error);
-      context.response.redirect(`/admin/content`);
+      context.response.redirect(
+        `/admin/taxonomy/${entity.type.replace("_", "-")}`,
+      );
       return;
     }
   },

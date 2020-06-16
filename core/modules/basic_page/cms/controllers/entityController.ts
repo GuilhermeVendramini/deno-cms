@@ -88,7 +88,7 @@ export default {
         { title: data.title, published: published },
       );
 
-      let currentUser: UserBaseEntity | undefined;
+      let currentUser: any | undefined;
       currentUser = await currentUserSession.get(context);
 
       if (!currentUser) {
