@@ -26,6 +26,7 @@
       <%- await include(
         `${Deno.cwd()}/core/modules/entity_reference/views/entityReferenceFormView.ejs`,
         {
+          field: 'tags',
           entities: {
             "taxonomy": ["tags"],
           }
@@ -37,6 +38,7 @@
       <%- await include(
         `${Deno.cwd()}/core/modules/entity_reference/views/entityReferenceFormView.ejs`,
         {
+          field: 'references',
           entities: {
             "taxonomy": ["categories", "tags"], 
             "content": ["article", "basic_page"],
