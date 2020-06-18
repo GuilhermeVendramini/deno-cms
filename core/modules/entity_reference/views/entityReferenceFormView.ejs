@@ -1,9 +1,9 @@
 <div class="entity-reference-container mb-3 border p-2">
-  <div class="entity-reference-entities mb-3" data-entities='<%- JSON.stringify(entities) %>'>
+  <div class="entity-reference-entities mb-3" data-field='<%- field %>' data-entities='<%- JSON.stringify(entities) %>'>
   </div>
   <hr/>
   <div class="entity-reference-selected">
     [SELECTED]
   </div>
-  <input id='<%- field  %>' name=='<%- field  %>' type="hidden" value='[]'>
+  <input id='<%- field  %>' name='<%- field  %>' type="hidden" value='[]'>
 </div>
