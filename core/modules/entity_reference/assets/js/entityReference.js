@@ -10,7 +10,7 @@ $(document).ready(function () {
         entityContainer.append(
           `<div class="bg-light p-2 mb-3 entity ${entity}">
             <a class="collapsed" href="#${entity}${index}" role="button" aria-controls="${entity}${index}" data-toggle="collapse" aria-expanded="false">
-              <h5 class="border-bottom pb-2 text-center text-capitalize font-weight-bold">
+              <h5 class="border-bottom border-white pb-2 text-center text-capitalize font-weight-bold">
                 ${entity.replace('_', ' ')}
               </h5>
             </a>
@@ -18,18 +18,34 @@ $(document).ready(function () {
           </div>`
         );
 
+        let entityItems = entityContainer.find('.entity.' + entity + ' > .items').first();
+
         $.each(types, async function (_, type) {
-          entityContainer.find('.entity.' + entity + ' > .items').first().append(
-            `<div class="mb-3 mt-3 type ${type}">
-              <h6 class="text-capitalize font-weight-bold text-secondary">${type.replace('_', ' ')}</h6>
+          entityItems.append(
+            `<div class="border-bottom mb-2 mt-2 p-2 type ${type}">
+              <div class="entity-header d-flex justify-content-between">
+                <h6 class="text-capitalize font-weight-bold text-secondary">
+                  ${type.replace('_', ' ')}
+                </h6>
+                <div class="actions">
+                  <span class="add-new">
+                    <a target="_blank" class="btn btn-outline-secondary btn-sm" href="/admin/${entity.replace('_', '-')}/${type.replace('_', '-')}/add">+</a>
+                  </span>
+                  <span class="refresh">
+                    <a data-entity="${entity}" data-type="${type}" class="btn btn-outline-secondary btn-sm" href="#">↻</a>
+                  </span>
+                </div>
+              </div>
               <div class="items clearfix"></div>
             </div>`
           );
+
           let entities = await getEntities(entity, type);
 
           if (entities && entities.data) {
+            let typeItems = entityContainer.find('.type.' + type + ' > .items').first();
             $.each(entities.data, function (_, data) {
-              entityContainer.find('.type.' + type + ' > .items').first().append(
+              typeItems.append(
                 getTemplate(entity, data)
               );
             });
@@ -38,6 +54,23 @@ $(document).ready(function () {
       });
     });
   }
+
+  $('.refresh > a').click(async function (e) {
+    e.preventDefault();
+    let entity = $(this).data('entity');
+    let type = $(this).data('type');
+    let entities = await getEntities(entity, type);
+
+    if (entities && entities.data) {
+      let itemsList = $('.entity.' + entity + ' .type.' + type + ' > .items');
+      itemsList.html('');
+      $.each(entities.data, function (_, data) {
+        itemsList.append(
+          getTemplate(entity, data)
+        );
+      });
+    }
+  });
 
   function getTemplate(entity, data) {
     let template;

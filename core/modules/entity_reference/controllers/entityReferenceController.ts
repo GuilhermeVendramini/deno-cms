@@ -41,7 +41,9 @@ export default {
         result = {
           entity: entity,
           type: type,
-          data: entities,
+          data: entities.filter((entity: any) => {
+            return entity.published === true;
+          }),
         };
       }
 
