@@ -79,27 +79,24 @@ $(document).ready(function () {
 
   function getTaxonomyTemplate(data) {
     let template = `
-      <a data-id="${data._id.$oid}" class="entity-action ${data._id.$oid} btn btn-info btn-sm m-2" href="#" role="button">
+      <a data-id="${data._id.$oid}" class="entity-action ${data._id.$oid} btn btn-outline-primary btn-sm m-2" href="#" role="button">
         ${data.data.title}
-        <span class="">+</span>
       </a>`;
     return template;
   }
 
   function getContentTemplate(data) {
     let template = `
-      <a class="entity-action ${data._id.$oid} btn btn-primary btn-sm m-2" href="#" role="button">
+      <a class="entity-action ${data._id.$oid} btn btn-outline-primary btn-sm m-2" href="#" role="button">
         ${data.data.title}
-        <span class="">+</span>
       </a>`;
     return template;
   }
 
   function getDefaultTemplate(data) {
     let template = `
-      <a class="entity-action ${data._id.$oid} btn btn-primary btn-sm m-2" href="#" role="button">
+      <a class="entity-action ${data._id.$oid} btn btn-outline-primary btn-sm m-2" href="#" role="button">
         ${data._id.$oid}
-        <span class="">+</span>
       </a>`;
     return template;
   }
@@ -123,7 +120,19 @@ $(document).ready(function () {
   function callAction(field, item) {
     $(`.field-${field} .${item}`).click(function (e) {
       e.preventDefault();
-      console.log(item);
+      $(this).toggleClass('btn-secondary');
+      $(this).toggleClass('btn-outline-primary');
+
+      if (!$(this).hasClass('added')) {
+        $(this).addClass('added');
+        $(`.${field}-container #sortable-${field}`).append(
+          `<li id="${field}-${item}">${item}</li>`
+        );
+      } else {
+        $(`#${field}-${item}`).remove();
+        $(this).removeClass('added');
+      }
+      
     });
   }
 
