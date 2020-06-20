@@ -1,6 +1,9 @@
 $(document).ready(function () {
+  var pickedEntities = [];
+  var loadEntities = [];
 
   buildReference();
+
 
   function buildReference() {
     let entityReference = $('.entity-reference-entities');
@@ -45,14 +48,15 @@ $(document).ready(function () {
             );
 
             let entities = await getEntities(entity, type);
+            loadEntities.push(entities);
 
             if (entities && entities.data) {
               let typeItems = entityContainer.find('.type.' + type + ' > .items').first();
               $.each(entities.data, function (_, data) {
                 typeItems.append(
-                  getTemplate(entity, data)
+                  getTemplate(field, entity, data)
                 );
-                callAction(field, data._id.$oid);
+                clickAction(field, data._id.$oid);
               });
             }
           });
@@ -61,41 +65,44 @@ $(document).ready(function () {
     }
   }
 
-  function getTemplate(entity, data) {
+  function getTemplate(field, entity, data) {
     let template;
     switch (entity) {
       case 'taxonomy':
-        template = getTaxonomyTemplate(data);
+        template = getTaxonomyTemplate(field, data);
         break;
       case 'content':
-        template = getContentTemplate(data);
+        template = getContentTemplate(field, data);
         break;
       default:
-        template = getDefaultTemplate(data);
+        template = getDefaultTemplate(field, data);
         break;
     }
     return template;
   }
 
-  function getTaxonomyTemplate(data) {
+  function getTaxonomyTemplate(field, data) {
+    let classStatus = getPickedItem(field, data._id.$oid) ? 'btn-secondary' : 'btn-outline-primary';
     let template = `
-      <a data-id="${data._id.$oid}" class="entity-action ${data._id.$oid} btn btn-outline-primary btn-sm m-2" href="#" role="button">
+      <a id="op-${field}-${data._id.$oid}" data-id="${data._id.$oid}" class=" ${data._id.$oid} btn ${classStatus} btn-sm m-2" href="#" role="button">
         ${data.data.title}
       </a>`;
     return template;
   }
 
-  function getContentTemplate(data) {
+  function getContentTemplate(field, data) {
+    let classStatus = getPickedItem(field, data._id.$oid) ? 'btn-secondary' : 'btn-outline-primary';
     let template = `
-      <a class="entity-action ${data._id.$oid} btn btn-outline-primary btn-sm m-2" href="#" role="button">
+      <a id="op-${field}-${data._id.$oid}" class="${data._id.$oid} btn ${classStatus} btn-sm m-2" href="#" role="button">
         ${data.data.title}
       </a>`;
     return template;
   }
 
-  function getDefaultTemplate(data) {
+  function getDefaultTemplate(field, data) {
+    let classStatus = getPickedItem(field, data._id.$oid) ? 'btn-secondary' : 'btn-outline-primary';
     let template = `
-      <a class="entity-action ${data._id.$oid} btn btn-outline-primary btn-sm m-2" href="#" role="button">
+      <a id="op-${field}-${data._id.$oid}" class="${data._id.$oid} btn ${classStatus} btn-sm m-2" href="#" role="button">
         ${data._id.$oid}
       </a>`;
     return template;
@@ -117,23 +124,11 @@ $(document).ready(function () {
     return result;
   }
 
-  function callAction(field, item) {
-    $(`.field-${field} .${item}`).click(function (e) {
-      e.preventDefault();
-      $(this).toggleClass('btn-secondary');
-      $(this).toggleClass('btn-outline-primary');
+  function getPickedItem(field, item) {
+    let found;
+    if (found = pickedEntities.find(e => e.field == field && e.item == item)) return found;
 
-      if (!$(this).hasClass('added')) {
-        $(this).addClass('added');
-        $(`.${field}-container #sortable-${field}`).append(
-          `<li id="${field}-${item}">${item}</li>`
-        );
-      } else {
-        $(`#${field}-${item}`).remove();
-        $(this).removeClass('added');
-      }
-      
-    });
+    return false;
   }
 
   $('.refresh > a').click(async function (e) {
@@ -144,14 +139,37 @@ $(document).ready(function () {
     let entities = await getEntities(entity, type);
 
     if (entities && entities.data) {
-      let itemsList = $('.entity.' + entity + ' .type.' + type + ' > .items');
+      let itemsList = $('.field-'+ field +'.entity.' + entity + ' .type.' + type + ' > .items');
       itemsList.html('');
       $.each(entities.data, function (_, data) {
         itemsList.append(
-          getTemplate(entity, data)
+          getTemplate(field, entity, data)
         );
-        callAction(field, data._id.$oid);
+        clickAction(field, data._id.$oid);
       });
     }
   });
+
+  function clickAction(field, item) {
+    $(`#op-${field}-${item}`).click(function (e) {
+      e.preventDefault();
+      let pickedItem = getPickedItem(field, item);
+
+      if (pickedItem) {
+        $(`#${field}-${item}`).remove();
+        $(this).removeClass('added');
+        $(this).addClass('btn-outline-primary');
+        $(this).removeClass('btn-secondary');
+        pickedEntities.splice(pickedEntities.indexOf(pickedItem), 1);
+      } else {
+        $(this).addClass('added');
+        $(`.${field}-container #sortable-${field}`).append(
+          `<li id="${field}-${item}">${item}</li>`
+        );
+        $(this).addClass('btn-secondary');
+        $(this).removeClass('btn-outline-primary');
+        pickedEntities.push({ field: field, item: item });
+      }
+    });
+  }
 });
