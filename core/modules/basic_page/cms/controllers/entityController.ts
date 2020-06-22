@@ -47,6 +47,8 @@ export default {
           entity: entity,
         },
       );
+      context.response.status = Status.OK;
+      return;
     } catch (error) {
       context.response.status = Status.NotFound;
       context.response.body = await renderFileToString(
@@ -136,6 +138,7 @@ export default {
           message: "Error saving content. Please try again.",
         },
       );
+      context.response.status = Status.OK;
       return;
     } catch (error) {
       context.response.body = await renderFileToString(
@@ -146,6 +149,7 @@ export default {
           content: false,
         },
       );
+      context.response.status = Status.OK;
       return;
     }
   },
@@ -174,6 +178,7 @@ export default {
             content: content,
           },
         );
+        context.response.status = Status.OK;
         return;
       }
 
@@ -221,6 +226,7 @@ export default {
             content: content,
           },
         );
+        context.response.status = Status.OK;
         return;
       }
 

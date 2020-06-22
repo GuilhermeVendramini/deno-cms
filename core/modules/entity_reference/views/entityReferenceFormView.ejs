@@ -6,11 +6,5 @@
     <ul id="sortable-<%- field %>">
     </ul>
   </div>
-  <input id='<%- field  %>' name='<%- field  %>' type="hidden" value='[]'>
+  <input class="entity-reference" id='<%- field  %>' name='<%- field  %>' type="hidden" value='<%- data  %>'>
 </div>
-<script>
-  $( function() {
-    $( "#sortable-<%- field %>" ).sortable();
-    $( "#sortable-<%- field %>" ).disableSelection();
-  } );
-  </script>

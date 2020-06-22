@@ -60,6 +60,8 @@ export default {
           entity: entity,
         },
       );
+      context.response.status = Status.OK;
+      return;
     } catch (error) {
       context.response.status = Status.NotFound;
       context.response.body = await renderFileToString(
@@ -158,6 +160,7 @@ export default {
           term: false,
         },
       );
+      context.response.status = Status.OK;
       return;
     }
   },

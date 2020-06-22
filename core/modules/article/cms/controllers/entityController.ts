@@ -47,6 +47,8 @@ export default {
           entity: entity,
         },
       );
+      context.response.status = Status.OK;
+      return;
     } catch (error) {
       context.response.status = Status.NotFound;
       context.response.body = await renderFileToString(
@@ -75,6 +77,8 @@ export default {
         "id",
         "title",
         "body",
+        "tags",
+        "references",
       ];
       let published: boolean;
       published = body.value.get("published") ? true : false;
@@ -146,6 +150,7 @@ export default {
           content: false,
         },
       );
+      context.response.status = Status.OK;
       return;
     }
   },
@@ -174,6 +179,7 @@ export default {
             content: content,
           },
         );
+        context.response.status = Status.OK;
         return;
       }
 

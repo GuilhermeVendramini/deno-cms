@@ -9,7 +9,7 @@
       <%= message %>
     </div>
   <% } %>
-  <form action='/admin/taxonomy/<%= entity.type.replace("_", "-") %>/add' method=post>
+  <form id="entity-form" action='/admin/taxonomy/<%= entity.type.replace("_", "-") %>/add' method=post>
     <input id="id" name="id" type="hidden" value='<%= term?._id?.$oid %>'>
     <div class="form-group">
       <label>Title</label>

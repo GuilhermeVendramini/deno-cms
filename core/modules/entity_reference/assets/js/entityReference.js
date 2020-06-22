@@ -3,7 +3,9 @@ $(document).ready(function () {
   var loadEntities = [];
 
   buildReference();
-
+  refreshEntities();
+  getCurrentEntities();
+  submitForm();
 
   function buildReference() {
     let entityReference = $('.entity-reference-entities');
@@ -12,6 +14,8 @@ $(document).ready(function () {
         let dataEntities = $(this).data('entities');
         let field = $(this).data('field');
         let entityContainer = $(this);
+
+        setSortable(field);
 
         $.each(dataEntities, function (entity, types) {
           entityContainer.append(
@@ -56,7 +60,7 @@ $(document).ready(function () {
                 typeItems.append(
                   getTemplate(field, entity, data)
                 );
-                clickAction(field, data._id.$oid);
+                clickAction(field, data);
               });
             }
           });
@@ -124,52 +128,107 @@ $(document).ready(function () {
     return result;
   }
 
-  function getPickedItem(field, item) {
+  function getPickedItem(field, id) {
     let found;
-    if (found = pickedEntities.find(e => e.field == field && e.item == item)) return found;
+    if (found = pickedEntities.find(e => e.field == field && e.data._id.$oid == id)) return found;
 
     return false;
   }
 
-  $('.refresh > a').click(async function (e) {
-    e.preventDefault();
-    let entity = $(this).data('entity');
-    let field = $(this).data('field');
-    let type = $(this).data('type');
-    let entities = await getEntities(entity, type);
-
-    if (entities && entities.data) {
-      let itemsList = $('.field-'+ field +'.entity.' + entity + ' .type.' + type + ' > .items');
-      itemsList.html('');
-      $.each(entities.data, function (_, data) {
-        itemsList.append(
-          getTemplate(field, entity, data)
-        );
-        clickAction(field, data._id.$oid);
-      });
-    }
-  });
-
-  function clickAction(field, item) {
-    $(`#op-${field}-${item}`).click(function (e) {
+  function refreshEntities() {
+    $('.refresh > a').click(async function (e) {
       e.preventDefault();
-      let pickedItem = getPickedItem(field, item);
+      let entity = $(this).data('entity');
+      let field = $(this).data('field');
+      let type = $(this).data('type');
+      let entities = await getEntities(entity, type);
+
+      if (entities && entities.data) {
+        let itemsList = $('.field-' + field + '.entity.' + entity + ' .type.' + type + ' > .items');
+        itemsList.html('');
+        $.each(entities.data, function (_, data) {
+          itemsList.append(
+            getTemplate(field, entity, data)
+          );
+          clickAction(field, data);
+        });
+      }
+    });
+  }
+
+  function clickAction(field, data) {
+    let id = data._id.$oid;
+    $(`#op-${field}-${id}`).click(function (e) {
+      e.preventDefault();
+      let pickedItem = getPickedItem(field, id);
 
       if (pickedItem) {
-        $(`#${field}-${item}`).remove();
-        $(this).removeClass('added');
+        $(`#${field}-${id}`).remove();
         $(this).addClass('btn-outline-primary');
         $(this).removeClass('btn-secondary');
         pickedEntities.splice(pickedEntities.indexOf(pickedItem), 1);
       } else {
-        $(this).addClass('added');
         $(`.${field}-container #sortable-${field}`).append(
-          `<li id="${field}-${item}">${item}</li>`
+          `<li id="${field}-${id}">${data.data.title}</li>`
         );
         $(this).addClass('btn-secondary');
         $(this).removeClass('btn-outline-primary');
-        pickedEntities.push({ field: field, item: item });
+        pickedEntities.push({ field: field, data: data });
       }
+    });
+  }
+
+  function setSortable(field) {
+    $('#sortable-' + field + '').sortable();
+    $('#sortable-' + field + '').disableSelection();
+  }
+
+  function getCurrentEntities() {
+    let fields = $('.entity-reference');
+    $.each(fields, function () {
+      let value = $(this).val();
+
+      if (value) {
+        value = JSON.parse(value);
+        value = value.sort(function (a, b) {
+          if (a.weight < b.weight) return -1;
+
+          return 1;
+        });
+
+        $.each(value, function (_, item) {
+          let option = $(`#op-${item.field}-${item.data._id.$oid}`);
+          $(`.${item.field}-container #sortable-${item.field}`).append(
+            `<li id="${item.field}-${item.data._id.$oid}">${item.data.data.title}</li>`
+          );
+
+          option.addClass('btn-secondary');
+          option.removeClass('btn-outline-primary');
+          pickedEntities.push({ field: item.field, data: item.data });
+        });
+      }
+    });
+  }
+
+  function submitForm() {
+    $('#entity-form').submit(function (e) {
+      e.preventDefault();
+      let entityFields = $('input.entity-reference');
+
+      $.each(entityFields, function () {
+        let field = $(this).attr("name");
+        let data = pickedEntities.filter(e => e.field == field);
+        let sortbleField = $('#sortable-' + field + '');
+
+        $.each(data, function (index, item) {
+          let weight = sortbleField.find(`#${field}-${item.data._id.$oid}`).first().index();
+          data[index]['weight'] = weight;
+        });
+
+        $(this).val(JSON.stringify(data));
+      });
+
+      $(this).unbind('submit').submit();
     });
   }
 });

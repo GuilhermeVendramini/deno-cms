@@ -9,7 +9,7 @@
       <%= message %>
     </div>
   <% } %>
-  <form action='/admin/content/<%= entity.type.replace("_", "-") %>/add' method=post>
+  <form id="entity-form" action='/admin/content/<%= entity.type.replace("_", "-") %>/add' method=post>
     <input id="id" name="id" type="hidden" value='<%= content?._id?.$oid %>'>
     <div class="form-group">
       <label>Title</label>
@@ -29,7 +29,8 @@
           field: 'tags',
           entities: {
             "taxonomy": ["tags"],
-          }
+          },
+          data: content?.data?.tags
         }
       ) %>
     </div>
@@ -42,7 +43,8 @@
           entities: {
             "taxonomy": ["categories", "tags"], 
             "content": ["article", "basic_page"],
-          }
+          },
+          data: content?.data?.references
         }
       ) %>
     </div>
