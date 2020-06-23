@@ -10,7 +10,6 @@ import {
 import vs from "value_schema";
 import entitySchema from "../../schemas/entitySchema.ts";
 import taxonomyRepository from "../../../../../repositories/mongodb/taxonomy/taxonomyRepository.ts";
-import baseEntityMiddleware from "../../../../../shared/middlewares/baseEntityMiddleware.ts";
 import { UserBaseEntity } from "../../../../../core/modules/users/entities/UserBaseEntity.ts";
 import entity from "../../entity.ts";
 
@@ -28,7 +27,7 @@ export default {
     );
   },
 
-  async add(context: Record<string, any>, next: Function) {
+  async add(context: Record<string, any>) {
     try {
       let currentUser: UserBaseEntity | undefined;
 
@@ -43,12 +42,6 @@ export default {
 
       if (id) {
         term = await taxonomyRepository.findOneByID(id);
-        await baseEntityMiddleware.needToBeAuthor(
-          context,
-          next,
-          currentUser as UserBaseEntity,
-          term,
-        );
       }
 
       context.response.body = await renderFileToString(
@@ -72,7 +65,7 @@ export default {
     }
   },
 
-  async addPost(context: Record<string, any>, next: Function) {
+  async addPost(context: Record<string, any>) {
     try {
       if (!context.request.hasBody) {
         context.throw(Status.BadRequest, "Bad Request");
@@ -127,13 +120,7 @@ export default {
 
         if (data?.id) {
           id = data.id;
-          await baseEntityMiddleware.needToBeAuthor(
-            context,
-            next,
-            currentUser as UserBaseEntity,
-            term,
-          );
-          result = await taxonomyRepository.updateOne(data.id, term);
+          result = await taxonomyRepository.updateOne(id, term);
         } else {
           result = await taxonomyRepository.insertOne(term);
           id = result?.$oid;
@@ -165,7 +152,7 @@ export default {
     }
   },
 
-  async view(context: Record<string, any>, next: Function) {
+  async view(context: Record<string, any>) {
     try {
       let currentUser: UserBaseEntity | undefined;
       currentUser = await currentUserSession.get(context);
@@ -175,13 +162,6 @@ export default {
       term = await taxonomyRepository.findOneByID(id);
 
       if (term && Object.keys(term).length != 0) {
-        await baseEntityMiddleware.needToBePublished(
-          context,
-          next,
-          currentUser,
-          term,
-        );
-
         context.response.body = await renderFileToString(
           `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityView.ejs`,
           {
@@ -208,7 +188,7 @@ export default {
     }
   },
 
-  async delete(context: Record<string, any>, next: Function) {
+  async delete(context: Record<string, any>) {
     try {
       let currentUser: UserBaseEntity | undefined;
       currentUser = await currentUserSession.get(context);
@@ -222,13 +202,6 @@ export default {
       term = await taxonomyRepository.findOneByID(id);
 
       if (term && Object.keys(term).length != 0) {
-        await baseEntityMiddleware.needToBeAuthor(
-          context,
-          next,
-          currentUser as UserBaseEntity,
-          term,
-        );
-
         context.response.body = await renderFileToString(
           `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormConfirm.ejs`,
           {
@@ -281,12 +254,6 @@ export default {
       term = await taxonomyRepository.findOneByID(id);
 
       if (term && Object.keys(term).length != 0) {
-        await baseEntityMiddleware.needToBeAuthor(
-          context,
-          next,
-          currentUser as UserBaseEntity,
-          term,
-        );
         await taxonomyRepository.deleteOne(id);
       }
       context.response.redirect(

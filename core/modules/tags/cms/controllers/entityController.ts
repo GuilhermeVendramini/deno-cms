@@ -43,12 +43,6 @@ export default {
 
       if (id) {
         term = await taxonomyRepository.findOneByID(id);
-        await baseEntityMiddleware.needToBeAuthor(
-          context,
-          next,
-          currentUser as UserBaseEntity,
-          term,
-        );
       }
 
       context.response.body = await renderFileToString(
@@ -127,13 +121,7 @@ export default {
 
         if (data?.id) {
           id = data.id;
-          await baseEntityMiddleware.needToBeAuthor(
-            context,
-            next,
-            currentUser as UserBaseEntity,
-            term,
-          );
-          result = await taxonomyRepository.updateOne(data.id, term);
+          result = await taxonomyRepository.updateOne(id, term);
         } else {
           result = await taxonomyRepository.insertOne(term);
           id = result?.$oid;
@@ -175,13 +163,6 @@ export default {
       term = await taxonomyRepository.findOneByID(id);
 
       if (term && Object.keys(term).length != 0) {
-        await baseEntityMiddleware.needToBePublished(
-          context,
-          next,
-          currentUser,
-          term,
-        );
-
         context.response.body = await renderFileToString(
           `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityView.ejs`,
           {
@@ -222,13 +203,6 @@ export default {
       term = await taxonomyRepository.findOneByID(id);
 
       if (term && Object.keys(term).length != 0) {
-        await baseEntityMiddleware.needToBeAuthor(
-          context,
-          next,
-          currentUser as UserBaseEntity,
-          term,
-        );
-
         context.response.body = await renderFileToString(
           `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormConfirm.ejs`,
           {
@@ -281,12 +255,6 @@ export default {
       term = await taxonomyRepository.findOneByID(id);
 
       if (term && Object.keys(term).length != 0) {
-        await baseEntityMiddleware.needToBeAuthor(
-          context,
-          next,
-          currentUser as UserBaseEntity,
-          term,
-        );
         await taxonomyRepository.deleteOne(id);
       }
       context.response.redirect(

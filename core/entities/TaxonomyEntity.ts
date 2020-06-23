@@ -17,6 +17,7 @@ export class TaxonomyEntity extends BaseEntity {
   ) {
     super(
       type,
+      'taxonomy',
       author,
       created,
       published,

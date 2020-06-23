@@ -18,6 +18,7 @@ export class ContentEntity extends BaseEntity {
   ) {
     super(
       type,
+      'content',
       author,
       created,
       published,

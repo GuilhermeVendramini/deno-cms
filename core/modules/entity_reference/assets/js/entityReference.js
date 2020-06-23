@@ -130,7 +130,7 @@ $(document).ready(function () {
 
   function getPickedItem(field, id) {
     let found;
-    if (found = pickedEntities.find(e => e.field == field && e.data._id.$oid == id)) return found;
+    if (found = pickedEntities.find(e => e.field == field && e.entity?._id?.$oid == id)) return found;
 
     return false;
   }
@@ -173,7 +173,7 @@ $(document).ready(function () {
         );
         $(this).addClass('btn-secondary');
         $(this).removeClass('btn-outline-primary');
-        pickedEntities.push({ field: field, data: data });
+        pickedEntities.push({ field: field, entity: data });
       }
     });
   }
@@ -190,21 +190,17 @@ $(document).ready(function () {
 
       if (value) {
         value = JSON.parse(value);
-        value = value.sort(function (a, b) {
-          if (a.weight < b.weight) return -1;
-
-          return 1;
-        });
+        value = value.sort(function (a, b) { return a.weight - b.weight });
 
         $.each(value, function (_, item) {
-          let option = $(`#op-${item.field}-${item.data._id.$oid}`);
+          let option = $(`#op-${item.field}-${item.entity._id.$oid}`);
           $(`.${item.field}-container #sortable-${item.field}`).append(
-            `<li id="${item.field}-${item.data._id.$oid}">${item.data.data.title}</li>`
+            `<li id="${item.field}-${item.entity._id.$oid}">${item.entity.data.title}</li>`
           );
 
           option.addClass('btn-secondary');
           option.removeClass('btn-outline-primary');
-          pickedEntities.push({ field: item.field, data: item.data });
+          pickedEntities.push({ field: item.field, entity: item.entity });
         });
       }
     });
@@ -221,7 +217,7 @@ $(document).ready(function () {
         let sortbleField = $('#sortable-' + field + '');
 
         $.each(data, function (index, item) {
-          let weight = sortbleField.find(`#${field}-${item.data._id.$oid}`).first().index();
+          let weight = sortbleField.find(`#${field}-${item.entity._id.$oid}`).first().index();
           data[index]['weight'] = weight;
         });
 

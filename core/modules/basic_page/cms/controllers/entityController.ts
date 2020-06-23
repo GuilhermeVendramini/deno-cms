@@ -10,7 +10,6 @@ import {
 import vs from "value_schema";
 import entitySchema from "../../schemas/entitySchema.ts";
 import contentRepository from "../../../../../repositories/mongodb/content/contentRepository.ts";
-import baseEntityMiddleware from "../../../../../shared/middlewares/baseEntityMiddleware.ts";
 import { UserBaseEntity } from "../../../../../core/modules/users/entities/UserBaseEntity.ts";
 import entity from "../../entity.ts";
 
@@ -30,12 +29,6 @@ export default {
 
       if (id) {
         content = await contentRepository.findOneByID(id);
-        await baseEntityMiddleware.needToBeAuthor(
-          context,
-          next,
-          currentUser as UserBaseEntity,
-          content,
-        );
       }
 
       context.response.body = await renderFileToString(
@@ -115,13 +108,7 @@ export default {
 
         if (data?.id) {
           id = data.id;
-          await baseEntityMiddleware.needToBeAuthor(
-            context,
-            next,
-            currentUser as UserBaseEntity,
-            content,
-          );
-          result = await contentRepository.updateOne(data.id, content);
+          result = await contentRepository.updateOne(id, content);
         } else {
           result = await contentRepository.insertOne(content);
           id = result?.$oid;
@@ -164,13 +151,6 @@ export default {
       content = await contentRepository.findOneByID(id);
 
       if (content && Object.keys(content).length != 0) {
-        await baseEntityMiddleware.needToBePublished(
-          context,
-          next,
-          currentUser,
-          content,
-        );
-
         context.response.body = await renderFileToString(
           `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityView.ejs`,
           {
@@ -212,13 +192,6 @@ export default {
       content = await contentRepository.findOneByID(id);
 
       if (content && Object.keys(content).length != 0) {
-        await baseEntityMiddleware.needToBeAuthor(
-          context,
-          next,
-          currentUser as UserBaseEntity,
-          content,
-        );
-
         context.response.body = await renderFileToString(
           `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormConfirm.ejs`,
           {
@@ -272,12 +245,6 @@ export default {
       content = await contentRepository.findOneByID(id);
 
       if (content && Object.keys(content).length != 0) {
-        await baseEntityMiddleware.needToBeAuthor(
-          context,
-          next,
-          currentUser as UserBaseEntity,
-          content,
-        );
         await contentRepository.deleteOne(id);
       }
       context.response.redirect(`/admin/content`);

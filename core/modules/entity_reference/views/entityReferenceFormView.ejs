@@ -6,5 +6,5 @@
     <ul id="sortable-<%- field %>">
     </ul>
   </div>
-  <input class="entity-reference" id='<%- field  %>' name='<%- field  %>' type="hidden" value='<%- data  %>'>
+  <input class="entity-reference" id='<%- field  %>' name='<%- field  %>' type="hidden" value='<%= JSON.stringify(data)  %>'>
 </div>

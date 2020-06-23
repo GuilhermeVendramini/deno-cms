@@ -30,12 +30,6 @@ export default {
 
       if (id) {
         content = await contentRepository.findOneByID(id);
-        await baseEntityMiddleware.needToBeAuthor(
-          context,
-          next,
-          currentUser as UserBaseEntity,
-          content,
-        );
       }
 
       context.response.body = await renderFileToString(
@@ -77,14 +71,21 @@ export default {
         "id",
         "title",
         "body",
-        "tags",
-        "references",
       ];
       let published: boolean;
       published = body.value.get("published") ? true : false;
 
       properties.forEach(function (field: string) {
         data[field] = body.value.get(field);
+      });
+
+      let entities: any = [
+        "tags",
+        "references",
+      ];
+
+      entities.forEach(function (field: string) {
+        data[field] = JSON.parse(body.value.get(field));
       });
 
       validated = vs.applySchemaObject(
@@ -117,13 +118,7 @@ export default {
 
         if (data?.id) {
           id = data.id;
-          await baseEntityMiddleware.needToBeAuthor(
-            context,
-            next,
-            currentUser as UserBaseEntity,
-            content,
-          );
-          result = await contentRepository.updateOne(data.id, content);
+          result = await contentRepository.updateOne(id, content);
         } else {
           result = await contentRepository.insertOne(content);
           id = result?.$oid;
@@ -165,13 +160,6 @@ export default {
       content = await contentRepository.findOneByID(id);
 
       if (content && Object.keys(content).length != 0) {
-        await baseEntityMiddleware.needToBePublished(
-          context,
-          next,
-          currentUser,
-          content,
-        );
-
         context.response.body = await renderFileToString(
           `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityView.ejs`,
           {
@@ -213,13 +201,6 @@ export default {
       content = await contentRepository.findOneByID(id);
 
       if (content && Object.keys(content).length != 0) {
-        await baseEntityMiddleware.needToBeAuthor(
-          context,
-          next,
-          currentUser as UserBaseEntity,
-          content,
-        );
-
         context.response.body = await renderFileToString(
           `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormConfirm.ejs`,
           {
@@ -246,7 +227,7 @@ export default {
     }
   },
 
-  async deletePost(context: Record<string, any>, next: Function) {
+  async deletePost(context: Record<string, any>) {
     try {
       if (!context.request.hasBody) {
         context.throw(Status.BadRequest, "Bad Request");
@@ -272,18 +253,11 @@ export default {
       content = await contentRepository.findOneByID(id);
 
       if (content && Object.keys(content).length != 0) {
-        await baseEntityMiddleware.needToBeAuthor(
-          context,
-          next,
-          currentUser as UserBaseEntity,
-          content,
-        );
         await contentRepository.deleteOne(id);
       }
       context.response.redirect(`/admin/content`);
       return;
     } catch (error) {
-      console.log(error);
       context.response.redirect(`/admin/content`);
       return;
     }
