@@ -12,6 +12,7 @@ import entitySchema from "../../schemas/entitySchema.ts";
 import taxonomyRepository from "../../../../../repositories/mongodb/taxonomy/taxonomyRepository.ts";
 import { UserBaseEntity } from "../../../../../core/modules/users/entities/UserBaseEntity.ts";
 import entity from "../../entity.ts";
+import cmsErrors from "../../../../../shared/utils/errors/cms/cmsErrors.ts";
 
 export default {
   async list(context: Record<string, any>) {
@@ -56,11 +57,7 @@ export default {
       context.response.status = Status.OK;
       return;
     } catch (error) {
-      context.response.status = Status.NotFound;
-      context.response.body = await renderFileToString(
-        `${Deno.cwd()}/core/modules/unknownPages/views/notFound.ejs`,
-        {},
-      );
+      await cmsErrors.NotFoundError(context, Status.NotFound, error);
       return;
     }
   },
@@ -126,7 +123,9 @@ export default {
           id = result?.$oid;
         }
 
-        context.response.redirect(`/admin/taxonomy/${entity.type.replace("_", "-")}`);
+        context.response.redirect(
+          `/admin/taxonomy/${entity.type.replace("_", "-")}`,
+        );
         return;
       }
 
@@ -171,19 +170,9 @@ export default {
         );
         return;
       }
-
-      context.response.status = Status.NotFound;
-      context.response.body = await renderFileToString(
-        `${Deno.cwd()}/core/modules/unknownPages/views/notFound.ejs`,
-        {},
-      );
-      return;
+      context.throw(Status.NotFound, "NotFound");
     } catch (error) {
-      context.response.status = Status.NotFound;
-      context.response.body = await renderFileToString(
-        `${Deno.cwd()}/core/modules/unknownPages/views/notFound.ejs`,
-        {},
-      );
+      await cmsErrors.NotFoundError(context, Status.NotFound, error);
       return;
     }
   },
@@ -211,24 +200,14 @@ export default {
         );
         return;
       }
-
-      context.response.status = Status.NotFound;
-      context.response.body = await renderFileToString(
-        `${Deno.cwd()}/core/modules/unknownPages/views/notFound.ejs`,
-        {},
-      );
-      return;
+      context.throw(Status.NotFound, "NotFound");
     } catch (error) {
-      context.response.status = Status.NotFound;
-      context.response.body = await renderFileToString(
-        `${Deno.cwd()}/core/modules/unknownPages/views/notFound.ejs`,
-        {},
-      );
+      await cmsErrors.NotFoundError(context, Status.NotFound, error);
       return;
     }
   },
 
-  async deletePost(context: Record<string, any>, next: Function) {
+  async deletePost(context: Record<string, any>) {
     try {
       if (!context.request.hasBody) {
         context.throw(Status.BadRequest, "Bad Request");

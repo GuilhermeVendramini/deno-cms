@@ -169,7 +169,7 @@ $(document).ready(function () {
         pickedEntities.splice(pickedEntities.indexOf(pickedItem), 1);
       } else {
         $(`.${field}-container #sortable-${field}`).append(
-          `<li id="${field}-${id}">${data.data.title}</li>`
+          `<li class="list-group-item" id="${field}-${id}">${data.data.title}</li>`
         );
         $(this).addClass('btn-secondary');
         $(this).removeClass('btn-outline-primary');
@@ -195,7 +195,7 @@ $(document).ready(function () {
         $.each(value, function (_, item) {
           let option = $(`#op-${item.field}-${item.entity._id.$oid}`);
           $(`.${item.field}-container #sortable-${item.field}`).append(
-            `<li id="${item.field}-${item.entity._id.$oid}">${item.entity.data.title}</li>`
+            `<li class="list-group-item" id="${item.field}-${item.entity._id.$oid}">${item.entity.data.title}</li>`
           );
 
           option.addClass('btn-secondary');

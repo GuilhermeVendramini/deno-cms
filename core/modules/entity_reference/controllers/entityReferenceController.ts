@@ -1,5 +1,4 @@
-import taxonomyRepository from "../../../../repositories/mongodb/taxonomy/taxonomyRepository.ts";
-import contentRepository from "../../../../repositories/mongodb/content/contentRepository.ts";
+import entityRepository from "../../../../repositories/mongodb/entity/entityRepository.ts";
 
 export default {
   async list(context: Record<string, any>) {
@@ -16,16 +15,7 @@ export default {
         return;
       }
 
-      let repository: any | undefined;
-      switch (entity) {
-        case "taxonomy":
-          repository = taxonomyRepository;
-          break;
-
-        case "content":
-          repository = contentRepository;
-          break;
-      }
+      let repository = entityRepository.getRepository(entity as string);
 
       if (!repository) {
         context.response.body = "{}";

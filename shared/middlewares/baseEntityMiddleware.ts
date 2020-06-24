@@ -2,10 +2,12 @@ import { UserRoles } from "../../core/modules/users/roles/UserRoles.ts";
 import {
   Status,
 } from "oak";
-import contentRepository from "../../repositories/mongodb/content/contentRepository.ts";
-import taxonomyRepository from "../../repositories/mongodb/taxonomy/taxonomyRepository.ts";
+import entityRepository from "../../repositories/mongodb/entity/entityRepository.ts";
 import currentUserSession from "../../shared/utils/sessions/currentUserSession.ts";
 import { renderFileToString } from "dejs";
+
+const taxonomyRepository = entityRepository.getRepository("taxonomy");
+const contentRepository = entityRepository.getRepository("content");
 
 async function needTobeAuthor(
   context: Record<string, any>,

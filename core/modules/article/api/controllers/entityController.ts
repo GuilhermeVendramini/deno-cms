@@ -3,6 +3,7 @@ import {
 } from "oak";
 import contentRepository from "../../../../../repositories/mongodb/content/contentRepository.ts";
 import entity from "../../entity.ts";
+import apiErrors from "../../../../../shared/utils/errors/api/apiErrors.ts";
 
 export default {
   async view(context: Record<string, any>) {
@@ -24,10 +25,7 @@ export default {
       }
       context.throw(Status.BadRequest, "Bad Request");
     } catch (error) {
-      console.log(error);
-      context.response.body = { error: error.message };
-      context.response.status = Status.BadRequest;
-      context.response.type = "json";
+      await apiErrors.genericError(context, Status.BadRequest, error);
     }
   },
 };
