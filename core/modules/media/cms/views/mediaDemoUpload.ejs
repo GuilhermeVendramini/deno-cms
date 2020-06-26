@@ -6,8 +6,11 @@
   <h1 class="text-center mb-3">Demo upload</h1>
   <div class="content">
     <form id="demoFormId" enctype="multipart/form-data" action="/upload" method="post">
-      <input type="file" name="file" multiple><br>
-      <input type="submit" value="Submit">
+      <div class="form-group">
+        <label for="file">Example file input</label>
+        <input class="form-control-file" type="file" name="file" multiple><br>
+      </div>
+      <input class="btn btn-primary" type="submit" value="Submit">
     </form>
   </div>
 </div>
