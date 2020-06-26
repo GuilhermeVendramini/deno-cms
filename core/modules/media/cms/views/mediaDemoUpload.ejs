@@ -1,0 +1,14 @@
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: 'Demo Upload' }) %>
+<% if (currentUser) { %>
+  <%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/menus/adminMenu.ejs`, { currentUser: currentUser}) %>
+<% } %>
+<div class="container h-100 pt-4">
+  <h1 class="text-center mb-3">Demo upload</h1>
+  <div class="content">
+    <form id="demoFormId" enctype="multipart/form-data" action="/upload" method="post">
+      <input type="file" name="file" multiple><br>
+      <input type="submit" value="Submit">
+    </form>
+  </div>
+</div>
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>
