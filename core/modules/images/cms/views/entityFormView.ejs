@@ -9,11 +9,21 @@
       <%= message %>
     </div>
   <% } %>
-  <form id="entity-form" action='/admin/taxonomy/<%= entity.type.replace("_", "-") %>/add' method=post>
+  <form id="entity-form" action='/admin/media/<%= entity.type.replace("_", "-") %>/add' method=post>
     <input id="id" name="id" type="hidden" value='<%= term?._id?.$oid %>'>
     <div class="form-group">
       <label>Title</label>
       <input type="text" required value="<%= term?.data?.title %>" name="title" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="file">Image</label>
+      <%- await include(
+        `${Deno.cwd()}/core/modules/media/cms/views/mediaFormView.ejs`,
+        {
+          type: 'images',
+          name: 'file',
+        }
+      ) %>
     </div>
     <div class="form-check">
       <% let checked = term?.published ? "checked" : "" %>

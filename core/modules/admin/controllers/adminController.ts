@@ -23,4 +23,13 @@ export default {
       },
     );
   },
+
+  async media(context: Record<string, any>) {
+    context.response.body = await renderFileToString(
+      `${Deno.cwd()}/core/modules/admin/views/mediaView.ejs`,
+      {
+        currentUser: await currentUserSession.get(context),
+      },
+    );
+  },
 };

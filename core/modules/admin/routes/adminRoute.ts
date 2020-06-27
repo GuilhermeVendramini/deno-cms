@@ -12,6 +12,11 @@ router
     "/admin/taxonomy",
     loggedMiddleware.needToBeLogged,
     adminController.taxonomy,
+  )
+  .get(
+    "/admin/media",
+    loggedMiddleware.needToBeLogged,
+    adminController.media,
   );
 
 export default router;

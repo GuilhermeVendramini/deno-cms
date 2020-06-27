@@ -22,6 +22,8 @@ import categoriesAPIRouter from "./core/modules/categories/api/routes/entityRout
 import librariesRoute from "./libraries/librariesRoute.ts";
 import entityReferenceRouter from "./core/modules/entity_reference/routes/entityReferenceRoute.ts";
 import mediaRouter from "./core/modules/media/cms/routes/mediaRoute.ts";
+import imagesAPIRouter from "./core/modules/images/api/routes/entityRoute.ts";
+import imagesRouter from "./core/modules/images/cms/routes/entityRoute.ts";
 
 const session = new Session({ framework: "oak" });
 await session.init();
@@ -47,6 +49,7 @@ app.use(basicPageAPIRouter.routes());
 app.use(articleAPIRouter.routes());
 app.use(tagsAPIRouter.routes());
 app.use(categoriesAPIRouter.routes());
+app.use(imagesAPIRouter.routes());
 
 /**
  * Themes routes
@@ -60,6 +63,7 @@ app.use(themeBoostrapRouter.routes());
 
 app.use(adminRouter.routes());
 app.use(usersRouter.routes());
+app.use(mediaRouter.routes());
 
 /**
  * Content types
@@ -88,10 +92,10 @@ app.use(librariesRoute.routes());
 app.use(entityReferenceRouter.routes());
 
 /**
- * Media
+ * Media types
  */
 
-app.use(mediaRouter.routes());
+app.use(imagesRouter.routes());
 
 /**
  * Unknown routes

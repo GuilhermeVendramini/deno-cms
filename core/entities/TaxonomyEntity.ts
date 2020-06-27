@@ -1,15 +1,11 @@
 import { BaseEntity } from "./BaseEntity.ts";
 import { UserBaseEntity } from "../modules/users/entities/UserBaseEntity.ts";
 
-export type TTaxonomyEntity = {
-  title: string;
-};
-
 export class TaxonomyEntity extends BaseEntity {
-  protected data: TTaxonomyEntity;
+  protected data: any;
 
   constructor(
-    data: TTaxonomyEntity,
+    data: any,
     type: string,
     author: UserBaseEntity | undefined,
     created: number,

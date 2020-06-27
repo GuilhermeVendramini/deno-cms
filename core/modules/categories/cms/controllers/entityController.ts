@@ -2,8 +2,8 @@ import { renderFileToString } from "dejs";
 import currentUserSession from "../../../../../shared/utils/sessions/currentUserSession.ts";
 import {
   TaxonomyEntity,
-  TTaxonomyEntity,
 } from "../../../../entities/TaxonomyEntity.ts";
+import { entityType } from "../../types/entityType.ts";
 import {
   Status,
 } from "oak";
@@ -103,7 +103,7 @@ export default {
 
       if (validated) {
         term = new TaxonomyEntity(
-          data as TTaxonomyEntity,
+          data as entityType,
           entity.type,
           currentUser,
           Date.now(),

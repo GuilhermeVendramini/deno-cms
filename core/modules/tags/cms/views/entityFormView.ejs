@@ -28,16 +28,3 @@
   </form>
 </div>
 <%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>
-<link href="/libraries/ckeditor/ckeditor.css" type="text/css" rel="stylesheet">
-<script src="/libraries/ckeditor/ckeditor.js" type="text/javascript"></script>
-<script>
-	ClassicEditor
-		.create( document.querySelector('#body'), {
-		} )
-		.then( editor => {
-			window.editor = editor;
-		} )
-		.catch( err => {
-			console.error( err.stack );
-		} );
-</script>

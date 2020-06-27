@@ -1,16 +1,11 @@
 import { BaseEntity } from "./BaseEntity.ts";
 import { UserBaseEntity } from "../modules/users/entities/UserBaseEntity.ts";
 
-export type TContentEntity = {
-  title: string;
-  body: string;
-};
-
 export class ContentEntity extends BaseEntity {
-  protected data: TContentEntity;
+  protected data: any;
 
   constructor(
-    data: TContentEntity,
+    data: any,
     type: string,
     author: UserBaseEntity | undefined,
     created: number,

@@ -8,6 +8,7 @@ import { renderFileToString } from "dejs";
 
 const taxonomyRepository = entityRepository.getRepository("taxonomy");
 const contentRepository = entityRepository.getRepository("content");
+const mediaRepository = entityRepository.getRepository("media");
 
 async function needTobeAuthor(
   context: Record<string, any>,
@@ -87,6 +88,12 @@ export default {
   ) {
     await needTobeAuthor(context, next, contentRepository);
   },
+  async needToBeMediaAuthor(
+    context: Record<string, any>,
+    next: Function,
+  ) {
+    await needTobeAuthor(context, next, mediaRepository);
+  },
   async contentNeedToBePublished(
     context: Record<string, any>,
     next: Function,
@@ -98,5 +105,11 @@ export default {
     next: Function,
   ) {
     await needToBePublished(context, next, taxonomyRepository);
+  },
+  async mediaNeedToBePublished(
+    context: Record<string, any>,
+    next: Function,
+  ) {
+    await needToBePublished(context, next, mediaRepository);
   },
 };

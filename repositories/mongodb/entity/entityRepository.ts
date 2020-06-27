@@ -1,5 +1,6 @@
 import taxonomyRepository from "../taxonomy/taxonomyRepository.ts";
 import contentRepository from "../content/contentRepository.ts";
+import mediaRepository from "../media/mediaRepository.ts";
 
 export default {
   getRepository(entity: string) {
@@ -11,6 +12,10 @@ export default {
 
       case "content":
         repository = contentRepository;
+        break;
+
+      case "media":
+        repository = mediaRepository;
         break;
     }
     return repository;

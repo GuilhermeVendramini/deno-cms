@@ -2,11 +2,11 @@ import { renderFileToString } from "dejs";
 import currentUserSession from "../../../../../shared/utils/sessions/currentUserSession.ts";
 import {
   ContentEntity,
-  TContentEntity,
 } from "../../../../entities/ContentEntity.ts";
 import {
   Status,
 } from "oak";
+import { entityType } from "../../types/entityType.ts";
 import vs from "value_schema";
 import entitySchema from "../../schemas/entitySchema.ts";
 import contentRepository from "../../../../../repositories/mongodb/content/contentRepository.ts";
@@ -91,7 +91,7 @@ export default {
 
       if (validated) {
         content = new ContentEntity(
-          data as TContentEntity,
+          data as entityType,
           entity.type,
           currentUser,
           Date.now(),
