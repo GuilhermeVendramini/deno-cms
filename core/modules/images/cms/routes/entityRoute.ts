@@ -47,7 +47,7 @@ router
   .post(
     "/media/images",
     loggedMiddleware.needToBeLogged,
-    upload("files/media/images", ["jpg", "png"], 20000000, 10000000, false, false, true),
+    upload("files/media/images", ["jpg", "png"], 20000000, 10000000, true, false, true),
     async (context: Record<string, any>) => {
       context.response.body = context.uploadedFiles;
     },
