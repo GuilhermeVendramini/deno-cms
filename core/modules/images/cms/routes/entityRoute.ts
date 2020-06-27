@@ -51,6 +51,14 @@ router
     async (context: Record<string, any>) => {
       context.response.body = context.uploadedFiles;
     },
+  )
+  .post(
+    "/media/temporary/images",
+    loggedMiddleware.needToBeLogged,
+    upload("temp_uploads", ["jpg", "png"], 20000000, 10000000, false, false, true),
+    async (context: Record<string, any>) => {
+      context.response.body = context.uploadedFiles;
+    },
   );
 
 export default router;
