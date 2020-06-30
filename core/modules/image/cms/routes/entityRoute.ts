@@ -45,7 +45,7 @@ router
     entityController.deletePost,
   )
   .post(
-    "/media/images",
+    `/media/${entity.type.replace("_", "-")}`,
     loggedMiddleware.needToBeLogged,
     upload("files/media/images", ["jpg", "png"], 20000000, 10000000, true, false, true),
     async (context: Record<string, any>) => {
@@ -53,7 +53,7 @@ router
     },
   )
   .post(
-    "/media/temporary/images",
+    `/media/temporary/${entity.type.replace("_", "-")}`,
     loggedMiddleware.needToBeLogged,
     upload("temp_uploads", ["jpg", "png"], 20000000, 10000000, false, false, true),
     async (context: Record<string, any>) => {

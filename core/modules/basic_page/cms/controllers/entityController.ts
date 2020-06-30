@@ -149,7 +149,7 @@ export default {
 
       if (content && Object.keys(content).length != 0) {
         context.response.body = await renderFileToString(
-          `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityView.ejs`,
+          `${Deno.cwd()}${Deno.env.get('THEME')}templates/entities/${entity.bundle}/${entity.type}/entityViewDefault.ejs`,
           {
             currentUser: currentUser,
             content: content,
@@ -180,7 +180,7 @@ export default {
 
       if (content && Object.keys(content).length != 0) {
         context.response.body = await renderFileToString(
-          `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormConfirm.ejs`,
+          `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormConfirmDelete.ejs`,
           {
             currentUser: await currentUserSession.get(context),
             content: content,
@@ -225,11 +225,11 @@ export default {
       if (content && Object.keys(content).length != 0) {
         await contentRepository.deleteOne(id);
       }
-      context.response.redirect(`/admin/content`);
+      context.response.redirect(`/admin/${entity.bundle}`);
       return;
     } catch (error) {
       console.log(error);
-      context.response.redirect(`/admin/content`);
+      context.response.redirect(`/admin/${entity.bundle}`);
       return;
     }
   },

@@ -5,9 +5,9 @@
 <div class="container h-100 pt-4">
   <% if (media.data) { %>
   <h1 class="text-center mb-3"><%= media.data.title %></h1>
-    <div class="media">
-      <% if (media.data.body) { %>
-        <%- media.data.body %>
+    <div class="media text-center">
+      <% if (media.data.image) { %>
+        <img src="/<%= media.data.image %>" height="200">
       <% } %>
     </div>
   <% } %>

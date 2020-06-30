@@ -58,7 +58,7 @@ $(document).ready(function () {
               let typeItems = entityContainer.find('.type.' + type + ' > .items').first();
               $.each(entities.data, function (_, data) {
                 typeItems.append(
-                  getTemplate(field, entity, data)
+                  getTemplate(field, entity, type, data)
                 );
                 clickAction(field, data);
               });
@@ -69,7 +69,7 @@ $(document).ready(function () {
     }
   }
 
-  function getTemplate(field, entity, data) {
+  function getTemplate(field, entity, type, data) {
     let template;
     switch (entity) {
       case 'taxonomy':
@@ -78,10 +78,36 @@ $(document).ready(function () {
       case 'content':
         template = getContentTemplate(field, data);
         break;
+      case 'media':
+        template = getMediaTemplate(type, field, data);
+        break;
       default:
         template = getDefaultTemplate(field, data);
         break;
     }
+    return template;
+  }
+
+  function getMediaTemplate(type, field, data) {
+    let template;
+    switch (type) {
+      case 'image':
+        template = getMediaImageTemplate(field, data);
+        break;
+      default:
+        template = getDefaultTemplate(field, data);
+        break;
+    }
+    return template;
+  }
+
+  function getMediaImageTemplate(field, data) {
+    let classStatus = getPickedItem(field, data._id.$oid) ? 'btn-secondary' : 'btn-outline-primary';
+    let template = `
+      <a id="op-${field}-${data._id.$oid}" data-id="${data._id.$oid}" class=" ${data._id.$oid} btn ${classStatus} btn-sm m-2" href="#" role="button">
+        <img src="/${data.data.image}" height="50">
+        ${data.data.title}
+      </a>`;
     return template;
   }
 
@@ -148,7 +174,7 @@ $(document).ready(function () {
         itemsList.html('');
         $.each(entities.data, function (_, data) {
           itemsList.append(
-            getTemplate(field, entity, data)
+            getTemplate(field, entity, type, data)
           );
           clickAction(field, data);
         });

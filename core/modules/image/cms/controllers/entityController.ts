@@ -171,7 +171,7 @@ export default {
 
       if (media && Object.keys(media).length != 0) {
         context.response.body = await renderFileToString(
-          `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityView.ejs`,
+          `${Deno.cwd()}${Deno.env.get('THEME')}templates/entities/${entity.bundle}/${entity.type}/entityViewDefault.ejs`,
           {
             currentUser: currentUser,
             media: media,
@@ -202,7 +202,7 @@ export default {
 
       if (media && Object.keys(media).length != 0) {
         context.response.body = await renderFileToString(
-          `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormConfirm.ejs`,
+          `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormConfirmDelete.ejs`,
           {
             currentUser: await currentUserSession.get(context),
             media: media,

@@ -124,7 +124,7 @@ export default {
         }
 
         context.response.redirect(
-          `/admin/taxonomy/${entity.type.replace("_", "-")}`,
+          `/admin/${entity.bundle}/${entity.type.replace("_", "-")}`,
         );
         return;
       }
@@ -162,7 +162,7 @@ export default {
 
       if (term && Object.keys(term).length != 0) {
         context.response.body = await renderFileToString(
-          `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityView.ejs`,
+          `${Deno.cwd()}${Deno.env.get('THEME')}templates/entities/${entity.bundle}/${entity.type}/entityViewDefault.ejs`,
           {
             currentUser: currentUser,
             term: term,
@@ -192,7 +192,7 @@ export default {
 
       if (term && Object.keys(term).length != 0) {
         context.response.body = await renderFileToString(
-          `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormConfirm.ejs`,
+          `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormConfirmDelete.ejs`,
           {
             currentUser: await currentUserSession.get(context),
             term: term,
@@ -236,13 +236,13 @@ export default {
         await taxonomyRepository.deleteOne(id);
       }
       context.response.redirect(
-        `/admin/taxonomy/${entity.type.replace("_", "-")}`,
+        `/admin/${entity.bundle}/${entity.type.replace("_", "-")}`,
       );
       return;
     } catch (error) {
       console.log(error);
       context.response.redirect(
-        `/admin/taxonomy/${entity.type.replace("_", "-")}`,
+        `/admin/${entity.bundle}/${entity.type.replace("_", "-")}`,
       );
       return;
     }

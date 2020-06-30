@@ -22,6 +22,19 @@
       </textarea>
     </div>
     <div class="form-group">
+      <label>Images</label>
+      <%- await include(
+        `${Deno.cwd()}/core/modules/entity_reference/views/entityReferenceFormView.ejs`,
+        {
+          field: 'images',
+          entities: {
+            "media": ["image"],
+          },
+          data: content?.data?.images
+        }
+      ) %>
+    </div>
+    <div class="form-group">
       <label>Tags</label>
       <%- await include(
         `${Deno.cwd()}/core/modules/entity_reference/views/entityReferenceFormView.ejs`,
@@ -31,20 +44,6 @@
             "taxonomy": ["tags"],
           },
           data: content?.data?.tags
-        }
-      ) %>
-    </div>
-    <div class="form-group">
-      <label>Categories and Tags</label>
-      <%- await include(
-        `${Deno.cwd()}/core/modules/entity_reference/views/entityReferenceFormView.ejs`,
-        {
-          field: 'references',
-          entities: {
-            "taxonomy": ["categories", "tags"], 
-            "content": ["article", "basic_page"],
-          },
-          data: content?.data?.references
         }
       ) %>
     </div>
