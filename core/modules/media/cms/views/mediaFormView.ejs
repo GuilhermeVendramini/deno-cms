@@ -2,11 +2,12 @@
   <div id="media-alert" class="alert alert-danger d-none">
   </div>
   <div id="media-input">
-    <input data-type='<%- type %>' class="media form-control-file" type="file" name="<%= name %>">
+    <input required data-type='<%- type %>' class="media form-control-file" type="file" name="media">
+    <input id="media" type="hidden" name="<%= name %>" value="<%= value %>">
     <a id="media-upload" href="#" class="mt-2 btn btn-secondary">Upload</a>
     <script src="/media/assets/js/mediaUpload.js" type="text/javascript"></script>
   </div>
-  <div id="media-value" class="d-none">
+  <div id="media-display" class="d-none">
     <div id="media-preview"></div>
     <a id="media-remove" href="#" class="mt-2 btn btn-secondary">Remove</a>
   </div>

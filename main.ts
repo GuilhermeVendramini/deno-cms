@@ -22,6 +22,7 @@ import categoriesAPIRouter from "./core/modules/categories/api/routes/entityRout
 import librariesRoute from "./libraries/librariesRoute.ts";
 import entityReferenceRouter from "./core/modules/entity_reference/routes/entityReferenceRoute.ts";
 import mediaRouter from "./core/modules/media/cms/routes/mediaRoute.ts";
+import mediaAPIRouter from "./core/modules/media/api/routes/mediaRoute.ts";
 import imagesAPIRouter from "./core/modules/images/api/routes/entityRoute.ts";
 import imagesRouter from "./core/modules/images/cms/routes/entityRoute.ts";
 
@@ -50,6 +51,7 @@ app.use(articleAPIRouter.routes());
 app.use(tagsAPIRouter.routes());
 app.use(categoriesAPIRouter.routes());
 app.use(imagesAPIRouter.routes());
+app.use(mediaAPIRouter.routes());
 
 /**
  * Themes routes

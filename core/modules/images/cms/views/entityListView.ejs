@@ -13,7 +13,7 @@
     </div>
   </fieldset>
   <div class="mt-3">
-    <% if (term) { %>
+    <% if (media) { %>
     <table class="table">
       <thead>
         <tr>
@@ -27,17 +27,17 @@
         </tr>
       </thead>
       <tbody>
-        <% for(var i=0; i < term.length; i++) { %>
+        <% for(var i=0; i < media.length; i++) { %>
         <tr>
-          <th scope="row"><%= term[i]._id.$oid %></th>
-          <td><a href='/media/<%= term[i].type.replace("_", "-") %>/<%= term[i]._id.$oid %>'><%= term[i].data.title %></a></td>
-          <td><%= term[i].author.name %></td>
-          <td><%= term[i].created %></td>
-          <td><%= term[i].updated %></td>
-          <td><%= term[i].published %></td>
+          <th scope="row"><%= media[i]._id.$oid %></th>
+          <td><a href='/media/<%= media[i].type.replace("_", "-") %>/<%= media[i]._id.$oid %>'><%= media[i].data.title %></a></td>
+          <td><%= media[i].author.name %></td>
+          <td><%= media[i].created %></td>
+          <td><%= media[i].updated %></td>
+          <td><%= media[i].published %></td>
           <td>
-            <% if (currentUser._id.$oid == term[i].author._id.$oid || currentUser.roles.includes(0)) { %>
-              <a href='/admin/media/<%= term[i].type.replace("_", "-") %>/edit/<%= term[i]._id.$oid %>'>edit</a> | <a href='/admin/media/<%= term[i].type.replace("_", "-") %>/delete/<%= term[i]._id.$oid %>'>delete</a>
+            <% if (currentUser._id.$oid == media[i].author._id.$oid || currentUser.roles.includes(0)) { %>
+              <a href='/admin/media/<%= media[i].type.replace("_", "-") %>/edit/<%= media[i]._id.$oid %>'>edit</a> | <a href='/admin/media/<%= media[i].type.replace("_", "-") %>/delete/<%= media[i]._id.$oid %>'>delete</a>
             <% } %>
           </td>
         </tr>

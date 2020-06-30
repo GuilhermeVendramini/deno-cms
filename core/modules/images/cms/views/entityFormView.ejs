@@ -10,10 +10,10 @@
     </div>
   <% } %>
   <form id="entity-form" action='/admin/media/<%= entity.type.replace("_", "-") %>/add' method=post>
-    <input id="id" name="id" type="hidden" value='<%= term?._id?.$oid %>'>
+    <input id="id" name="id" type="hidden" value='<%= media?._id?.$oid %>'>
     <div class="form-group">
       <label>Title</label>
-      <input type="text" required value="<%= term?.data?.title %>" name="title" class="form-control">
+      <input type="text" required value="<%= media?.data?.title %>" name="title" class="form-control">
     </div>
     <div class="form-group">
       <label for="file">Image</label>
@@ -21,16 +21,17 @@
         `${Deno.cwd()}/core/modules/media/cms/views/mediaFormView.ejs`,
         {
           type: 'images',
-          name: 'file',
+          name: 'image',
+          value: media?.data?.image,
         }
       ) %>
     </div>
     <div class="form-check">
-      <% let checked = term?.published ? "checked" : "" %>
+      <% let checked = media?.published ? "checked" : "" %>
       <input <%= checked %> type="checkbox" name="published" value="true" class="form-check-input" id="published">
       <label class="form-check-label" for="published">Published</label>
     </div>
-    <div class="d-flex justify-term-between">
+    <div class="d-flex justify-media-between">
       <div class="mr-2">
         <button type="submit" class="btn btn-primary">Save</button>
       </div>

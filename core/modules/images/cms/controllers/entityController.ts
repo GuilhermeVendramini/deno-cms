@@ -13,16 +13,17 @@ import mediaRepository from "../../../../../repositories/mongodb/media/mediaRepo
 import { UserBaseEntity } from "../../../../../core/modules/users/entities/UserBaseEntity.ts";
 import entity from "../../entity.ts";
 import cmsErrors from "../../../../../shared/utils/errors/cms/cmsErrors.ts";
+import mediaHelpers from "../../../media/utils/mediaHelpers.ts";
 
 export default {
   async list(context: Record<string, any>) {
-    let term: [] | undefined;
-    term = await mediaRepository.find(entity.type);
+    let media: [] | undefined;
+    media = await mediaRepository.find(entity.type);
     context.response.body = await renderFileToString(
       `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityListView.ejs`,
       {
         currentUser: await currentUserSession.get(context),
-        term: term,
+        media: media,
         entity: entity,
       },
     );
@@ -39,10 +40,10 @@ export default {
       }
 
       let id: string = context.params?.id;
-      let term: {} | undefined;
+      let media: {} | undefined;
 
       if (id) {
-        term = await mediaRepository.findOneByID(id);
+        media = await mediaRepository.findOneByID(id);
       }
 
       context.response.body = await renderFileToString(
@@ -50,7 +51,7 @@ export default {
         {
           currentUser: currentUser,
           message: false,
-          term: term,
+          media: media,
           entity: entity,
         },
       );
@@ -79,6 +80,7 @@ export default {
       let properties: any = [
         "id",
         "title",
+        "image",
       ];
       let published: boolean;
       published = body.value.get("published") ? true : false;
@@ -86,8 +88,6 @@ export default {
       properties.forEach(function (field: string) {
         data[field] = body.value.get(field);
       });
-
-      //data['file'] = context.uploadedFiles;
 
       validated = vs.applySchemaObject(
         entitySchema,
@@ -101,10 +101,10 @@ export default {
         context.throw(Status.BadRequest, "Bad Request");
       }
 
-      let term: MediaEntity | undefined;
+      let media: MediaEntity | undefined;
 
       if (validated) {
-        term = new MediaEntity(
+        media = new MediaEntity(
           data as entityType,
           entity.type,
           currentUser,
@@ -113,19 +113,28 @@ export default {
         );
       }
 
-      if (term && Object.keys(term).length != 0) {
+      if (media && Object.keys(media).length != 0) {
         let result: any;
         let id: string;
+        let oldImage: string | undefined;
 
         if (data?.id) {
           id = data.id;
-          result = await mediaRepository.updateOne(id, term);
+          let oldMedia : any = await mediaRepository.findOneByID(id);
+          oldImage = oldMedia?.data?.image;
+          result = await mediaRepository.updateOne(id, media);
         } else {
-          result = await mediaRepository.insertOne(term);
+          result = await mediaRepository.insertOne(media);
           id = result?.$oid;
         }
 
-        context.response.redirect(`/admin/media/${entity.type.replace("_", "-")}`);
+        if (oldImage && oldImage != data?.image) {
+          await mediaHelpers.deleteFile(oldImage);
+        }
+
+        context.response.redirect(
+          `/admin/media/${entity.type.replace("_", "-")}`,
+        );
         return;
       }
 
@@ -133,7 +142,7 @@ export default {
         `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormView.ejs`,
         {
           currentUser: currentUser,
-          message: "Error saving term. Please try again.",
+          message: "Error saving media. Please try again.",
         },
       );
       return;
@@ -143,7 +152,7 @@ export default {
         {
           currentUser: await currentUserSession.get(context),
           message: error.message,
-          term: false,
+          media: false,
         },
       );
       context.response.status = Status.OK;
@@ -157,15 +166,15 @@ export default {
       currentUser = await currentUserSession.get(context);
 
       const id: string = context.params.id;
-      let term: any | undefined;
-      term = await mediaRepository.findOneByID(id);
+      let media: any | undefined;
+      media = await mediaRepository.findOneByID(id);
 
-      if (term && Object.keys(term).length != 0) {
+      if (media && Object.keys(media).length != 0) {
         context.response.body = await renderFileToString(
           `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityView.ejs`,
           {
             currentUser: currentUser,
-            term: term,
+            media: media,
           },
         );
         return;
@@ -188,15 +197,15 @@ export default {
       }
 
       const id: string = context.params.id;
-      let term: any | undefined;
-      term = await mediaRepository.findOneByID(id);
+      let media: any | undefined;
+      media = await mediaRepository.findOneByID(id);
 
-      if (term && Object.keys(term).length != 0) {
+      if (media && Object.keys(media).length != 0) {
         context.response.body = await renderFileToString(
           `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormConfirm.ejs`,
           {
             currentUser: await currentUserSession.get(context),
-            term: term,
+            media: media,
           },
         );
         return;
@@ -230,11 +239,15 @@ export default {
       let id: string;
       id = body.value.get("id");
 
-      let term: any | undefined;
-      term = await mediaRepository.findOneByID(id);
+      let media: any | undefined;
+      media = await mediaRepository.findOneByID(id);
 
-      if (term && Object.keys(term).length != 0) {
+      if (media && Object.keys(media).length != 0) {
         await mediaRepository.deleteOne(id);
+
+        if (media?.data?.image) {
+          await mediaHelpers.deleteFile(media.data.image);
+        }
       }
       context.response.redirect(
         `/admin/media/${entity.type.replace("_", "-")}`,

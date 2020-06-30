@@ -10,16 +10,16 @@ export default {
     try {
       let id: string | undefined;
       id = context.params.id;
-      let term: any | undefined;
+      let media: any | undefined;
 
       if (id) {
-        term = await mediaRepository.findOneByID(id, entity.type);
+        media = await mediaRepository.findOneByID(id, entity.type);
       } else {
-        term = await mediaRepository.find(entity.type);
+        media = await mediaRepository.find(entity.type);
       }
 
-      if (term && Object.keys(term).length != 0) {
-        context.response.body = term;
+      if (media && Object.keys(media).length != 0) {
+        context.response.body = media;
         context.response.type = "json";
         return;
       }
