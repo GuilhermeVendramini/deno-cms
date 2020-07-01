@@ -26,10 +26,38 @@ export default {
       }
 
       let id: string = context.params?.id;
-      let content: {} | undefined;
+      let content: any | undefined;
 
       if (id) {
         content = await contentRepository.findOneByID(id);
+        console.log(content);
+        let references: any = [
+          "tags",
+          "images",
+        ];
+
+        let referenceValues: any;
+
+        for (let field of references) {
+          let entities = new Array();
+          referenceValues = content.data[field as string];
+
+          for (let value of referenceValues) {
+            let entity: any = await entityReferenceHelper.entityLoad(
+              value.entity._id.$oid,
+              value.entity.bundle,
+            );
+
+            if (Object.keys(entity).length != 0) {
+              value.entity = entity;
+              entities.push(value);
+            }
+          }
+
+          if (entities.length > 0) {
+            content.data[field as string] = entities;
+          }
+        }
       }
 
       context.response.body = await renderFileToString(
