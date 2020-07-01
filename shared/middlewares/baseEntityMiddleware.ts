@@ -3,8 +3,8 @@ import {
   Status,
 } from "oak";
 import entityRepository from "../../repositories/mongodb/entity/entityRepository.ts";
-import currentUserSession from "../../shared/utils/sessions/currentUserSession.ts";
 import { renderFileToString } from "dejs";
+import currentUserSession from "../utils/sessions/currentUserSession.ts";
 
 const taxonomyRepository = entityRepository.getRepository("taxonomy");
 const contentRepository = entityRepository.getRepository("content");
@@ -17,7 +17,7 @@ async function needTobeAuthor(
 ) {
   try {
     let method = context.request.method;
-    let currentUser: any | undefined = await currentUserSession.get(context);
+    let currentUser = context.getCurrentUser;
     let id: string;
 
     if (method == "POST") {
@@ -57,7 +57,7 @@ async function needToBePublished(
   repository: any,
 ) {
   try {
-    let currentUser: any | undefined = await currentUserSession.get(context);
+    let currentUser = await currentUserSession.get(context);
     const id: string = context.params.id;
     let entity: any = await repository.findOneByID(id);
 

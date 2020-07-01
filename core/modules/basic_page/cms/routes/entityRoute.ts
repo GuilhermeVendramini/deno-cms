@@ -3,6 +3,7 @@ import entityController from "../controllers/entityController.ts";
 import loggedMiddleware from "../../../../../shared/middlewares/loggedMiddleware.ts";
 import entity from "../../entity.ts";
 import baseEntityMiddleware from "../../../../../shared/middlewares/baseEntityMiddleware.ts";
+import cmsMiddleware from "../../../../../shared/middlewares/cmsMiddleware.ts";
 
 router
   .get(
@@ -24,6 +25,7 @@ router
   .post(
     `/admin/content/${entity.type.replace("_", "-")}/add`,
     loggedMiddleware.needToBeLogged,
+    cmsMiddleware.submittedByForm,
     entityController.addPost,
   )
   .get(
@@ -36,6 +38,7 @@ router
     `/admin/content/${entity.type.replace("_", "-")}/delete`,
     loggedMiddleware.needToBeLogged,
     baseEntityMiddleware.needToBeContentAuthor,
+    cmsMiddleware.submittedByForm,
     entityController.deletePost,
   );
 

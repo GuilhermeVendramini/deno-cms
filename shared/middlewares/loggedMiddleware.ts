@@ -10,10 +10,15 @@ export default {
     context: Record<string, any>,
     next: Function,
   ) {
-    if (!await currentUserSession.get(context)) {
+
+    const currentUser = await currentUserSession.get(context);
+    if (!currentUser) {
       context.response.redirect("/login");
       return;
     }
+
+    context['getCurrentUser'] = currentUser;
+
     await next();
   },
 
@@ -21,7 +26,9 @@ export default {
     context: Record<string, any>,
     next: Function,
   ) {
-    if (await currentUserSession.get(context)) {
+
+    const currentUser = await currentUserSession.get(context);
+    if (currentUser) {
       context.response.redirect("/");
     }
     await next();

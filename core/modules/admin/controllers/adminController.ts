@@ -1,5 +1,4 @@
 import { renderFileToString } from "dejs";
-import currentUserSession from "../../../../shared/utils/sessions/currentUserSession.ts";
 import contentRepository from "../../../../repositories/mongodb/content/contentRepository.ts";
 
 export default {
@@ -9,7 +8,7 @@ export default {
     context.response.body = await renderFileToString(
       `${Deno.cwd()}/core/modules/admin/views/contentView.ejs`,
       {
-        currentUser: await currentUserSession.get(context),
+        currentUser: context.getCurrentUser,
         content: content,
       },
     );
@@ -19,7 +18,7 @@ export default {
     context.response.body = await renderFileToString(
       `${Deno.cwd()}/core/modules/admin/views/taxonomyView.ejs`,
       {
-        currentUser: await currentUserSession.get(context),
+        currentUser: context.getCurrentUser,
       },
     );
   },
@@ -28,7 +27,7 @@ export default {
     context.response.body = await renderFileToString(
       `${Deno.cwd()}/core/modules/admin/views/mediaView.ejs`,
       {
-        currentUser: await currentUserSession.get(context),
+        currentUser: context.getCurrentUser,
       },
     );
   },

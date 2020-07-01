@@ -1,5 +1,4 @@
 import { renderFileToString } from "dejs";
-import currentUserSession from "../../../../../shared/utils/sessions/currentUserSession.ts";
 import {
   TaxonomyEntity,
 } from "../../../../entities/TaxonomyEntity.ts";
@@ -9,9 +8,9 @@ import {
 import vs from "value_schema";
 import entitySchema from "../../schemas/entitySchema.ts";
 import taxonomyRepository from "../../../../../repositories/mongodb/taxonomy/taxonomyRepository.ts";
-import { UserBaseEntity } from "../../../../../core/modules/users/entities/UserBaseEntity.ts";
 import entity from "../../entity.ts";
 import cmsErrors from "../../../../../shared/utils/errors/cms/cmsErrors.ts";
+import currentUserSession from "../../../../../shared/utils/sessions/currentUserSession.ts";
 
 export default {
   async list(context: Record<string, any>) {
@@ -20,7 +19,7 @@ export default {
     context.response.body = await renderFileToString(
       `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityListView.ejs`,
       {
-        currentUser: await currentUserSession.get(context),
+        currentUser: context.getCurrentUser,
         term: term,
         entity: entity,
       },
@@ -29,14 +28,7 @@ export default {
 
   async add(context: Record<string, any>) {
     try {
-      let currentUser: UserBaseEntity | undefined;
-
-      currentUser = await currentUserSession.get(context);
-
-      if (!currentUser) {
-        context.throw(Status.BadRequest, "Bad Request");
-      }
-
+      let currentUser = context.getCurrentUser;
       let id: string = context.params?.id;
       let term: {} | undefined;
 
@@ -63,16 +55,8 @@ export default {
 
   async addPost(context: Record<string, any>) {
     try {
-      if (!context.request.hasBody) {
-        context.throw(Status.BadRequest, "Bad Request");
-      }
-
-      const body = await context.request.body();
-
-      if (body.type !== "form") {
-        context.throw(Status.BadRequest, "Bad Request");
-      }
-
+      let body = context.getBody;
+      let currentUser = context.getCurrentUser;
       let validated: { title: string };
       let data: any = {};
       let properties: any = [
@@ -90,13 +74,6 @@ export default {
         entitySchema,
         { title: data.title, published: published },
       );
-
-      let currentUser: UserBaseEntity | undefined;
-      currentUser = await currentUserSession.get(context);
-
-      if (!currentUser) {
-        context.throw(Status.BadRequest, "Bad Request");
-      }
 
       let term: TaxonomyEntity | undefined;
 
@@ -140,7 +117,7 @@ export default {
       context.response.body = await renderFileToString(
         `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormView.ejs`,
         {
-          currentUser: await currentUserSession.get(context),
+          currentUser: context.getCurrentUser,
           message: error.message,
           term: false,
         },
@@ -152,16 +129,16 @@ export default {
 
   async view(context: Record<string, any>) {
     try {
-      let currentUser: UserBaseEntity | undefined;
-      currentUser = await currentUserSession.get(context);
-
-      const id: string = context.params.id;
+      let currentUser = await currentUserSession.get(context);
+      let id: string = context.params.id;
       let term: any | undefined;
       term = await taxonomyRepository.findOneByID(id);
 
       if (term && Object.keys(term).length != 0) {
         context.response.body = await renderFileToString(
-          `${Deno.cwd()}${Deno.env.get('THEME')}templates/entities/${entity.bundle}/${entity.type}/entityViewDefault.ejs`,
+          `${Deno.cwd()}${
+            Deno.env.get("THEME")
+          }templates/entities/${entity.bundle}/${entity.type}/entityViewDefault.ejs`,
           {
             currentUser: currentUser,
             term: term,
@@ -178,14 +155,7 @@ export default {
 
   async delete(context: Record<string, any>) {
     try {
-      let currentUser: UserBaseEntity | undefined;
-      currentUser = await currentUserSession.get(context);
-
-      if (!currentUser) {
-        context.throw(Status.BadRequest, "Bad Request");
-      }
-
-      const id: string = context.params.id;
+      let id: string = context.params.id;
       let term: any | undefined;
       term = await taxonomyRepository.findOneByID(id);
 
@@ -193,7 +163,7 @@ export default {
         context.response.body = await renderFileToString(
           `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormConfirmDelete.ejs`,
           {
-            currentUser: await currentUserSession.get(context),
+            currentUser: context.getCurrentUser,
             term: term,
           },
         );
@@ -208,23 +178,7 @@ export default {
 
   async deletePost(context: Record<string, any>) {
     try {
-      if (!context.request.hasBody) {
-        context.throw(Status.BadRequest, "Bad Request");
-      }
-
-      const body = await context.request.body();
-
-      if (body.type !== "form") {
-        context.throw(Status.BadRequest, "Bad Request");
-      }
-
-      let currentUser: UserBaseEntity | undefined;
-      currentUser = await currentUserSession.get(context);
-
-      if (!currentUser) {
-        context.throw(Status.BadRequest, "Bad Request");
-      }
-
+      let body = context.getBody;
       let id: string;
       id = body.value.get("id");
 
