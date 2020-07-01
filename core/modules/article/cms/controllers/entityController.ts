@@ -30,27 +30,29 @@ export default {
 
       if (id) {
         content = await contentRepository.findOneByID(id);
-        console.log(content);
+
         let references: any = [
           "tags",
           "images",
         ];
 
-        let referenceValues: any;
+        let referenceValues = new Array();
 
         for (let field of references) {
           let entities = new Array();
           referenceValues = content.data[field as string];
 
-          for (let value of referenceValues) {
-            let entity: any = await entityReferenceHelper.entityLoad(
-              value.entity._id.$oid,
-              value.entity.bundle,
-            );
+          if (referenceValues && referenceValues.length > 0) {
+            for (let value of referenceValues) {
+              let entity: any = await entityReferenceHelper.entityLoad(
+                value.entity._id.$oid,
+                value.entity.bundle,
+              );
 
-            if (Object.keys(entity).length != 0) {
-              value.entity = entity;
-              entities.push(value);
+              if (Object.keys(entity).length != 0) {
+                value.entity = entity;
+                entities.push(value);
+              }
             }
           }
 
@@ -96,7 +98,7 @@ export default {
         context.throw(Status.BadRequest, "Bad Request");
       }
 
-      let validated: {};
+      let validated: any;
       let data: any = {};
       let properties: any = [
         "id",
@@ -115,21 +117,23 @@ export default {
         "images",
       ];
 
-      let referenceValues: any;
+      let referenceValues = new Array();
 
       for (let field of references) {
         let entities = new Array();
         referenceValues = JSON.parse(body.value.get(field));
 
-        for (let value of referenceValues) {
-          let entity: any = await entityReferenceHelper.entityLoad(
-            value.entity._id.$oid,
-            value.entity.bundle,
-          );
+        if (referenceValues && referenceValues.length > 0) {
+          for (let value of referenceValues) {
+            let entity: any = await entityReferenceHelper.entityLoad(
+              value.entity._id.$oid,
+              value.entity.bundle,
+            );
 
-          if (Object.keys(entity).length != 0) {
-            value.entity = entity;
-            entities.push(value);
+            if (Object.keys(entity).length != 0) {
+              value.entity = entity;
+              entities.push(value);
+            }
           }
         }
 
@@ -140,18 +144,18 @@ export default {
 
       validated = vs.applySchemaObject(
         entitySchema,
-        { title: data.title, published: published },
+        { data: data, published: published },
       );
 
       let content: ContentEntity | undefined;
-      console.log(validated);
+
       if (validated) {
         content = new ContentEntity(
-          data,
+          validated.data,
           entity.type,
           currentUser,
           Date.now(),
-          published,
+          validated.published,
         );
       }
 
