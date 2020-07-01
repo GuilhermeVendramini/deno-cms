@@ -3,9 +3,9 @@ import contentRepository from "../content/contentRepository.ts";
 import mediaRepository from "../media/mediaRepository.ts";
 
 export default {
-  getRepository(entity: string) {
+  getRepository(bundle: string) {
     let repository: any | undefined;
-    switch (entity) {
+    switch (bundle) {
       case "taxonomy":
         repository = taxonomyRepository;
         break;

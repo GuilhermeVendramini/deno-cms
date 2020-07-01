@@ -246,7 +246,6 @@ $(document).ready(function () {
           let weight = sortbleField.find(`#${field}-${item.entity._id.$oid}`).first().index();
           data[index]['weight'] = weight;
         });
-
         $(this).val(JSON.stringify(data));
       });
 

@@ -3,7 +3,6 @@ import currentUserSession from "../../../../../shared/utils/sessions/currentUser
 import {
   TaxonomyEntity,
 } from "../../../../entities/TaxonomyEntity.ts";
-import { entityType } from "../../types/entityType.ts";
 import {
   Status,
 } from "oak";
@@ -103,7 +102,7 @@ export default {
 
       if (validated) {
         term = new TaxonomyEntity(
-          data as entityType,
+          data,
           entity.type,
           currentUser,
           Date.now(),

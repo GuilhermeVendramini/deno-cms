@@ -6,7 +6,6 @@ import {
 import {
   Status,
 } from "oak";
-import { entityType } from "../../types/entityType.ts";
 import vs from "value_schema";
 import entitySchema from "../../schemas/entitySchema.ts";
 import contentRepository from "../../../../../repositories/mongodb/content/contentRepository.ts";
@@ -91,7 +90,7 @@ export default {
 
       if (validated) {
         content = new ContentEntity(
-          data as entityType,
+          data,
           entity.type,
           currentUser,
           Date.now(),

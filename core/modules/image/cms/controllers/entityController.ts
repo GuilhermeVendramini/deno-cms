@@ -3,7 +3,6 @@ import currentUserSession from "../../../../../shared/utils/sessions/currentUser
 import {
   MediaEntity,
 } from "../../../../entities/MediaEntity.ts";
-import { entityType } from "../../types/entityType.ts";
 import {
   Status,
 } from "oak";
@@ -13,7 +12,7 @@ import mediaRepository from "../../../../../repositories/mongodb/media/mediaRepo
 import { UserBaseEntity } from "../../../../../core/modules/users/entities/UserBaseEntity.ts";
 import entity from "../../entity.ts";
 import cmsErrors from "../../../../../shared/utils/errors/cms/cmsErrors.ts";
-import mediaHelpers from "../../../media/utils/mediaHelpers.ts";
+import mediaHelper from "../../../media/utils/mediaHelper.ts";
 
 export default {
   async list(context: Record<string, any>) {
@@ -105,7 +104,7 @@ export default {
 
       if (validated) {
         media = new MediaEntity(
-          data as entityType,
+          data,
           entity.type,
           currentUser,
           Date.now(),
@@ -129,7 +128,7 @@ export default {
         }
 
         if (oldImage && oldImage != data?.image) {
-          await mediaHelpers.deleteFile(oldImage);
+          await mediaHelper.deleteFile(oldImage);
         }
 
         context.response.redirect(
@@ -246,7 +245,7 @@ export default {
         await mediaRepository.deleteOne(id);
 
         if (media?.data?.image) {
-          await mediaHelpers.deleteFile(media.data.image);
+          await mediaHelper.deleteFile(media.data.image);
         }
       }
       context.response.redirect(

@@ -3,7 +3,6 @@ import currentUserSession from "../../../../../shared/utils/sessions/currentUser
 import {
   ContentEntity,
 } from "../../../../entities/ContentEntity.ts";
-import { entityType } from "../../types/entityType.ts";
 import {
   Status,
 } from "oak";
@@ -13,6 +12,7 @@ import contentRepository from "../../../../../repositories/mongodb/content/conte
 import { UserBaseEntity } from "../../../../../core/modules/users/entities/UserBaseEntity.ts";
 import entity from "../../entity.ts";
 import cmsErrors from "../../../../../shared/utils/errors/cms/cmsErrors.ts";
+import entityReferenceHelper from "../../../entity_reference/utils/entityReferenceHelper.ts";
 
 export default {
   async add(context: Record<string, any>) {
@@ -61,6 +61,13 @@ export default {
         context.throw(Status.BadRequest, "Bad Request");
       }
 
+      let currentUser: any | undefined;
+      currentUser = await currentUserSession.get(context);
+
+      if (!currentUser) {
+        context.throw(Status.BadRequest, "Bad Request");
+      }
+
       let validated: { title: string };
       let data: any = {};
       let properties: any = [
@@ -75,32 +82,41 @@ export default {
         data[field] = body.value.get(field);
       });
 
-      let entities: any = [
+      let references: any = [
         "tags",
         "images",
       ];
 
-      entities.forEach(function (field: string) {
-        data[field] = JSON.parse(body.value.get(field));
-      });
+      let referenceValues: any;
+
+      for (let field of references) {
+        let entities = new Array();
+        referenceValues = JSON.parse(body.value.get(field));
+
+        for (let value of referenceValues) {
+          let entity: any = await entityReferenceHelper.entityLoad(
+            value.entity._id.$oid,
+            value.entity.bundle,
+          );
+          value.entity = entity;
+          entities.push(value);
+        }
+
+        if (entities.length > 0) {
+          data[field as string] = entities;
+        }
+      }
 
       validated = vs.applySchemaObject(
         entitySchema,
         { title: data.title, published: published },
       );
 
-      let currentUser: any | undefined;
-      currentUser = await currentUserSession.get(context);
-
-      if (!currentUser) {
-        context.throw(Status.BadRequest, "Bad Request");
-      }
-
       let content: ContentEntity | undefined;
 
       if (validated) {
         content = new ContentEntity(
-          data as entityType,
+          data,
           entity.type,
           currentUser,
           Date.now(),
@@ -157,7 +173,9 @@ export default {
 
       if (content && Object.keys(content).length != 0) {
         context.response.body = await renderFileToString(
-          `${Deno.cwd()}${Deno.env.get('THEME')}templates/entities/${entity.bundle}/${entity.type}/entityViewDefault.ejs`,
+          `${Deno.cwd()}${
+            Deno.env.get("THEME")
+          }templates/entities/${entity.bundle}/${entity.type}/entityViewDefault.ejs`,
           {
             currentUser: currentUser,
             content: content,
