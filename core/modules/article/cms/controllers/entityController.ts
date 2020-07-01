@@ -68,7 +68,7 @@ export default {
         context.throw(Status.BadRequest, "Bad Request");
       }
 
-      let validated: { title: string };
+      let validated: {};
       let data: any = {};
       let properties: any = [
         "id",
@@ -98,8 +98,11 @@ export default {
             value.entity._id.$oid,
             value.entity.bundle,
           );
-          value.entity = entity;
-          entities.push(value);
+
+          if (Object.keys(entity).length != 0) {
+            value.entity = entity;
+            entities.push(value);
+          }
         }
 
         if (entities.length > 0) {
@@ -113,7 +116,7 @@ export default {
       );
 
       let content: ContentEntity | undefined;
-
+      console.log(validated);
       if (validated) {
         content = new ContentEntity(
           data,
