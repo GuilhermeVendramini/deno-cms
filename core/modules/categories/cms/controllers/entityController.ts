@@ -57,7 +57,7 @@ export default {
     try {
       let body = context.getBody;
       let currentUser = context.getCurrentUser;
-      let validated: { title: string };
+      let validated: any;
       let data: any = {};
       let properties: any = [
         "id",
@@ -72,18 +72,18 @@ export default {
 
       validated = vs.applySchemaObject(
         entitySchema,
-        { title: data.title, published: published },
+        { data: data, published: published },
       );
 
       let term: TaxonomyEntity | undefined;
 
       if (validated) {
         term = new TaxonomyEntity(
-          data,
+          validated.data,
           entity.type,
           currentUser,
           Date.now(),
-          published,
+          validated.published,
         );
       }
 
@@ -110,6 +110,8 @@ export default {
         {
           currentUser: currentUser,
           message: "Error saving term. Please try again.",
+          term: false,
+          entity: entity,
         },
       );
       return;
@@ -120,6 +122,7 @@ export default {
           currentUser: context.getCurrentUser,
           message: error.message,
           term: false,
+          entity: entity,
         },
       );
       context.response.status = Status.OK;

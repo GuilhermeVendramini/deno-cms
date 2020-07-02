@@ -36,13 +36,13 @@ export default {
 
           if (referenceValues && referenceValues.length > 0) {
             for (let value of referenceValues) {
-              let entity: any = await entityReferenceHelper.entityLoad(
+              let loadedEntity: any = await entityReferenceHelper.entityLoad(
                 value.entity._id.$oid,
                 value.entity.bundle,
               );
 
-              if (Object.keys(entity).length != 0) {
-                value.entity = entity;
+              if (Object.keys(loadedEntity).length != 0) {
+                value.entity = loadedEntity;
                 entities.push(value);
               }
             }
@@ -102,13 +102,13 @@ export default {
 
         if (referenceValues && referenceValues.length > 0) {
           for (let value of referenceValues) {
-            let entity: any = await entityReferenceHelper.entityLoad(
+            let loadedEntity: any = await entityReferenceHelper.entityLoad(
               value.entity._id.$oid,
               value.entity.bundle,
             );
 
-            if (Object.keys(entity).length != 0) {
-              value.entity = entity;
+            if (Object.keys(loadedEntity).length != 0) {
+              value.entity = loadedEntity;
               entities.push(value);
             }
           }
@@ -157,6 +157,8 @@ export default {
         {
           currentUser: currentUser,
           message: "Error saving content. Please try again.",
+          content: false,
+          entity: entity,
         },
       );
       return;
@@ -167,6 +169,7 @@ export default {
           currentUser: context.getCurrentUser,
           message: error.message,
           content: false,
+          entity: entity,
         },
       );
       context.response.status = Status.OK;

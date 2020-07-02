@@ -31,26 +31,25 @@ export default {
         context.throw(Status.BadRequest, "Bad Request");
       }
 
-      type userLogin = { email: string; password: string };
-      let value: userLogin | undefined;
+      let validated: any;
       let logged: boolean | undefined;
       let email = body.value.get("email");
       let password = body.value.get("password");
 
-      value = vs.applySchemaObject(
+      validated = vs.applySchemaObject(
         loginSchema,
         { email, password },
-      ) as userLogin;
+      );
 
       let user: any | undefined;
 
-      if (value?.email && value?.password) {
-        user = await userService.findOneByEmail(value.email);
+      if (validated) {
+        user = await userService.findOneByEmail(validated.email);
 
         if (user) {
           logged = await hash.verify(
             user.password,
-            value.password,
+            validated.password,
           );
         }
       }

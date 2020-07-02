@@ -9,7 +9,7 @@ const entitySchema = {
           trims: true,
         },
       }),
-      body: vs.string(),
+      body: vs.string({ ifUndefined: "", ifEmptyString: "" }),
       tags: vs.array({
         ifUndefined: [],
         separatedBy: ",",

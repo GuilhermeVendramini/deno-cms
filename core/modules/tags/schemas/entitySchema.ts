@@ -1,13 +1,17 @@
 import vs from "value_schema";
 
 const entitySchema = {
-  title: vs.string({
-    maxLength: {
-      length: 255,
-      trims: false,
+  data: vs.object({
+    schemaObject: {
+      title: vs.string({
+        maxLength: {
+          length: 150,
+          trims: true,
+        },
+      }),
     },
   }),
-  published: vs.boolean(),
+  published: vs.boolean({ ifUndefined: false }),
 };
 
 export default entitySchema;

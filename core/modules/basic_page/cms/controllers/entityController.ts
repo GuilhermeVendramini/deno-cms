@@ -44,7 +44,7 @@ export default {
     try {
       let body = context.getBody;
       let currentUser = context.getCurrentUser;
-      let validated: { title: string };
+      let validated: any;
       let data: any = {};
       let properties: any = [
         "id",
@@ -60,18 +60,18 @@ export default {
 
       validated = vs.applySchemaObject(
         entitySchema,
-        { title: data.title, published: published },
+        { data: data, published: published },
       );
 
       let content: ContentEntity | undefined;
 
       if (validated) {
         content = new ContentEntity(
-          data,
+          validated.data,
           entity.type,
           currentUser,
           Date.now(),
-          published,
+          validated.published,
         );
       }
 
@@ -96,6 +96,8 @@ export default {
         {
           currentUser: currentUser,
           message: "Error saving content. Please try again.",
+          content: false,
+          entity: entity,
         },
       );
       context.response.status = Status.OK;
@@ -107,6 +109,7 @@ export default {
           currentUser: context.getCurrentUser,
           message: error.message,
           content: false,
+          entity: entity,
         },
       );
       context.response.status = Status.OK;

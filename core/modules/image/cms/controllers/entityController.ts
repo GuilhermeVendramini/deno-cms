@@ -58,7 +58,7 @@ export default {
     try {
       let body = context.getBody;
       let currentUser = context.getCurrentUser;
-      let validated: { title: string };
+      let validated: any;
       let data: any = {};
       let properties: any = [
         "id",
@@ -74,18 +74,18 @@ export default {
 
       validated = vs.applySchemaObject(
         entitySchema,
-        { title: data.title, published: published },
+        { data: data, published: published },
       );
 
       let media: MediaEntity | undefined;
 
       if (validated) {
         media = new MediaEntity(
-          data,
+          validated.data,
           entity.type,
           currentUser,
           Date.now(),
-          published,
+          validated.published,
         );
       }
 
@@ -119,6 +119,8 @@ export default {
         {
           currentUser: currentUser,
           message: "Error saving media. Please try again.",
+          media: false,
+          entity: entity,
         },
       );
       return;
@@ -129,6 +131,7 @@ export default {
           currentUser: context.getCurrentUser,
           message: error.message,
           media: false,
+          entity: entity,
         },
       );
       context.response.status = Status.OK;
