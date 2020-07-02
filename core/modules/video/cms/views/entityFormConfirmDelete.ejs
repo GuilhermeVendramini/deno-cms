@@ -1,0 +1,19 @@
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: 'Confirm delete' }) %>
+<% if (currentUser) { %>
+  <%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/menus/adminMenu.ejs`, { currentUser: currentUser}) %>
+<% } %>
+<div class="container h-100 pt-4">
+  <h1 class="text-center mb-3">Confirm delete <%= media.data.title %></h1>
+  <form action='/admin/media/<%= media.type.replace("_", "-") %>/delete' method=post>
+    <input type="hidden" id="id" name="id" value="<%= media._id.$oid %>">
+    <div class="d-flex justify-content-center">
+      <div class="mr-2">
+        <a href="#" onclick="window.history.back();" class="btn btn-outline-secondary">Cancel</a>
+      </div>
+      <div class="mr-2">
+        <button type="submit" class="btn btn-primary">Confirm</button>
+      </div>
+    </div>
+  </form>
+</div>
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>

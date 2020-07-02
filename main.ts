@@ -23,8 +23,10 @@ import librariesRoute from "./libraries/librariesRoute.ts";
 import entityReferenceRouter from "./core/modules/entity_reference/routes/entityReferenceRoute.ts";
 import mediaRouter from "./core/modules/media/cms/routes/mediaRoute.ts";
 import mediaAPIRouter from "./core/modules/media/api/routes/mediaRoute.ts";
-import imagesAPIRouter from "./core/modules/image/api/routes/entityRoute.ts";
-import imagesRouter from "./core/modules/image/cms/routes/entityRoute.ts";
+import imageAPIRouter from "./core/modules/image/api/routes/entityRoute.ts";
+import imageRouter from "./core/modules/image/cms/routes/entityRoute.ts";
+import videoAPIRouter from "./core/modules/video/api/routes/entityRoute.ts";
+import videoRouter from "./core/modules/video/cms/routes/entityRoute.ts";
 
 const session = new Session({ framework: "oak" });
 await session.init();
@@ -50,7 +52,8 @@ app.use(basicPageAPIRouter.routes());
 app.use(articleAPIRouter.routes());
 app.use(tagsAPIRouter.routes());
 app.use(categoriesAPIRouter.routes());
-app.use(imagesAPIRouter.routes());
+app.use(imageAPIRouter.routes());
+app.use(videoAPIRouter.routes());
 app.use(mediaAPIRouter.routes());
 
 /**
@@ -97,7 +100,8 @@ app.use(entityReferenceRouter.routes());
  * Media types
  */
 
-app.use(imagesRouter.routes());
+app.use(imageRouter.routes());
+app.use(videoRouter.routes());
 
 /**
  * Unknown routes

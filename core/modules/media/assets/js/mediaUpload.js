@@ -7,8 +7,9 @@ $(document).ready(function () {
   let mediaAlert = $("#media-alert");
   let currentTempFile = '';
   let media = $("#media");
+  let type = $('input[name$="media"]').data('type');
 
-  showCurrentValue()
+  showCurrentValue();
 
   function showCurrentValue() {
     let mediaVal = media.val();
@@ -17,12 +18,9 @@ $(document).ready(function () {
       mediaInput.find('input').removeAttr("required");
       mediaInput.addClass("d-none");
       mediaDisplay.removeClass("d-none");
-      let mediaName = mediaVal.substring(mediaVal.lastIndexOf('/'));
 
-      let preview = `
-        <img src="/${mediaVal}" height="100">
-        <a href="/${mediaVal}" target="_blank">${mediaName}</a>
-      `;
+      let mediaName = mediaVal.substring(mediaVal.lastIndexOf('/'));
+      let preview = getMediaPreview(mediaName, mediaVal);
 
       mediapreview.html(preview);
     }
@@ -30,7 +28,7 @@ $(document).ready(function () {
 
   buttonUpload.click(async function (e) {
     e.preventDefault();
-    let result = await uploadImage(true);
+    let result = await uploadFile(true);
 
     if (result) {
       await removeTempFile();
@@ -40,11 +38,7 @@ $(document).ready(function () {
       let file = Object.values(result)[0];
       let url = file.tempfile;
       let tempName = url.substring(url.lastIndexOf('/'));
-      let preview = `
-        <img src="/temp_uploads${tempName}" height="100">
-        <a href="/temp_uploads${tempName}" target="_blank">${file.filename}</a>
-      `;
-
+      let preview = getMediaPreview(file.filename, 'temp_uploads' + tempName);
       currentTempFile = tempName;
 
       mediapreview.html(preview);
@@ -87,10 +81,9 @@ $(document).ready(function () {
     }
   });
 
-  async function uploadImage(temporary = false) {
+  async function uploadFile(temporary = false) {
     mediaAlert.addClass('d-none');
     let input = $('input.media:file');
-    let type = input.data('type');
     let files = input.prop('files');
     let name = input.attr('name');
     let form = new FormData();
@@ -137,13 +130,11 @@ $(document).ready(function () {
     return result;
   }
 
-
-
   $('#entity-form').submit(async function (e) {
     window.onbeforeunload = null;
     e.preventDefault();
 
-    let uploadResult = await uploadImage();
+    let uploadResult = await uploadFile();
 
     if (uploadResult) {
       await removeTempFile();
@@ -154,5 +145,31 @@ $(document).ready(function () {
   window.onbeforeunload = async function () {
     await removeTempFile();
   };
+
+  function getMediaPreview(mediaName, mediaVal) {
+    let preview = '';
+    switch (type) {
+      case 'image':
+        preview = `
+          <img src="/${mediaVal}" height="100">
+          <a href="/${mediaVal}" target="_blank">${mediaName}</a>
+        `;
+        break;
+      case 'video':
+        preview = `
+          <video height="100" controls>
+            <source src="/${mediaVal}">
+          </video>
+          <a href="/${mediaVal}" target="_blank">${mediaName}</a>
+        `;
+        break;
+      default:
+        preview = `
+          <a href="/${mediaVal}" target="_blank">${mediaName}</a>
+        `;
+    }
+
+    return preview;
+  }
 
 });

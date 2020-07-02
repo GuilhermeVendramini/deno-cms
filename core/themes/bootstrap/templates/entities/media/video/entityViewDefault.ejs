@@ -1,0 +1,18 @@
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: media.data.title }) %>
+<% if (currentUser) { %>
+  <%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/menus/adminMenu.ejs`, { currentUser: currentUser}) %>
+  <%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/menus/adminEntityAction.ejs`, { content: media}) %>
+<% } %>
+<div class="container h-100">
+  <% if (media.data) { %>
+  <h1 class="text-center mb-3"><%= media.data.title %></h1>
+    <div class="media text-center">
+      <% if (media.data.video) { %>
+        <video height="200" controls>
+          <source src="/<%= media.data.video %>">
+        </video>
+      <% } %>
+    </div>
+  <% } %>
+</div>
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>
