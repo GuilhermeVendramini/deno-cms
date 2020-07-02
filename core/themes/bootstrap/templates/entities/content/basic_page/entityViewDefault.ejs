@@ -1,16 +1,16 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: content.data.title }) %>
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: page.content.data.title }) %>
 <% if (currentUser) { %>
-  <%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/menus/adminMenu.ejs`, { currentUser: currentUser}) %>
-  <%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/menus/adminEntityAction.ejs`, { content: content}) %>
+  <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminMenu.ejs`, { currentUser: currentUser}) %>
+  <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: page.content}) %>
 <% } %>
 <div class="container h-100">
-  <% if (content.data) { %>
-  <h1 class="text-center mb-3"><%= content.data.title %></h1>
-    <div class="content">
-      <% if (content.data.body) { %>
-        <%- content.data.body %>
-      <% } %>
-    </div>
+  <% if (page?.content?.data) { %>
+  <h1 class="text-center mb-3"><%= page.content.data.title %></h1>
+    <% if (page?.content?.data?.body) { %>
+      <div class="content">
+        <%- page.content.data.body %>
+      </div>
+    <% } %>
   <% } %>
 </div>
 <%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>

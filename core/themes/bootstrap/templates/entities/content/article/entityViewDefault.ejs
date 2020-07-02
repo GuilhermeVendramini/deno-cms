@@ -1,31 +1,31 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: content.data.title }) %>
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: page.content.data.title }) %>
 <% if (currentUser) { %>
-  <%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/menus/adminMenu.ejs`, { currentUser: currentUser}) %>
-  <%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/menus/adminEntityAction.ejs`, { content: content}) %>
+  <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminMenu.ejs`, { currentUser: currentUser}) %>
+  <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: page.content}) %>
 <% } %>
 <div class="container h-100">
-  <% if (content?.data) { %>
-  <h1 class="text-center mb-3"><%= content.data.title %></h1>
-    <% if (content?.data?.body) { %>
+  <% if (page?.content?.data) { %>
+  <h1 class="text-center mb-3"><%= page.content.data.title %></h1>
+    <% if (page?.content?.data?.body) { %>
       <div class="content">
-        <%- content.data.body %>
+        <%- page.content.data.body %>
       </div>
     <% } %>
-    <% if (content?.data?.images && content.data.images.length > 0) { %>
+    <% if (page?.content?.data?.images && page.content.data.images.length > 0) { %>
       <div class="mb-3">
         <div class="field-images text-center">
-          <% let images = content.data.images.sort(function(a, b){return a.weight - b.weight}) %>
+          <% let images = page.content.data.images.sort(function(a, b){return a.weight - b.weight}) %>
           <% for(var i=0; i < images.length; i++) { %>
             <img src="/<%= images[i].entity.data.image %>" height="200">
           <% } %>
         </div>
       </div>
     <% } %>
-    <% if (content?.data?.tags && content.data.tags.length > 0) { %>
+    <% if (page?.content?.data?.tags && page.content.data.tags.length > 0) { %>
       <div class="mb-3">
         <h5>Tags</h5>
         <div class="field-tags">
-          <% let tags = content.data.tags.sort(function(a, b){return a.weight - b.weight}) %>
+          <% let tags = page.content.data.tags.sort(function(a, b){return a.weight - b.weight}) %>
           <% for(var i=0; i < tags.length; i++) { %>
             <a href='/taxonomy/<%= tags[i].entity.type.replace("_", "-") %>/<%= tags[i].entity._id.$oid %>' class="badge badge-primary"><%= tags[i].entity.data.title %></a>
           <% } %>

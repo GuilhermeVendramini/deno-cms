@@ -191,7 +191,9 @@ export default {
           }templates/entities/${entity.bundle}/${entity.type}/entityViewDefault.ejs`,
           {
             currentUser: currentUser,
-            content: content,
+            page: {
+              content: content,
+            },
           },
         );
         context.response.status = Status.OK;
