@@ -2,6 +2,15 @@ import router from "../../../router.ts";
 
 router
   .get(
+    "/favicon.png",
+    async (context: Record<string, any>) => {
+      context.response.headers.set("Content-Type", "image/png");
+      context.response.body = await Deno.readFile(
+        `${Deno.cwd()}/core/themes/bootstrap/favicon.png`,
+      );
+    },
+  )
+  .get(
     "/core/themes/boostrap/assets/:folder/:file",
     async (context: Record<string, any>) => {
       const folder = context.params.folder;
