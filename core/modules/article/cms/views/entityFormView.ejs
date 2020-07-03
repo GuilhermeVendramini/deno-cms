@@ -1,15 +1,12 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: entity.name }) %>
-<% if (currentUser) { %>
-  <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminMenu.ejs`, { currentUser: currentUser}) %>
-<% } %>
-<div class="container h-100 pt-4">
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: entity.name, currentUser: currentUser }) %>
+<div class="container">
   <h1 class="text-center mb-3"><%= entity.name %></h1>
   <% if (message) { %>
     <div class="alert alert-danger">
       <%= message %>
     </div>
   <% } %>
-  <form id="entity-form" action='/admin/content/<%= entity.type.replace("_", "-") %>/add' method=post>
+  <form id="entity-form" action='/admin/content/<%= entity.type %>/add' method=post>
     <input id="id" name="id" type="hidden" value='<%= content?._id?.$oid %>'>
     <div class="form-group">
       <label>Title</label>
@@ -58,7 +55,7 @@
       </div>
       <% if (content?._id) { %>
         <div class="mr-2">
-          <a href='/admin/<%= content.bundle %>/<%= content.type.replace("_", "-") %>/delete/<%= content._id.$oid %>' class="btn btn-danger">Delete</a>
+          <a href='/admin/<%= content.bundle %>/<%= content.type %>/delete/<%= content._id.$oid %>' class="btn btn-danger">Delete</a>
         </div>
       <% } %>
     </div>

@@ -9,6 +9,7 @@ import currentUserSession from "../utils/sessions/currentUserSession.ts";
 const taxonomyRepository = entityRepository.getRepository("taxonomy");
 const contentRepository = entityRepository.getRepository("content");
 const mediaRepository = entityRepository.getRepository("media");
+const blockRepository = entityRepository.getRepository("block");
 
 async function needTobeAuthor(
   context: Record<string, any>,
@@ -76,6 +77,12 @@ async function needToBePublished(
 }
 
 export default {
+  async needToBeBlockAuthor(
+    context: Record<string, any>,
+    next: Function,
+  ) {
+    await needTobeAuthor(context, next, blockRepository);
+  },
   async needToBeTaxonomyAuthor(
     context: Record<string, any>,
     next: Function,
@@ -111,5 +118,11 @@ export default {
     next: Function,
   ) {
     await needToBePublished(context, next, mediaRepository);
+  },
+  async blockNeedToBePublished(
+    context: Record<string, any>,
+    next: Function,
+  ) {
+    await needToBePublished(context, next, blockRepository);
   },
 };

@@ -1,10 +1,7 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: 'Confirm delete' }) %>
-<% if (currentUser) { %>
-  <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminMenu.ejs`, { currentUser: currentUser}) %>
-<% } %>
-<div class="container h-100 pt-4">
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: 'Confirm delete', currentUser: currentUser }) %>
+<div class="container">
   <h1 class="text-center mb-3">Confirm delete <%= content.data.title %></h1>
-  <form action='/admin/content/<%= content.type.replace("_", "-") %>/delete' method=post>
+  <form action='/admin/content/<%= content.type %>/delete' method=post>
     <input type="hidden" id="id" name="id" value="<%= content._id.$oid %>">
     <div class="d-flex justify-content-center">
       <div class="mr-2">

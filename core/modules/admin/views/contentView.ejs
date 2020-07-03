@@ -1,20 +1,17 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: 'Content' }) %>
-<% if (currentUser) { %>
-  <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminMenu.ejs`, { currentUser: currentUser}) %>
-<% } %>
-<div class="container h-100 pt-4">
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: 'Content', currentUser: currentUser }) %>
+<div class="container">
   <h1 class="text-center mb-3">Content</h1>
   <fieldset class="border p-2">
     <legend  class="w-auto">Add</legend>
     <div class="d-flex mb-3">
       <div class="mr-2">
-        <a href="/admin/content/basic-page/add" class="btn btn-outline-secondary">Basic page</a>
+        <a href="/admin/content/basic_page/add" class="btn btn-outline-secondary">Basic page</a>
       </div>
       <div class="mr-2">
         <a href="/admin/content/article/add" class="btn btn-outline-secondary">Article</a>
       </div>
       <div class="mr-2">
-        <a href="#" class="btn btn-outline-secondary">Landing page</a>
+        <a href="/admin/content/landing_page/add" class="btn btn-outline-secondary">Landing page</a>
       </div>
     </div>
   </fieldset>
@@ -37,7 +34,7 @@
         <% for(var i=0; i < content.length; i++) { %>
         <tr>
           <th scope="row"><%= content[i]._id.$oid %></th>
-          <td><a href='/<%= content[i].type.replace("_", "-") %>/<%= content[i]._id.$oid %>'><%= content[i].data.title %></a></td>
+          <td><a href='/<%= content[i].type %>/<%= content[i]._id.$oid %>'><%= content[i].data.title %></a></td>
           <td><%= content[i].type %></td>
           <td><%= content[i].author.name %></td>
           <td><%= content[i].created %></td>
@@ -45,7 +42,7 @@
           <td><%= content[i].published %></td>
           <td>
             <% if (currentUser._id.$oid == content[i].author._id.$oid || currentUser.roles.includes(0)) { %>
-              <a href='/admin/content/<%= content[i].type.replace("_", "-") %>/edit/<%= content[i]._id.$oid %>'>edit</a> | <a href='/admin/content/<%= content[i].type.replace("_", "-") %>/delete/<%= content[i]._id.$oid %>'>delete</a>
+              <a href='/admin/content/<%= content[i].type %>/edit/<%= content[i]._id.$oid %>'>edit</a> | <a href='/admin/content/<%= content[i].type %>/delete/<%= content[i]._id.$oid %>'>delete</a>
             <% } %>
           </td>
         </tr>

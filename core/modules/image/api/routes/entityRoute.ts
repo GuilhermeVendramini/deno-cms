@@ -5,12 +5,12 @@ import entity from "../../entity.ts";
 
 router
   .get(
-    `/api/media/${entity.type}/:id`,
+    `/api/${entity.bundle}/${entity.type}/:id`,
     loggedMiddleware.tokenValidated,
     entityController.view,
   )
   .get(
-    `/api/media/${entity.type}`,
+    `/api/${entity.bundle}/${entity.type}`,
     loggedMiddleware.tokenValidated,
     entityController.view,
   );

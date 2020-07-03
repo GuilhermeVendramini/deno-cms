@@ -27,6 +27,10 @@ import imageAPIRouter from "./core/modules/image/api/routes/entityRoute.ts";
 import imageRouter from "./core/modules/image/cms/routes/entityRoute.ts";
 import videoAPIRouter from "./core/modules/video/api/routes/entityRoute.ts";
 import videoRouter from "./core/modules/video/cms/routes/entityRoute.ts";
+import basicBlockAPIRouter from "./core/modules/basic_block/api/routes/entityRoute.ts";
+import basicBlockRouter from "./core/modules/basic_block/cms/routes/entityRoute.ts";
+import landingPageAPIRouter from "./core/modules/landing_page/api/routes/entityRoute.ts";
+import landingPageRouter from "./core/modules/landing_page/cms/routes/entityRoute.ts";
 
 const session = new Session({ framework: "oak" });
 await session.init();
@@ -55,6 +59,8 @@ app.use(categoriesAPIRouter.routes());
 app.use(imageAPIRouter.routes());
 app.use(videoAPIRouter.routes());
 app.use(mediaAPIRouter.routes());
+app.use(basicBlockAPIRouter.routes());
+app.use(landingPageAPIRouter.routes());
 
 /**
  * Themes routes
@@ -76,6 +82,7 @@ app.use(mediaRouter.routes());
 
 app.use(basicPageRouter.routes());
 app.use(articleRouter.routes());
+app.use(landingPageRouter.routes());
 
 /**
  * Taxonomy types
@@ -102,6 +109,12 @@ app.use(entityReferenceRouter.routes());
 
 app.use(imageRouter.routes());
 app.use(videoRouter.routes());
+
+/**
+ * Block Types
+ */
+
+app.use(basicBlockRouter.routes());
 
 /**
  * Unknown routes

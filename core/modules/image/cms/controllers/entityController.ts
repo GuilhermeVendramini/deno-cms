@@ -60,8 +60,8 @@ export default {
       let currentUser = context.getCurrentUser;
       let validated: any;
       let data: any = {};
+      let id: string = body.value.get("id");
       let properties: any = [
-        "id",
         "title",
         "image",
       ];
@@ -91,11 +91,9 @@ export default {
 
       if (media && Object.keys(media).length != 0) {
         let result: any;
-        let id: string;
         let oldImage: string | undefined;
 
-        if (data?.id) {
-          id = data.id;
+        if (id) {
           let oldMedia: any = await mediaRepository.findOneByID(id);
           oldImage = oldMedia?.data?.image;
           result = await mediaRepository.updateOne(id, media);
@@ -109,7 +107,7 @@ export default {
         }
 
         context.response.redirect(
-          `/admin/media/${entity.type.replace("_", "-")}`,
+          `/admin/media/${entity.type}`,
         );
         return;
       }
@@ -206,13 +204,13 @@ export default {
         }
       }
       context.response.redirect(
-        `/admin/media/${entity.type.replace("_", "-")}`,
+        `/admin/media/${entity.type}`,
       );
       return;
     } catch (error) {
       console.log(error);
       context.response.redirect(
-        `/admin/media/${entity.type.replace("_", "-")}`,
+        `/admin/media/${entity.type}`,
       );
       return;
     }

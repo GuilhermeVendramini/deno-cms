@@ -1,9 +1,8 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: page.content.data.title }) %>
-<% if (currentUser) { %>
-  <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminMenu.ejs`, { currentUser: currentUser}) %>
-  <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: page.content}) %>
-<% } %>
-<div class="container h-100">
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: page.content.data.title, currentUser: currentUser }) %>
+<div class="container">
+  <% if (currentUser) { %>
+    <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: page.content}) %>
+  <% } %>
   <% if (page?.content?.data) { %>
   <h1 class="text-center mb-3"><%= page.content.data.title %></h1>
     <% if (page?.content?.data?.body) { %>
@@ -27,7 +26,7 @@
         <div class="field-tags">
           <% let tags = page.content.data.tags.sort(function(a, b){return a.weight - b.weight}) %>
           <% for(var i=0; i < tags.length; i++) { %>
-            <a href='/taxonomy/<%= tags[i].entity.type.replace("_", "-") %>/<%= tags[i].entity._id.$oid %>' class="badge badge-primary"><%= tags[i].entity.data.title %></a>
+            <a href='/taxonomy/<%= tags[i].entity.type %>/<%= tags[i].entity._id.$oid %>' class="badge badge-primary"><%= tags[i].entity.data.title %></a>
           <% } %>
         </div>
       </div>

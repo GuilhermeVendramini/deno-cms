@@ -17,6 +17,11 @@ router
     "/admin/media",
     loggedMiddleware.needToBeLogged,
     adminController.media,
+  )
+  .get(
+    "/admin/block",
+    loggedMiddleware.needToBeLogged,
+    adminController.block,
   );
 
 export default router;

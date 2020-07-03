@@ -1,14 +1,11 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: entity.name }) %>
-<% if (currentUser) { %>
-  <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminMenu.ejs`, { currentUser: currentUser}) %>
-<% } %>
-<div class="container h-100 pt-4">
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: entity.name, currentUser: currentUser }) %>
+<div class="container">
   <h1 class="text-center mb-3"><%= entity.name %></h1>
   <fieldset class="border p-2">
     <legend  class="w-auto">Manager</legend>
     <div class="d-flex mb-3">
       <div class="mr-2">
-        <a href='/admin/taxonomy/<%= entity.type.replace("_", "-") %>/add' class="btn btn-outline-secondary">Add new</a>
+        <a href='/admin/<%= entity.bundle %>/<%= entity.type %>/add' class="btn btn-outline-secondary">Add new</a>
       </div>
     </div>
   </fieldset>
@@ -30,14 +27,14 @@
         <% for(var i=0; i < term.length; i++) { %>
         <tr>
           <th scope="row"><%= term[i]._id.$oid %></th>
-          <td><a href='/taxonomy/<%= term[i].type.replace("_", "-") %>/<%= term[i]._id.$oid %>'><%= term[i].data.title %></a></td>
+          <td><a href='/<%= entity.bundle %>/<%= term[i].type %>/<%= term[i]._id.$oid %>'><%= term[i].data.title %></a></td>
           <td><%= term[i].author.name %></td>
           <td><%= term[i].created %></td>
           <td><%= term[i].updated %></td>
           <td><%= term[i].published %></td>
           <td>
             <% if (currentUser._id.$oid == term[i].author._id.$oid || currentUser.roles.includes(0)) { %>
-              <a href='/admin/taxonomy/<%= term[i].type.replace("_", "-") %>/edit/<%= term[i]._id.$oid %>'>edit</a> | <a href='/admin/taxonomy/<%= term[i].type.replace("_", "-") %>/delete/<%= term[i]._id.$oid %>'>delete</a>
+              <a href='/admin/<%= entity.bundle %>/<%= term[i].type %>/edit/<%= term[i]._id.$oid %>'>edit</a> | <a href='/admin/<%= entity.bundle %>/<%= term[i].type %>/delete/<%= term[i]._id.$oid %>'>delete</a>
             <% } %>
           </td>
         </tr>

@@ -5,12 +5,12 @@ import entity from "../../entity.ts";
 
 router
   .get(
-    `/api/content/${entity.type.replace("_", "-")}/:id`,
+    `/api/${entity.bundle}/${entity.type}/:id`,
     loggedMiddleware.tokenValidated,
     entityController.view,
   )
   .get(
-    `/api/content/${entity.type.replace("_", "-")}`,
+    `/api/${entity.bundle}/${entity.type}`,
     loggedMiddleware.tokenValidated,
     entityController.view,
   );

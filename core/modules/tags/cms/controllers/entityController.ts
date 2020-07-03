@@ -59,8 +59,8 @@ export default {
       let currentUser = context.getCurrentUser;
       let validated: any;
       let data: any = {};
+      let id: string = body.value.get("id");
       let properties: any = [
-        "id",
         "title",
       ];
       let published: boolean;
@@ -89,10 +89,8 @@ export default {
 
       if (term && Object.keys(term).length != 0) {
         let result: any;
-        let id: string;
 
-        if (data?.id) {
-          id = data.id;
+        if (id) {
           result = await taxonomyRepository.updateOne(id, term);
         } else {
           result = await taxonomyRepository.insertOne(term);
@@ -100,7 +98,7 @@ export default {
         }
 
         context.response.redirect(
-          `/admin/${entity.bundle}/${entity.type.replace("_", "-")}`,
+          `/admin/${entity.bundle}/${entity.type}`,
         );
         return;
       }
@@ -193,13 +191,13 @@ export default {
         await taxonomyRepository.deleteOne(id);
       }
       context.response.redirect(
-        `/admin/${entity.bundle}/${entity.type.replace("_", "-")}`,
+        `/admin/${entity.bundle}/${entity.type}`,
       );
       return;
     } catch (error) {
       console.log(error);
       context.response.redirect(
-        `/admin/${entity.bundle}/${entity.type.replace("_", "-")}`,
+        `/admin/${entity.bundle}/${entity.type}`,
       );
       return;
     }

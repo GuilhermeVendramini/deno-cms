@@ -7,40 +7,40 @@ import cmsMiddleware from "../../../../../shared/middlewares/cmsMiddleware.ts";
 
 router
   .get(
-    `/admin/taxonomy/${entity.type.replace("_", "-")}`,
+    `/admin/taxonomy/${entity.type}`,
     loggedMiddleware.needToBeLogged,
     entityController.list,
   )
   .get(
-    `/admin/taxonomy/${entity.type.replace("_", "-")}/add`,
+    `/admin/taxonomy/${entity.type}/add`,
     loggedMiddleware.needToBeLogged,
     entityController.add,
   )
   .get(
-    `/admin/taxonomy/${entity.type.replace("_", "-")}/edit/:id`,
+    `/admin/taxonomy/${entity.type}/edit/:id`,
     loggedMiddleware.needToBeLogged,
     baseEntityMiddleware.needToBeTaxonomyAuthor,
     entityController.add,
   )
   .get(
-    `/taxonomy/${entity.type.replace("_", "-")}/:id`,
+    `/taxonomy/${entity.type}/:id`,
     baseEntityMiddleware.taxonomyNeedToBePublished,
     entityController.view,
   )
   .post(
-    `/admin/taxonomy/${entity.type.replace("_", "-")}/add`,
+    `/admin/taxonomy/${entity.type}/add`,
     loggedMiddleware.needToBeLogged,
     cmsMiddleware.submittedByForm,
     entityController.addPost,
   )
   .get(
-    `/admin/taxonomy/${entity.type.replace("_", "-")}/delete/:id`,
+    `/admin/taxonomy/${entity.type}/delete/:id`,
     loggedMiddleware.needToBeLogged,
     baseEntityMiddleware.needToBeTaxonomyAuthor,
     entityController.delete,
   )
   .post(
-    `/admin/taxonomy/${entity.type.replace("_", "-")}/delete`,
+    `/admin/taxonomy/${entity.type}/delete`,
     loggedMiddleware.needToBeLogged,
     baseEntityMiddleware.needToBeTaxonomyAuthor,
     cmsMiddleware.submittedByForm,

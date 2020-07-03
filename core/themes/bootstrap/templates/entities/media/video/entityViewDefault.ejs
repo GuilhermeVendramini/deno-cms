@@ -1,9 +1,8 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: media.data.title }) %>
-<% if (currentUser) { %>
-  <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminMenu.ejs`, { currentUser: currentUser}) %>
-  <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: media}) %>
-<% } %>
-<div class="container h-100">
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: media.data.title, currentUser: currentUser }) %>
+<div class="container">
+  <% if (currentUser) { %>
+    <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: media}) %>
+  <% } %>
   <% if (media.data) { %>
   <h1 class="text-center mb-3"><%= media.data.title %></h1>
     <div class="media text-center">

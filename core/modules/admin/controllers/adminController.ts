@@ -31,4 +31,13 @@ export default {
       },
     );
   },
+
+  async block(context: Record<string, any>) {
+    context.response.body = await renderFileToString(
+      `${Deno.cwd()}/core/modules/admin/views/blockView.ejs`,
+      {
+        currentUser: context.getCurrentUser,
+      },
+    );
+  },
 };

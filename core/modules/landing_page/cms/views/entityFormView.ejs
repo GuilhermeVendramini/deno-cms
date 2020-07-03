@@ -1,0 +1,49 @@
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: entity.name, currentUser: currentUser }) %>
+<div class="container">
+  <h1 class="text-center mb-3"><%= entity.name %></h1>
+  <% if (message) { %>
+    <div class="alert alert-danger">
+      <%= message %>
+    </div>
+  <% } %>
+  <form id="entity-form" action='/admin/content/<%= entity.type %>/add' method=post>
+    <input id="id" name="id" type="hidden" value='<%= content?._id?.$oid %>'>
+    <div class="form-group">
+      <label>Title</label>
+      <input type="text" required value="<%= content?.data?.title %>" name="title" class="form-control">
+    </div>
+    <div class="form-group">
+      <label>References</label>
+      <%- await include(
+        `${Deno.cwd()}/core/modules/entity_reference/views/entityReferenceFormView.ejs`,
+        {
+          field: 'references',
+          entities: {
+            "media": ["image", "video"],
+            "block": ["basic_block"],
+            "content": ["basic_page"],
+          },
+          data: content?.data?.references
+        }
+      ) %>
+    </div>
+    <div class="form-check mb-3">
+      <% let checked = content?.published ? "checked" : "" %>
+      <input <%= checked %> type="checkbox" name="published" value="true" class="form-check-input" id="published">
+      <label class="form-check-label" for="published">Published</label>
+    </div>
+    <div class="d-flex justify-content-between">
+      <div class="mr-2">
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+      <% if (content?._id) { %>
+        <div class="mr-2">
+          <a href='/admin/<%= content.bundle %>/<%= content.type %>/delete/<%= content._id.$oid %>' class="btn btn-danger">Delete</a>
+        </div>
+      <% } %>
+    </div>
+  </form>
+</div>
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>
+<script src="/core/themes/boostrap/assets/js/jquery-ui.min.js" type="text/javascript"></script>
+<script src="/entity-reference/assets/js/entityReference.js" type="text/javascript"></script>

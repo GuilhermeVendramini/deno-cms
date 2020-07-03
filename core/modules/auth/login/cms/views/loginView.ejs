@@ -1,4 +1,4 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: 'Login' }) %>
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: 'Login', currentUser: false }) %>
 <div class="container">
   <h1 class="text-center mb-3">Login</h1>
   <% if (message) { %>

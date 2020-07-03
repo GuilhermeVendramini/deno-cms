@@ -46,8 +46,8 @@ export default {
       let currentUser = context.getCurrentUser;
       let validated: any;
       let data: any = {};
+      let id: string = body.value.get("id");
       let properties: any = [
-        "id",
         "title",
         "body",
       ];
@@ -77,17 +77,15 @@ export default {
 
       if (content && Object.keys(content).length != 0) {
         let result: any;
-        let id: string;
 
-        if (data?.id) {
-          id = data.id;
+        if (id) {
           result = await contentRepository.updateOne(id, content);
         } else {
           result = await contentRepository.insertOne(content);
           id = result?.$oid;
         }
 
-        context.response.redirect(`/${entity.type.replace("_", "-")}/${id}`);
+        context.response.redirect(`/${entity.type}/${id}`);
         return;
       }
 

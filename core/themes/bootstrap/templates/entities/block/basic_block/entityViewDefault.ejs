@@ -1,0 +1,15 @@
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: block.data.title, currentUser: currentUser }) %>
+<div class="container">
+  <% if (currentUser) { %>
+    <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: block}) %>
+  <% } %>
+  <% if (block?.data) { %>
+  <h1 class="text-center mb-3"><%= block.data.title %></h1>
+    <% if (block?.data?.body) { %>
+      <div class="content">
+        <%- block.data.body %>
+      </div>
+    <% } %>
+  <% } %>
+</div>
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>

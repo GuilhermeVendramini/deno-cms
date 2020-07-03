@@ -1,8 +1,5 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: 'Media' }) %>
-<% if (currentUser) { %>
-  <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminMenu.ejs`, { currentUser: currentUser}) %>
-<% } %>
-<div class="container h-100 pt-4">
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: 'Media', currentUser: currentUser }) %>
+<div class="container">
   <h1 class="text-center mb-3">Media</h1>
   <fieldset class="border p-2">
     <legend  class="w-auto">Types</legend>

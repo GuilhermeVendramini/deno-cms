@@ -1,14 +1,11 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: entity.name }) %>
-<% if (currentUser) { %>
-  <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminMenu.ejs`, { currentUser: currentUser}) %>
-<% } %>
-<div class="container h-100 pt-4">
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: entity.name, currentUser: currentUser }) %>
+<div class="container">
   <h1 class="text-center mb-3"><%= entity.name %></h1>
   <fieldset class="border p-2">
     <legend  class="w-auto">Manager</legend>
     <div class="d-flex mb-3">
       <div class="mr-2">
-        <a href='/admin/media/<%= entity.type.replace("_", "-") %>/add' class="btn btn-outline-secondary">Add new</a>
+        <a href='/admin/<%= entity.bundle %>/<%= entity.type %>/add' class="btn btn-outline-secondary">Add new</a>
       </div>
     </div>
   </fieldset>
@@ -30,14 +27,14 @@
         <% for(var i=0; i < media.length; i++) { %>
         <tr>
           <th scope="row"><%= media[i]._id.$oid %></th>
-          <td><a href='/media/<%= media[i].type.replace("_", "-") %>/<%= media[i]._id.$oid %>'><%= media[i].data.title %></a></td>
+          <td><a href='/<%= entity.bundle %>/<%= media[i].type %>/<%= media[i]._id.$oid %>'><%= media[i].data.title %></a></td>
           <td><%= media[i].author.name %></td>
           <td><%= media[i].created %></td>
           <td><%= media[i].updated %></td>
           <td><%= media[i].published %></td>
           <td>
             <% if (currentUser._id.$oid == media[i].author._id.$oid || currentUser.roles.includes(0)) { %>
-              <a href='/admin/media/<%= media[i].type.replace("_", "-") %>/edit/<%= media[i]._id.$oid %>'>edit</a> | <a href='/admin/media/<%= media[i].type.replace("_", "-") %>/delete/<%= media[i]._id.$oid %>'>delete</a>
+              <a href='/admin/<%= entity.bundle %>/<%= media[i].type %>/edit/<%= media[i]._id.$oid %>'>edit</a> | <a href='/admin/<%= entity.bundle %>/<%= media[i].type %>/delete/<%= media[i]._id.$oid %>'>delete</a>
             <% } %>
           </td>
         </tr>

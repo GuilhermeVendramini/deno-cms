@@ -1,9 +1,8 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: term.data.title }) %>
-<% if (currentUser) { %>
-  <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminMenu.ejs`, { currentUser: currentUser}) %>
-  <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: term}) %>
-<% } %>
-<div class="container h-100">
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: term.data.title, currentUser: currentUser }) %>
+<div class="container">
+  <% if (currentUser) { %>
+    <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: term}) %>
+  <% } %>
   <% if (term.data) { %>
   <h1 class="text-center mb-3"><%= term.data.title %></h1>
     <div class="term">
@@ -12,5 +11,5 @@
       <% } %>
     </div>
   <% } %>
-</div>
+  </div>
 <%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>

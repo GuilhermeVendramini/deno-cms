@@ -131,9 +131,10 @@ $(document).ready(function () {
 
   function getDefaultTemplate(field, data) {
     let classStatus = getPickedItem(field, data._id.$oid) ? 'btn-secondary' : 'btn-outline-primary';
+    let text = data?.data?.title ? data.data.title : data._id.$oid;
     let template = `
       <a id="op-${field}-${data._id.$oid}" class="${data._id.$oid} btn ${classStatus} btn-sm m-2" href="#" role="button">
-        ${data._id.$oid}
+        ${text}
       </a>`;
     return template;
   }

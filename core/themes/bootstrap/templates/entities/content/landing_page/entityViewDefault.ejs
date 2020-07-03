@@ -1,0 +1,36 @@
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: page.content.data.title, currentUser: currentUser }) %>
+<div class="container">
+  <% if (currentUser) { %>
+    <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: page.content}) %>
+  <% } %>
+  <% if (page?.content?.data) { %>
+  <h1 class="text-center mb-3"><%= page.content.data.title %></h1>
+    <% if (page?.content?.data?.references && page.content.data.references.length > 0) { %>
+      <div class="mb-3">
+        <div class="field-references text-center">
+          <% let references = page.content.data.references.sort(function(a, b){return a.weight - b.weight}) %>
+          <% for(var i=0; i < references.length; i++) { %>
+            <div class="mb-4">
+              <% if (references[i].entity.type == 'image') { %>
+                <img src="/<%= references[i].entity.data.image %>" height="300">
+              <% } else if (references[i].entity.type == 'video') { %>
+                <video height="300" controls="controls">
+                  <source src="/<%= references[i].entity.data.video %>">
+                </video>
+              <% } else if (references[i].entity.type == 'basic_block') { %>
+                <h2><%= references[i].entity.data?.title %></h2>
+                <%- references[i].entity.data?.body %>
+              <% } else if (references[i].entity.type == 'basic_page') { %>
+                <% let url = references[i].entity.type + '/' + references[i].entity._id.$oid %>
+                <h2><%= references[i].entity.data?.title %></h2>
+                <%- references[i].entity.data?.body.substring(0,200) %>
+                ... <a href="/<%= url %>">see more</a>
+              <% } %>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    <% } %>
+  <% } %>
+</div>
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>

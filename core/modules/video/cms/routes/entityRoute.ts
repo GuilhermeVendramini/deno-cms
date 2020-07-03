@@ -8,53 +8,53 @@ import { upload } from "upload";
 
 router
   .get(
-    `/admin/media/${entity.type.replace("_", "-")}`,
+    `/admin/media/${entity.type}`,
     loggedMiddleware.needToBeLogged,
     entityController.list,
   )
   .get(
-    `/admin/media/${entity.type.replace("_", "-")}/add`,
+    `/admin/media/${entity.type}/add`,
     loggedMiddleware.needToBeLogged,
     entityController.add,
   )
   .get(
-    `/admin/media/${entity.type.replace("_", "-")}/edit/:id`,
+    `/admin/media/${entity.type}/edit/:id`,
     loggedMiddleware.needToBeLogged,
     baseEntityMiddleware.needToBeMediaAuthor,
     entityController.add,
   )
   .get(
-    `/media/${entity.type.replace("_", "-")}/:id`,
+    `/media/${entity.type}/:id`,
     baseEntityMiddleware.mediaNeedToBePublished,
     entityController.view,
   )
   .post(
-    `/admin/media/${entity.type.replace("_", "-")}/add`,
+    `/admin/media/${entity.type}/add`,
     loggedMiddleware.needToBeLogged,
     cmsMiddleware.submittedByForm,
     entityController.addPost,
   )
   .get(
-    `/admin/media/${entity.type.replace("_", "-")}/delete/:id`,
+    `/admin/media/${entity.type}/delete/:id`,
     loggedMiddleware.needToBeLogged,
     baseEntityMiddleware.needToBeMediaAuthor,
     entityController.delete,
   )
   .post(
-    `/admin/media/${entity.type.replace("_", "-")}/delete`,
+    `/admin/media/${entity.type}/delete`,
     loggedMiddleware.needToBeLogged,
     baseEntityMiddleware.needToBeMediaAuthor,
     cmsMiddleware.submittedByForm,
     entityController.deletePost,
   )
   .post(
-    `/media/${entity.type.replace("_", "-")}`,
+    `/media/${entity.type}`,
     loggedMiddleware.needToBeLogged,
     upload(
       "files/media/videos",
       ["mp4", "webm"],
-      80000000,
-      40000000,
+      2 * 80000000,
+      2 * 40000000,
       true,
       false,
       true,
@@ -64,13 +64,13 @@ router
     },
   )
   .post(
-    `/media/temporary/${entity.type.replace("_", "-")}`,
+    `/media/temporary/${entity.type}`,
     loggedMiddleware.needToBeLogged,
     upload(
       "temp_uploads",
       ["mp4", "webm"],
-      80000000,
-      40000000,
+      2 * 80000000,
+      2 * 40000000,
       false,
       false,
       true,
