@@ -7,10 +7,12 @@ import {
 } from "oak";
 import vs from "value_schema";
 import entitySchema from "../../schemas/entitySchema.ts";
-import contentRepository from "../../../../../repositories/mongodb/content/contentRepository.ts";
+import entityRepository from "../../../../../repositories/mongodb/entity/entityRepository.ts";
 import entity from "../../entity.ts";
 import cmsErrors from "../../../../../shared/utils/errors/cms/cmsErrors.ts";
 import currentUserSession from "../../../../../shared/utils/sessions/currentUserSession.ts";
+
+const repository = entityRepository.getRepository(entity.bundle);
 
 export default {
   async add(context: Record<string, any>) {
@@ -20,7 +22,7 @@ export default {
       let content: {} | undefined;
 
       if (id) {
-        content = await contentRepository.findOneByID(id);
+        content = await repository.findOneByID(id);
       }
 
       context.response.body = await renderFileToString(
@@ -79,9 +81,9 @@ export default {
         let result: any;
 
         if (id) {
-          result = await contentRepository.updateOne(id, content);
+          result = await repository.updateOne(id, content);
         } else {
-          result = await contentRepository.insertOne(content);
+          result = await repository.insertOne(content);
           id = result?.$oid;
         }
 
@@ -120,7 +122,7 @@ export default {
       let currentUser = await currentUserSession.get(context);
       let id: string = context.params.id;
       let content: any | undefined;
-      content = await contentRepository.findOneByID(id);
+      content = await repository.findOneByID(id);
 
       if (content && Object.keys(content).length != 0) {
         context.response.body = await renderFileToString(
@@ -148,7 +150,7 @@ export default {
     try {
       let id: string = context.params.id;
       let content: any | undefined;
-      content = await contentRepository.findOneByID(id);
+      content = await repository.findOneByID(id);
 
       if (content && Object.keys(content).length != 0) {
         context.response.body = await renderFileToString(
@@ -176,10 +178,10 @@ export default {
       id = body.value.get("id");
 
       let content: any | undefined;
-      content = await contentRepository.findOneByID(id);
+      content = await repository.findOneByID(id);
 
       if (content && Object.keys(content).length != 0) {
-        await contentRepository.deleteOne(id);
+        await repository.deleteOne(id);
       }
       context.response.redirect(`/admin/${entity.bundle}`);
       return;

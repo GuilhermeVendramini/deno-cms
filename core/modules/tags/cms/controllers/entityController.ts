@@ -7,15 +7,17 @@ import {
 } from "oak";
 import vs from "value_schema";
 import entitySchema from "../../schemas/entitySchema.ts";
-import taxonomyRepository from "../../../../../repositories/mongodb/taxonomy/taxonomyRepository.ts";
+import entityRepository from "../../../../../repositories/mongodb/entity/entityRepository.ts";
 import entity from "../../entity.ts";
 import cmsErrors from "../../../../../shared/utils/errors/cms/cmsErrors.ts";
 import currentUserSession from "../../../../../shared/utils/sessions/currentUserSession.ts";
 
+const repository = entityRepository.getRepository(entity.bundle);
+
 export default {
   async list(context: Record<string, any>) {
     let term: [] | undefined;
-    term = await taxonomyRepository.find(entity.type);
+    term = await repository.find(entity.type);
     context.response.body = await renderFileToString(
       `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityListView.ejs`,
       {
@@ -33,7 +35,7 @@ export default {
       let term: {} | undefined;
 
       if (id) {
-        term = await taxonomyRepository.findOneByID(id);
+        term = await repository.findOneByID(id);
       }
 
       context.response.body = await renderFileToString(
@@ -91,9 +93,9 @@ export default {
         let result: any;
 
         if (id) {
-          result = await taxonomyRepository.updateOne(id, term);
+          result = await repository.updateOne(id, term);
         } else {
-          result = await taxonomyRepository.insertOne(term);
+          result = await repository.insertOne(term);
           id = result?.$oid;
         }
 
@@ -133,7 +135,7 @@ export default {
       let currentUser = await currentUserSession.get(context);
       let id: string = context.params.id;
       let term: any | undefined;
-      term = await taxonomyRepository.findOneByID(id);
+      term = await repository.findOneByID(id);
 
       if (term && Object.keys(term).length != 0) {
         context.response.body = await renderFileToString(
@@ -159,7 +161,7 @@ export default {
     try {
       let id: string = context.params.id;
       let term: any | undefined;
-      term = await taxonomyRepository.findOneByID(id);
+      term = await repository.findOneByID(id);
 
       if (term && Object.keys(term).length != 0) {
         context.response.body = await renderFileToString(
@@ -185,10 +187,10 @@ export default {
       id = body.value.get("id");
 
       let term: any | undefined;
-      term = await taxonomyRepository.findOneByID(id);
+      term = await repository.findOneByID(id);
 
       if (term && Object.keys(term).length != 0) {
-        await taxonomyRepository.deleteOne(id);
+        await repository.deleteOne(id);
       }
       context.response.redirect(
         `/admin/${entity.bundle}/${entity.type}`,

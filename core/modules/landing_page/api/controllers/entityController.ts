@@ -1,9 +1,11 @@
 import {
   Status,
 } from "oak";
-import contentRepository from "../../../../../repositories/mongodb/content/contentRepository.ts";
+import entityRepository from "../../../../../repositories/mongodb/entity/entityRepository.ts";
 import entity from "../../entity.ts";
 import apiErrors from "../../../../../shared/utils/errors/api/apiErrors.ts";
+
+const repository = entityRepository.getRepository(entity.bundle);
 
 export default {
   async view(context: Record<string, any>) {
@@ -13,9 +15,9 @@ export default {
       let content: any | undefined;
 
       if (id) {
-        content = await contentRepository.findOneByID(id, entity.type);
+        content = await repository.findOneByID(id, entity.type);
       } else {
-        content = await contentRepository.find(entity.type);
+        content = await repository.find(entity.type);
       }
 
       if (content && Object.keys(content).length != 0) {

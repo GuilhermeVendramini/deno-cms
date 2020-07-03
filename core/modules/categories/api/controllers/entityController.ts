@@ -1,9 +1,11 @@
 import {
   Status,
 } from "oak";
-import taxonomyRepository from "../../../../../repositories/mongodb/taxonomy/taxonomyRepository.ts";
+import entityRepository from "../../../../../repositories/mongodb/entity/entityRepository.ts";
 import entity from "../../entity.ts";
 import apiErrors from "../../../../../shared/utils/errors/api/apiErrors.ts";
+
+const repository = entityRepository.getRepository(entity.bundle);
 
 export default {
   async view(context: Record<string, any>) {
@@ -13,9 +15,9 @@ export default {
       let term: any | undefined;
 
       if (id) {
-        term = await taxonomyRepository.findOneByID(id, entity.type);
+        term = await repository.findOneByID(id, entity.type);
       } else {
-        term = await taxonomyRepository.find(entity.type);
+        term = await repository.find(entity.type);
       }
 
       if (term && Object.keys(term).length != 0) {
