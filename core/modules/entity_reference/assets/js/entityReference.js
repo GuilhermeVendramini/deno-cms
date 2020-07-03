@@ -22,7 +22,7 @@ $(document).ready(function () {
             `<div class="bg-light p-2 mb-3 field-${field} entity ${entity}">
               <a class="collapsed" href="#${entity}${index}" role="button" aria-controls="${entity}${index}" data-toggle="collapse" aria-expanded="false">
                 <h5 class="border-bottom border-white pb-2 text-center text-capitalize font-weight-bold">
-                  ${entity.replace('_', ' ')}
+                  ${entity}
                 </h5>
               </a>
               <div id="${entity}${index}" class="items collapse"></div>
@@ -36,11 +36,11 @@ $(document).ready(function () {
               `<div class="border-bottom mb-2 mt-2 p-2 type ${type}">
                 <div class="entity-header d-flex justify-content-between">
                   <h6 class="text-capitalize font-weight-bold text-secondary">
-                    ${type.replace('_', ' ')}
+                    ${type}
                   </h6>
                   <div class="actions">
                     <span class="add-new">
-                      <a target="_blank" class="btn btn-outline-secondary btn-sm" href="/admin/${entity.replace('_', '-')}/${type.replace('_', '-')}/add">+</a>
+                      <a target="_blank" class="btn btn-outline-secondary btn-sm" href="/admin/${entity}/${type}/add">+</a>
                     </span>
                     <span class="refresh">
                       <a data-field="${field}" data-entity="${entity}" data-type="${type}" class="btn btn-outline-secondary btn-sm" href="#">↻</a>
@@ -57,8 +57,9 @@ $(document).ready(function () {
             if (entities && entities.data) {
               let typeItems = entityContainer.find('.type.' + type + ' > .items').first();
               $.each(entities.data, function (_, data) {
+                let picked = getPickedItem(field, data._id.$oid) ? true : false;
                 typeItems.append(
-                  getTemplate(field, entity, type, data)
+                  getTemplate(field, entity, type, data, picked)
                 );
                 clickAction(field, data);
               });
@@ -67,76 +68,6 @@ $(document).ready(function () {
         });
       });
     }
-  }
-
-  function getTemplate(field, entity, type, data) {
-    let template;
-    switch (entity) {
-      case 'taxonomy':
-        template = getTaxonomyTemplate(field, data);
-        break;
-      case 'content':
-        template = getContentTemplate(field, data);
-        break;
-      case 'media':
-        template = getMediaTemplate(type, field, data);
-        break;
-      default:
-        template = getDefaultTemplate(field, data);
-        break;
-    }
-    return template;
-  }
-
-  function getMediaTemplate(type, field, data) {
-    let template;
-    switch (type) {
-      case 'image':
-        template = getMediaImageTemplate(field, data);
-        break;
-      default:
-        template = getDefaultTemplate(field, data);
-        break;
-    }
-    return template;
-  }
-
-  function getMediaImageTemplate(field, data) {
-    let classStatus = getPickedItem(field, data._id.$oid) ? 'btn-secondary' : 'btn-outline-primary';
-    let template = `
-      <a id="op-${field}-${data._id.$oid}" data-id="${data._id.$oid}" class=" ${data._id.$oid} btn ${classStatus} btn-sm m-2" href="#" role="button">
-        <img src="/${data.data.image}" height="50">
-        ${data.data.title}
-      </a>`;
-    return template;
-  }
-
-  function getTaxonomyTemplate(field, data) {
-    let classStatus = getPickedItem(field, data._id.$oid) ? 'btn-secondary' : 'btn-outline-primary';
-    let template = `
-      <a id="op-${field}-${data._id.$oid}" data-id="${data._id.$oid}" class=" ${data._id.$oid} btn ${classStatus} btn-sm m-2" href="#" role="button">
-        ${data.data.title}
-      </a>`;
-    return template;
-  }
-
-  function getContentTemplate(field, data) {
-    let classStatus = getPickedItem(field, data._id.$oid) ? 'btn-secondary' : 'btn-outline-primary';
-    let template = `
-      <a id="op-${field}-${data._id.$oid}" class="${data._id.$oid} btn ${classStatus} btn-sm m-2" href="#" role="button">
-        ${data.data.title}
-      </a>`;
-    return template;
-  }
-
-  function getDefaultTemplate(field, data) {
-    let classStatus = getPickedItem(field, data._id.$oid) ? 'btn-secondary' : 'btn-outline-primary';
-    let text = data?.data?.title ? data.data.title : data._id.$oid;
-    let template = `
-      <a id="op-${field}-${data._id.$oid}" class="${data._id.$oid} btn ${classStatus} btn-sm m-2" href="#" role="button">
-        ${text}
-      </a>`;
-    return template;
   }
 
   async function getEntities(entity, type) {
@@ -174,8 +105,9 @@ $(document).ready(function () {
         let itemsList = $('.field-' + field + '.entity.' + entity + ' .type.' + type + ' > .items');
         itemsList.html('');
         $.each(entities.data, function (_, data) {
+          let picked = getPickedItem(field, data._id.$oid) ? true : false;
           itemsList.append(
-            getTemplate(field, entity, type, data)
+            getTemplate(field, entity, type, data, picked)
           );
           clickAction(field, data);
         });

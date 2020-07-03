@@ -20,7 +20,7 @@ $(document).ready(function () {
       mediaDisplay.removeClass("d-none");
 
       let mediaName = mediaVal.substring(mediaVal.lastIndexOf('/'));
-      let preview = getMediaPreview(mediaName, mediaVal);
+      let preview = getMediaPreview(type, mediaName, mediaVal);
 
       mediapreview.html(preview);
     }
@@ -38,7 +38,7 @@ $(document).ready(function () {
       let file = Object.values(result)[0];
       let url = file.tempfile;
       let tempName = url.substring(url.lastIndexOf('/'));
-      let preview = getMediaPreview(file.filename, 'temp_uploads' + tempName);
+      let preview = getMediaPreview(type, file.filename, 'temp_uploads' + tempName);
       currentTempFile = tempName;
 
       mediapreview.html(preview);
@@ -145,31 +145,5 @@ $(document).ready(function () {
   window.onbeforeunload = async function () {
     await removeTempFile();
   };
-
-  function getMediaPreview(mediaName, mediaVal) {
-    let preview = '';
-    switch (type) {
-      case 'image':
-        preview = `
-          <img src="/${mediaVal}" height="100">
-          <a href="/${mediaVal}" target="_blank">${mediaName}</a>
-        `;
-        break;
-      case 'video':
-        preview = `
-          <video height="100" controls>
-            <source src="/${mediaVal}">
-          </video>
-          <a href="/${mediaVal}" target="_blank">${mediaName}</a>
-        `;
-        break;
-      default:
-        preview = `
-          <a href="/${mediaVal}" target="_blank">${mediaName}</a>
-        `;
-    }
-
-    return preview;
-  }
 
 });
