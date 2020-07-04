@@ -32,6 +32,7 @@ async function needTobeAuthor(
       id = context.params.id;
     }
 
+
     let entity: any = await repository.findOneByID(id);
 
     if (
@@ -59,8 +60,8 @@ async function needToBePublished(
 ) {
   try {
     let currentUser = await currentUserSession.get(context);
-    const id: string = context.params.id;
-    let entity: any = await repository.findOneByID(id);
+    let path: string = context.request.url.pathname;
+    let entity: any = await repository.findOneByFilters({path: path});
 
     if (!entity.published && !currentUser) {
       context.throw(Status.Unauthorized, "Unauthorized");

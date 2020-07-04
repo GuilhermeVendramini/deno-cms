@@ -4,6 +4,7 @@ const entitySchema = {
   data: vs.object({
     schemaObject: {
       title: vs.string({
+        trims: true,
         maxLength: {
           length: 150,
           trims: true,

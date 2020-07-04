@@ -12,6 +12,7 @@ import entity from "../../entity.ts";
 import cmsErrors from "../../../../../shared/utils/errors/cms/cmsErrors.ts";
 import entityReferenceHelper from "../../../entity_reference/utils/entityReferenceHelper.ts";
 import currentUserSession from "../../../../../shared/utils/sessions/currentUserSession.ts";
+import pathauto from "../../../../../shared/utils/pathauto/defaultPathauto.ts";
 
 const repository = entityRepository.getRepository(entity.bundle);
 
@@ -128,14 +129,22 @@ export default {
       );
 
       let content: ContentEntity | undefined;
+      let path: string | undefined;
 
       if (validated) {
+        path = await pathauto.generate(
+          entity.bundle,
+          [entity.bundle, entity.type, validated.data.title],
+          id,
+        );
+
         content = new ContentEntity(
           validated.data,
           entity.type,
           currentUser,
           Date.now(),
           validated.published,
+          path,
         );
       }
 
@@ -149,7 +158,7 @@ export default {
           id = result?.$oid;
         }
 
-        context.response.redirect(`/${entity.type}/${id}`);
+        context.response.redirect(path);
         return;
       }
 
@@ -181,9 +190,9 @@ export default {
   async view(context: Record<string, any>) {
     try {
       let currentUser = await currentUserSession.get(context);
-      let id: string = context.params.id;
+      let path: string = context.request.url.pathname;
       let content: any | undefined;
-      content = await repository.findOneByID(id);
+      content = await repository.findOneByFilters({ path: path });
 
       if (content && Object.keys(content).length != 0) {
         context.response.body = await renderFileToString(

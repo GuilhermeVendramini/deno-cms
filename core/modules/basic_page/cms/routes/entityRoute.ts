@@ -7,35 +7,37 @@ import cmsMiddleware from "../../../../../shared/middlewares/cmsMiddleware.ts";
 
 router
   .get(
-    `/admin/content/${entity.type}/add`,
+    `/admin/${entity.bundle}/${entity.type}/add`,
     loggedMiddleware.needToBeLogged,
     entityController.add,
   )
   .get(
-    `/admin/content/${entity.type}/edit/:id`,
+    `/admin/${entity.bundle}/${entity.type}/edit/:id`,
     loggedMiddleware.needToBeLogged,
     baseEntityMiddleware.needToBeContentAuthor,
     entityController.add,
   )
   .get(
-    `/${entity.type}/:id`,
+    `/${entity.bundle.replace("_", "-")}/${
+      entity.type.replace("_", "-")
+    }/:title`,
     baseEntityMiddleware.contentNeedToBePublished,
     entityController.view,
   )
   .post(
-    `/admin/content/${entity.type}/add`,
+    `/admin/${entity.bundle}/${entity.type}/add`,
     loggedMiddleware.needToBeLogged,
     cmsMiddleware.submittedByForm,
     entityController.addPost,
   )
   .get(
-    `/admin/content/${entity.type}/delete/:id`,
+    `/admin/${entity.bundle}/${entity.type}/delete/:id`,
     loggedMiddleware.needToBeLogged,
     baseEntityMiddleware.needToBeContentAuthor,
     entityController.delete,
   )
   .post(
-    `/admin/content/${entity.type}/delete`,
+    `/admin/${entity.bundle}/${entity.type}/delete`,
     loggedMiddleware.needToBeLogged,
     baseEntityMiddleware.needToBeContentAuthor,
     cmsMiddleware.submittedByForm,
