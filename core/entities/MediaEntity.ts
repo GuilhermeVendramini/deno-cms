@@ -10,13 +10,15 @@ export class MediaEntity extends BaseEntity {
     author: UserBaseEntity | undefined,
     created: number,
     published: boolean,
+    path: string,
   ) {
     super(
       type,
-      'media',
+      "media",
       author,
       created,
       published,
+      path,
     );
     this.data = data;
   }

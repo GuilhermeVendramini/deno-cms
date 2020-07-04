@@ -4,18 +4,19 @@ import { ObjectId } from "mongo";
 const data = DB.collection("media");
 
 export default {
-  async insertOne(term: any): Promise<any> {
-    return await data.insertOne(term);
+  async insertOne(media: any): Promise<any> {
+    return await data.insertOne(media);
   },
 
-  async updateOne(id: string, term: any): Promise<any> {
+  async updateOne(id: string, media: any): Promise<any> {
     return await data.updateOne(
       { _id: ObjectId(id) },
       {
         $set: {
-          data: term.data,
-          updated: term.updated,
-          published: term.published,
+          data: media.data,
+          updated: media.updated,
+          published: media.published,
+          path: media.path,
         },
       },
     );
@@ -61,5 +62,15 @@ export default {
 
   async deleteOne(id: string): Promise<any> {
     return await data.deleteOne({ _id: ObjectId(id) });
+  },
+
+  async findOneByFilters(filters: {}): Promise<{}> {
+    let result: any;
+
+    result = await data.findOne(filters);
+
+    if (result) return result;
+
+    return {};
   },
 };

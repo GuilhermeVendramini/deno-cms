@@ -1,6 +1,6 @@
-function getTemplate(field, entity, type, data, picked) {
+function getTemplate(field, bundle, type, data, picked) {
   let template;
-  switch (entity) {
+  switch (bundle) {
     case 'taxonomy':
       template = getTaxonomyTemplate(field, data, picked);
       break;

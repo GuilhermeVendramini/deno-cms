@@ -27,7 +27,7 @@
         <% for(var i=0; i < media.length; i++) { %>
         <tr>
           <th scope="row"><%= media[i]._id.$oid %></th>
-          <td><a href='/<%= entity.bundle %>/<%= media[i].type %>/<%= media[i]._id.$oid %>'><%= media[i].data.title %></a></td>
+          <td><a href='<%= media[i].path %>'><%= media[i].data.title %></a></td>
           <td><%= media[i].author.name %></td>
           <td><%= media[i].created %></td>
           <td><%= media[i].updated %></td>

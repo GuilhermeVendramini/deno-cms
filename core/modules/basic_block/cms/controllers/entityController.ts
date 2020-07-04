@@ -7,15 +7,18 @@ import {
 } from "oak";
 import vs from "value_schema";
 import entitySchema from "../../schemas/entitySchema.ts";
-import blockRepository from "../../../../../repositories/mongodb/block/blockRepository.ts";
+import entityRepository from "../../../../../repositories/mongodb/entity/entityRepository.ts";
 import entity from "../../entity.ts";
 import cmsErrors from "../../../../../shared/utils/errors/cms/cmsErrors.ts";
 import currentUserSession from "../../../../../shared/utils/sessions/currentUserSession.ts";
+import pathauto from "../../../../../shared/utils/pathauto/defaultPathauto.ts";
+
+const repository = entityRepository.getRepository(entity.bundle);
 
 export default {
   async list(context: Record<string, any>) {
     let block: [] | undefined;
-    block = await blockRepository.find(entity.type);
+    block = await repository.find(entity.type);
     context.response.body = await renderFileToString(
       `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityListView.ejs`,
       {
@@ -33,7 +36,7 @@ export default {
       let block: {} | undefined;
 
       if (id) {
-        block = await blockRepository.findOneByID(id);
+        block = await repository.findOneByID(id);
       }
 
       context.response.body = await renderFileToString(
@@ -77,14 +80,22 @@ export default {
       );
 
       let block: BlockEntity | undefined;
+      let path: string | undefined;
 
       if (validated) {
+        path = await pathauto.generate(
+          entity.bundle,
+          [entity.bundle, entity.type, validated.data.title],
+          id,
+        );
+
         block = new BlockEntity(
           validated.data,
           entity.type,
           currentUser,
           Date.now(),
           validated.published,
+          path,
         );
       }
 
@@ -92,15 +103,13 @@ export default {
         let result: any;
 
         if (id) {
-          result = await blockRepository.updateOne(id, block);
+          result = await repository.updateOne(id, block);
         } else {
-          result = await blockRepository.insertOne(block);
+          result = await repository.insertOne(block);
           id = result?.$oid;
         }
 
-        context.response.redirect(
-          `/admin/${entity.bundle}/${entity.type}`,
-        );
+        context.response.redirect(path);
         return;
       }
 
@@ -132,9 +141,9 @@ export default {
   async view(context: Record<string, any>) {
     try {
       let currentUser = await currentUserSession.get(context);
-      let id: string = context.params.id;
+      let path: string = context.request.url.pathname;
       let block: any | undefined;
-      block = await blockRepository.findOneByID(id);
+      block = await repository.findOneByFilters({ path: path });
 
       if (block && Object.keys(block).length != 0) {
         context.response.body = await renderFileToString(
@@ -160,7 +169,7 @@ export default {
     try {
       let id: string = context.params.id;
       let block: any | undefined;
-      block = await blockRepository.findOneByID(id);
+      block = await repository.findOneByID(id);
 
       if (block && Object.keys(block).length != 0) {
         context.response.body = await renderFileToString(
@@ -186,10 +195,10 @@ export default {
       id = body.value.get("id");
 
       let block: any | undefined;
-      block = await blockRepository.findOneByID(id);
+      block = await repository.findOneByID(id);
 
       if (block && Object.keys(block).length != 0) {
-        await blockRepository.deleteOne(id);
+        await repository.deleteOne(id);
       }
       context.response.redirect(
         `/admin/${entity.bundle}/${entity.type}`,

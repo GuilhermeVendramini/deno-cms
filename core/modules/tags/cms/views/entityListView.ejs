@@ -27,7 +27,7 @@
         <% for(var i=0; i < term.length; i++) { %>
         <tr>
           <th scope="row"><%= term[i]._id.$oid %></th>
-          <td><a href='/<%= entity.bundle %>/<%= term[i].type %>/<%= term[i]._id.$oid %>'><%= term[i].data.title %></a></td>
+          <td><a href='<%= term[i].path %>'><%= term[i].data.title %></a></td>
           <td><%= term[i].author.name %></td>
           <td><%= term[i].created %></td>
           <td><%= term[i].updated %></td>

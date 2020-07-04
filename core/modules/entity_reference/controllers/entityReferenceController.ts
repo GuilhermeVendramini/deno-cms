@@ -3,19 +3,19 @@ import entityRepository from "../../../../repositories/mongodb/entity/entityRepo
 export default {
   async list(context: Record<string, any>) {
     try {
-      let entity: string | undefined;
+      let bundle: string | undefined;
       let type: string | undefined;
 
-      entity = context.params.entity;
+      bundle = context.params.bundle;
       type = context.params.type;
 
-      if (!entity && !type) {
+      if (!bundle && !type) {
         context.response.body = "{}";
         context.response.type = "json";
         return;
       }
 
-      let repository = entityRepository.getRepository(entity as string);
+      let repository = entityRepository.getRepository(bundle as string);
 
       if (!repository) {
         context.response.body = "{}";
@@ -29,7 +29,7 @@ export default {
       let result = {};
       if (entities && Object.keys(entities).length != 0) {
         result = {
-          entity: entity,
+          bundle: bundle,
           type: type,
           data: entities.filter((entity: any) => {
             return entity.published === true;

@@ -7,6 +7,7 @@ export abstract class BaseEntity {
   protected created: number;
   protected updated: number;
   protected published: boolean;
+  protected path: string;
 
   constructor(
     type: string,
@@ -14,6 +15,7 @@ export abstract class BaseEntity {
     author: UserBaseEntity | undefined,
     created: number,
     published: boolean,
+    path: string,
   ) {
     this.type = type;
     this.bundle = bundle;
@@ -21,5 +23,6 @@ export abstract class BaseEntity {
     this.created = created;
     this.published = published;
     this.updated = Date.now();
+    this.path = path;
   }
 }

@@ -41,4 +41,14 @@ export default {
 
     return [];
   },
+
+  async findOneByFilters(filters: {}): Promise<{}> {
+    let result: any;
+
+    result = await data.findOne(filters);
+
+    if (result) return result;
+
+    return {};
+  },
 };

@@ -17,19 +17,19 @@ $(document).ready(function () {
 
         setSortable(field);
 
-        $.each(dataEntities, function (entity, types) {
+        $.each(dataEntities, function (bundle, types) {
           entityContainer.append(
-            `<div class="bg-light p-2 mb-3 field-${field} entity ${entity}">
-              <a class="collapsed" href="#${entity}${index}" role="button" aria-controls="${entity}${index}" data-toggle="collapse" aria-expanded="false">
+            `<div class="bg-light p-2 mb-3 field-${field} entity ${bundle}">
+              <a class="collapsed" href="#${bundle}${index}" role="button" aria-controls="${bundle}${index}" data-toggle="collapse" aria-expanded="false">
                 <h5 class="border-bottom border-white pb-2 text-center text-capitalize font-weight-bold">
-                  ${entity}
+                  ${bundle}
                 </h5>
               </a>
-              <div id="${entity}${index}" class="items collapse"></div>
+              <div id="${bundle}${index}" class="items collapse"></div>
             </div>`
           );
 
-          let entityItems = entityContainer.find('.entity.' + entity + ' > .items').first();
+          let entityItems = entityContainer.find('.entity.' + bundle + ' > .items').first();
 
           $.each(types, async function (_, type) {
             entityItems.append(
@@ -40,10 +40,10 @@ $(document).ready(function () {
                   </h6>
                   <div class="actions">
                     <span class="add-new">
-                      <a target="_blank" class="btn btn-outline-secondary btn-sm" href="/admin/${entity}/${type}/add">+</a>
+                      <a target="_blank" class="btn btn-outline-secondary btn-sm" href="/admin/${bundle}/${type}/add">+</a>
                     </span>
                     <span class="refresh">
-                      <a data-field="${field}" data-entity="${entity}" data-type="${type}" class="btn btn-outline-secondary btn-sm" href="#">↻</a>
+                      <a data-field="${field}" data-entity="${bundle}" data-type="${type}" class="btn btn-outline-secondary btn-sm" href="#">↻</a>
                     </span>
                   </div>
                 </div>
@@ -51,7 +51,7 @@ $(document).ready(function () {
               </div>`
             );
 
-            let entities = await getEntities(entity, type);
+            let entities = await getEntities(bundle, type);
             loadEntities.push(entities);
 
             if (entities && entities.data) {
@@ -59,7 +59,7 @@ $(document).ready(function () {
               $.each(entities.data, function (_, data) {
                 let picked = getPickedItem(field, data._id.$oid) ? true : false;
                 typeItems.append(
-                  getTemplate(field, entity, type, data, picked)
+                  getTemplate(field, bundle, type, data, picked)
                 );
                 clickAction(field, data);
               });
@@ -70,10 +70,10 @@ $(document).ready(function () {
     }
   }
 
-  async function getEntities(entity, type) {
+  async function getEntities(bundle, type) {
     let result = null;
     await $.ajax({
-      url: '/entity-reference/' + entity + '/' + type,
+      url: '/entity-reference/' + bundle + '/' + type,
       type: 'get',
       dataType: 'json',
       async: true,

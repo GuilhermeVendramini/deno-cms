@@ -8,50 +8,52 @@ import { upload } from "upload";
 
 router
   .get(
-    `/admin/media/${entity.type}`,
+    `/admin/${entity.bundle}/${entity.type}`,
     loggedMiddleware.needToBeLogged,
     entityController.list,
   )
   .get(
-    `/admin/media/${entity.type}/add`,
+    `/admin/${entity.bundle}/${entity.type}/add`,
     loggedMiddleware.needToBeLogged,
     entityController.add,
   )
   .get(
-    `/admin/media/${entity.type}/edit/:id`,
+    `/admin/${entity.bundle}/${entity.type}/edit/:id`,
     loggedMiddleware.needToBeLogged,
     baseEntityMiddleware.needToBeMediaAuthor,
     entityController.add,
   )
   .get(
-    `/media/${entity.type}/:id`,
+    `/${entity.bundle.replace("_", "-")}/${
+      entity.type.replace("_", "-")
+    }/:title`,
     baseEntityMiddleware.mediaNeedToBePublished,
     entityController.view,
   )
   .post(
-    `/admin/media/${entity.type}/add`,
+    `/admin/${entity.bundle}/${entity.type}/add`,
     loggedMiddleware.needToBeLogged,
     cmsMiddleware.submittedByForm,
     entityController.addPost,
   )
   .get(
-    `/admin/media/${entity.type}/delete/:id`,
+    `/admin/${entity.bundle}/${entity.type}/delete/:id`,
     loggedMiddleware.needToBeLogged,
     baseEntityMiddleware.needToBeMediaAuthor,
     entityController.delete,
   )
   .post(
-    `/admin/media/${entity.type}/delete`,
+    `/admin/${entity.bundle}/${entity.type}/delete`,
     loggedMiddleware.needToBeLogged,
     baseEntityMiddleware.needToBeMediaAuthor,
     cmsMiddleware.submittedByForm,
     entityController.deletePost,
   )
   .post(
-    `/media/${entity.type}`,
+    `/${entity.bundle}/${entity.type}`,
     loggedMiddleware.needToBeLogged,
     upload(
-      "files/media/videos",
+      `files/${entity.bundle}/videos`,
       ["mp4", "webm"],
       2 * 80000000,
       2 * 40000000,
@@ -64,7 +66,7 @@ router
     },
   )
   .post(
-    `/media/temporary/${entity.type}`,
+    `/${entity.bundle}/temporary/${entity.type}`,
     loggedMiddleware.needToBeLogged,
     upload(
       "temp_uploads",

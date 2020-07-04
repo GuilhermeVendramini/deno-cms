@@ -4,7 +4,7 @@ import loggedMiddleware from "../../../../shared/middlewares/loggedMiddleware.ts
 
 router
   .get(
-    "/entity-reference/:entity/:type",
+    "/entity-reference/:bundle/:type",
     loggedMiddleware.needToBeLogged,
     entityReferenceController.list,
   )

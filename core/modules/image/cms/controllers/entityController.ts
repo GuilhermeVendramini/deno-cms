@@ -7,16 +7,19 @@ import {
 } from "oak";
 import vs from "value_schema";
 import entitySchema from "../../schemas/entitySchema.ts";
-import mediaRepository from "../../../../../repositories/mongodb/media/mediaRepository.ts";
+import entityRepository from "../../../../../repositories/mongodb/entity/entityRepository.ts";
 import entity from "../../entity.ts";
 import cmsErrors from "../../../../../shared/utils/errors/cms/cmsErrors.ts";
 import mediaHelper from "../../../media/utils/mediaHelper.ts";
 import currentUserSession from "../../../../../shared/utils/sessions/currentUserSession.ts";
+import pathauto from "../../../../../shared/utils/pathauto/defaultPathauto.ts";
+
+const repository = entityRepository.getRepository(entity.bundle);
 
 export default {
   async list(context: Record<string, any>) {
     let media: [] | undefined;
-    media = await mediaRepository.find(entity.type);
+    media = await repository.find(entity.type);
     context.response.body = await renderFileToString(
       `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityListView.ejs`,
       {
@@ -34,7 +37,7 @@ export default {
       let media: {} | undefined;
 
       if (id) {
-        media = await mediaRepository.findOneByID(id);
+        media = await repository.findOneByID(id);
       }
 
       context.response.body = await renderFileToString(
@@ -78,14 +81,22 @@ export default {
       );
 
       let media: MediaEntity | undefined;
+      let path: string | undefined;
 
       if (validated) {
+        path = await pathauto.generate(
+          entity.bundle,
+          [entity.bundle, entity.type, validated.data.title],
+          id,
+        );
+
         media = new MediaEntity(
           validated.data,
           entity.type,
           currentUser,
           Date.now(),
           validated.published,
+          path,
         );
       }
 
@@ -94,11 +105,11 @@ export default {
         let oldImage: string | undefined;
 
         if (id) {
-          let oldMedia: any = await mediaRepository.findOneByID(id);
+          let oldMedia: any = await repository.findOneByID(id);
           oldImage = oldMedia?.data?.image;
-          result = await mediaRepository.updateOne(id, media);
+          result = await repository.updateOne(id, media);
         } else {
-          result = await mediaRepository.insertOne(media);
+          result = await repository.insertOne(media);
           id = result?.$oid;
         }
 
@@ -106,9 +117,7 @@ export default {
           await mediaHelper.deleteFile(oldImage);
         }
 
-        context.response.redirect(
-          `/admin/media/${entity.type}`,
-        );
+        context.response.redirect(path);
         return;
       }
 
@@ -139,10 +148,10 @@ export default {
 
   async view(context: Record<string, any>) {
     try {
-      let currentUser = await currentUserSession.get(context);;
-      let id: string = context.params.id;
+      let currentUser = await currentUserSession.get(context);
+      let path: string = context.request.url.pathname;
       let media: any | undefined;
-      media = await mediaRepository.findOneByID(id);
+      media = await repository.findOneByFilters({ path: path });
 
       if (media && Object.keys(media).length != 0) {
         context.response.body = await renderFileToString(
@@ -168,7 +177,7 @@ export default {
     try {
       let id: string = context.params.id;
       let media: any | undefined;
-      media = await mediaRepository.findOneByID(id);
+      media = await repository.findOneByID(id);
 
       if (media && Object.keys(media).length != 0) {
         context.response.body = await renderFileToString(
@@ -194,10 +203,10 @@ export default {
       id = body.value.get("id");
 
       let media: any | undefined;
-      media = await mediaRepository.findOneByID(id);
+      media = await repository.findOneByID(id);
 
       if (media && Object.keys(media).length != 0) {
-        await mediaRepository.deleteOne(id);
+        await repository.deleteOne(id);
 
         if (media?.data?.image) {
           await mediaHelper.deleteFile(media.data.image);

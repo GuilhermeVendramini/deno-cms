@@ -16,6 +16,7 @@ export default {
           data: term.data,
           updated: term.updated,
           published: term.published,
+          path: term.path,
         },
       },
     );
@@ -61,5 +62,15 @@ export default {
 
   async deleteOne(id: string): Promise<any> {
     return await data.deleteOne({ _id: ObjectId(id) });
+  },
+
+  async findOneByFilters(filters: {}): Promise<{}> {
+    let result: any;
+
+    result = await data.findOne(filters);
+
+    if (result) return result;
+
+    return {};
   },
 };

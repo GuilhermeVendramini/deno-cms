@@ -10,13 +10,15 @@ export class BlockEntity extends BaseEntity {
     author: UserBaseEntity | undefined,
     created: number,
     published: boolean,
+    path: string,
   ) {
     super(
       type,
-      'block',
+      "block",
       author,
       created,
       published,
+      path,
     );
     this.data = data;
   }

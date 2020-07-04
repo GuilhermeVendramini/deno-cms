@@ -10,13 +10,15 @@ export class TaxonomyEntity extends BaseEntity {
     author: UserBaseEntity | undefined,
     created: number,
     published: boolean,
+    path: string,
   ) {
     super(
       type,
-      'taxonomy',
+      "taxonomy",
       author,
       created,
       published,
+      path,
     );
     this.data = data;
   }

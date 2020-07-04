@@ -3,7 +3,6 @@ import { UserBaseEntity } from "../modules/users/entities/UserBaseEntity.ts";
 
 export class ContentEntity extends BaseEntity {
   protected data: any;
-  protected path: string;
 
   constructor(
     data: any,
@@ -19,8 +18,8 @@ export class ContentEntity extends BaseEntity {
       author,
       created,
       published,
+      path,
     );
     this.data = data;
-    this.path = path;
   }
 }

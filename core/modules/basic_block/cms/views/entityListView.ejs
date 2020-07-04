@@ -27,7 +27,7 @@
         <% for(var i=0; i < block.length; i++) { %>
         <tr>
           <th scope="row"><%= block[i]._id.$oid %></th>
-          <td><a href='/<%= entity.bundle %>/<%= block[i].type %>/<%= block[i]._id.$oid %>'><%= block[i].data.title %></a></td>
+          <td><a href='<%= block[i].path %>'><%= block[i].data.title %></a></td>
           <td><%= block[i].author.name %></td>
           <td><%= block[i].created %></td>
           <td><%= block[i].updated %></td>

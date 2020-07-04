@@ -23,7 +23,9 @@ router
     entityController.add,
   )
   .get(
-    `/${entity.bundle}/${entity.type}/:id`,
+    `/${entity.bundle.replace("_", "-")}/${
+      entity.type.replace("_", "-")
+    }/:title`,
     baseEntityMiddleware.blockNeedToBePublished,
     entityController.view,
   )

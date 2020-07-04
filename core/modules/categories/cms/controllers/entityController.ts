@@ -11,6 +11,7 @@ import entityRepository from "../../../../../repositories/mongodb/entity/entityR
 import entity from "../../entity.ts";
 import cmsErrors from "../../../../../shared/utils/errors/cms/cmsErrors.ts";
 import currentUserSession from "../../../../../shared/utils/sessions/currentUserSession.ts";
+import pathauto from "../../../../../shared/utils/pathauto/defaultPathauto.ts";
 
 const repository = entityRepository.getRepository(entity.bundle);
 
@@ -78,14 +79,22 @@ export default {
       );
 
       let term: TaxonomyEntity | undefined;
+      let path: string | undefined;
 
       if (validated) {
+        path = await pathauto.generate(
+          entity.bundle,
+          [entity.bundle, entity.type, validated.data.title],
+          id,
+        );
+
         term = new TaxonomyEntity(
           validated.data,
           entity.type,
           currentUser,
           Date.now(),
           validated.published,
+          path,
         );
       }
 
@@ -99,9 +108,7 @@ export default {
           id = result?.$oid;
         }
 
-        context.response.redirect(
-          `/admin/${entity.bundle}/${entity.type}`,
-        );
+        context.response.redirect(path);
         return;
       }
 
@@ -133,9 +140,9 @@ export default {
   async view(context: Record<string, any>) {
     try {
       let currentUser = await currentUserSession.get(context);
-      let id: string = context.params.id;
+      let path: string = context.request.url.pathname;
       let term: any | undefined;
-      term = await repository.findOneByID(id);
+      term = await repository.findOneByFilters({ path: path });
 
       if (term && Object.keys(term).length != 0) {
         context.response.body = await renderFileToString(

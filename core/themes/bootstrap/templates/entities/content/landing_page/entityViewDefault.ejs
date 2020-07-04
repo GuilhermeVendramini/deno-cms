@@ -21,10 +21,9 @@
                 <h2><%= references[i].entity.data?.title %></h2>
                 <%- references[i].entity.data?.body %>
               <% } else if (references[i].entity.type == 'basic_page') { %>
-                <% let url = references[i].entity.type + '/' + references[i].entity._id.$oid %>
                 <h2><%= references[i].entity.data?.title %></h2>
                 <%- references[i].entity.data?.body.substring(0,200) %>
-                ... <a href="/<%= url %>">see more</a>
+                ... <a href="<%= references[i].entity.path %>">see more</a>
               <% } %>
             </div>
           <% } %>
