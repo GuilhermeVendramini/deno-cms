@@ -26,13 +26,18 @@ export default {
         content = await repository.findOneByID(id);
       }
 
+      let page = {
+        content: content,
+        entity: entity,
+        error: false,
+        message: false,
+      };
+
       context.response.body = await renderFileToString(
         `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormView.ejs`,
         {
           currentUser: currentUser,
-          message: false,
-          content: content,
-          entity: entity,
+          page: page,
         },
       );
       context.response.status = Status.OK;
@@ -43,7 +48,7 @@ export default {
     }
   },
 
-  async addPost(context: Record<string, any>) {
+  async addPost(context: Record<string, any>, next: Function) {
     try {
       let body = context.getBody;
       let currentUser = context.getCurrentUser;
@@ -96,32 +101,56 @@ export default {
           id = result?.$oid;
         }
 
-        context.response.redirect(path);
+        context["getRedirect"] = path;
+
+        await next();
+        // context.response.redirect(path);
         return;
       }
 
-      context.response.body = await renderFileToString(
-        `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormView.ejs`,
-        {
-          currentUser: currentUser,
-          message: "Error saving content. Please try again.",
-          content: false,
-          entity: entity,
-        },
-      );
-      context.response.status = Status.OK;
+      let page = {
+        content: false,
+        entity: entity,
+        error: true,
+        message: "Error saving content. Please try again.",
+      };
+
+      context['getPage'] = page;
+
+      // context.response.body = await renderFileToString(
+      //   `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormView.ejs`,
+      //   {
+      //     currentUser: currentUser,
+      //     message: "Error saving content. Please try again.",
+      //     content: false,
+      //     entity: entity,
+      //   },
+      // );
+      // context.response.status = Status.OK;
+      // return;
+      await next();
       return;
     } catch (error) {
-      context.response.body = await renderFileToString(
-        `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormView.ejs`,
-        {
-          currentUser: context.getCurrentUser,
-          message: error.message,
-          content: false,
-          entity: entity,
-        },
-      );
-      context.response.status = Status.OK;
+      let page = {
+        content: false,
+        entity: entity,
+        error: true,
+        message: error.message,
+      };
+
+      context['getPage'] = page;
+      // context.response.body = await renderFileToString(
+      //   `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormView.ejs`,
+      //   {
+      //     currentUser: context.getCurrentUser,
+      //     message: error.message,
+      //     content: false,
+      //     entity: entity,
+      //   },
+      // );
+      // context.response.status = Status.OK;
+      // return;
+      await next();
       return;
     }
   },

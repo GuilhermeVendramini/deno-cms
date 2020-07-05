@@ -4,6 +4,7 @@ import loggedMiddleware from "../../../../../shared/middlewares/loggedMiddleware
 import entity from "../../entity.ts";
 import baseEntityMiddleware from "../../../../../shared/middlewares/baseEntityMiddleware.ts";
 import cmsMiddleware from "../../../../../shared/middlewares/cmsMiddleware.ts";
+import entityBaseController from "../../../../entities/controllers/entityBaseController.ts";
 
 router
   .get(
@@ -29,6 +30,7 @@ router
     loggedMiddleware.needToBeLogged,
     cmsMiddleware.submittedByForm,
     entityController.addPost,
+    entityBaseController.save,
   )
   .get(
     `/admin/${entity.bundle}/${entity.type}/delete/:id`,
