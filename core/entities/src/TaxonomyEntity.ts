@@ -1,7 +1,7 @@
 import { BaseEntity } from "./BaseEntity.ts";
-import { UserBaseEntity } from "../modules/users/entities/UserBaseEntity.ts";
+import { UserBaseEntity } from "../../modules/users/entities/UserBaseEntity.ts";
 
-export class MediaEntity extends BaseEntity {
+export class TaxonomyEntity extends BaseEntity {
   protected data: any;
 
   constructor(
@@ -14,7 +14,7 @@ export class MediaEntity extends BaseEntity {
   ) {
     super(
       type,
-      "media",
+      "taxonomy",
       author,
       created,
       published,

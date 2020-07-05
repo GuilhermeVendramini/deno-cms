@@ -1,7 +1,7 @@
 import { renderFileToString } from "dejs";
 import {
   TaxonomyEntity,
-} from "../../../../entities/TaxonomyEntity.ts";
+} from "../../../../entities/src/TaxonomyEntity.ts";
 import {
   Status,
 } from "oak";

@@ -1,7 +1,7 @@
 import { BaseEntity } from "./BaseEntity.ts";
-import { UserBaseEntity } from "../modules/users/entities/UserBaseEntity.ts";
+import { UserBaseEntity } from "../../modules/users/entities/UserBaseEntity.ts";
 
-export class ContentEntity extends BaseEntity {
+export class BlockEntity extends BaseEntity {
   protected data: any;
 
   constructor(
@@ -14,7 +14,7 @@ export class ContentEntity extends BaseEntity {
   ) {
     super(
       type,
-      "content",
+      "block",
       author,
       created,
       published,

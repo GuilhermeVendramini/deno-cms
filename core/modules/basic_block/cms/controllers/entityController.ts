@@ -1,7 +1,7 @@
 import { renderFileToString } from "dejs";
 import {
   BlockEntity,
-} from "../../../../entities/BlockEntity.ts";
+} from "../../../../entities/src/BlockEntity.ts";
 import {
   Status,
 } from "oak";

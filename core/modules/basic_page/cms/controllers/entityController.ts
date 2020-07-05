@@ -1,7 +1,7 @@
 import { renderFileToString } from "dejs";
 import {
   ContentEntity,
-} from "../../../../entities/ContentEntity.ts";
+} from "../../../../entities/src/ContentEntity.ts";
 import {
   Status,
 } from "oak";
@@ -49,17 +49,19 @@ export default {
   },
 
   async addPost(context: Record<string, any>, next: Function) {
+    let data: any = {};
+    let published: boolean = false;
+
     try {
       let body = context.getBody;
       let currentUser = context.getCurrentUser;
       let validated: any;
-      let data: any = {};
       let id: string = body.value.get("id");
       let properties: any = [
         "title",
         "body",
       ];
-      let published: boolean;
+
       published = body.value.get("published") ? true : false;
 
       properties.forEach(function (field: string) {
@@ -104,54 +106,28 @@ export default {
         context["getRedirect"] = path;
 
         await next();
-        // context.response.redirect(path);
         return;
       }
 
       let page = {
-        content: false,
+        content: { data: data, published: published },
         entity: entity,
         error: true,
         message: "Error saving content. Please try again.",
       };
 
-      context['getPage'] = page;
-
-      // context.response.body = await renderFileToString(
-      //   `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormView.ejs`,
-      //   {
-      //     currentUser: currentUser,
-      //     message: "Error saving content. Please try again.",
-      //     content: false,
-      //     entity: entity,
-      //   },
-      // );
-      // context.response.status = Status.OK;
-      // return;
+      context["getPage"] = page;
       await next();
-      return;
     } catch (error) {
       let page = {
-        content: false,
+        content: { data: data, published: published },
         entity: entity,
         error: true,
         message: error.message,
       };
 
-      context['getPage'] = page;
-      // context.response.body = await renderFileToString(
-      //   `${Deno.cwd()}/core/modules/${entity.type}/cms/views/entityFormView.ejs`,
-      //   {
-      //     currentUser: context.getCurrentUser,
-      //     message: error.message,
-      //     content: false,
-      //     entity: entity,
-      //   },
-      // );
-      // context.response.status = Status.OK;
-      // return;
+      context["getPage"] = page;
       await next();
-      return;
     }
   },
 

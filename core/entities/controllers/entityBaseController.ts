@@ -1,25 +1,25 @@
 import { renderFileToString } from "dejs";
+import {
+  Status,
+} from "oak";
 
 export default {
   async save(context: Record<string, any>) {
-
-    let path : string | undefined = context?.getRedirect;
+    let path: string | undefined = context?.getRedirect;
 
     if (path) {
       context.response.redirect(path);
       return;
     }
 
-    let currentUser = context.getCurrentUser;
-
-    if (context.getPage.error) {
-      context.response.body = await renderFileToString(
-        `${Deno.cwd()}/core/modules/${context.getPage.type}/cms/views/entityFormView.ejs`,
-        {
-          currentUser: currentUser,
-          page: context.getPage,
-        },
-      );
-    }
-  }
-}
+    let page = context.getPage;
+    context.response.body = await renderFileToString(
+      `${Deno.cwd()}/core/modules/${page.entity.type}/cms/views/entityFormView.ejs`,
+      {
+        currentUser: context.getCurrentUser,
+        page: page,
+      },
+    );
+    return;
+  },
+};

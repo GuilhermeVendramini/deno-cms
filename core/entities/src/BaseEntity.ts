@@ -1,4 +1,4 @@
-import { UserBaseEntity } from "../modules/users/entities/UserBaseEntity.ts";
+import { UserBaseEntity } from "../../modules/users/entities/UserBaseEntity.ts";
 
 export abstract class BaseEntity {
   protected type: string;

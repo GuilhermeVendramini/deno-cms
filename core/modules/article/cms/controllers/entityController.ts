@@ -1,7 +1,7 @@
 import { renderFileToString } from "dejs";
 import {
   ContentEntity,
-} from "../../../../entities/ContentEntity.ts";
+} from "../../../../entities/src/ContentEntity.ts";
 import {
   Status,
 } from "oak";
