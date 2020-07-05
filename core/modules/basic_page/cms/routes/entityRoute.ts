@@ -1,5 +1,5 @@
 import router from "../../../../router.ts";
-import entityController from "../controllers/entityController.ts";
+import entityMiddleware from "../middlewares/entityMiddleware.ts";
 import loggedMiddleware from "../../../../../shared/middlewares/loggedMiddleware.ts";
 import entity from "../../entity.ts";
 import baseEntityMiddleware from "../../../../../shared/middlewares/baseEntityMiddleware.ts";
@@ -10,40 +10,45 @@ router
   .get(
     `/admin/${entity.bundle}/${entity.type}/add`,
     loggedMiddleware.needToBeLogged,
-    entityController.add,
+    entityMiddleware.add,
+    entityBaseController.add,
   )
   .get(
     `/admin/${entity.bundle}/${entity.type}/edit/:id`,
     loggedMiddleware.needToBeLogged,
     baseEntityMiddleware.needToBeContentAuthor,
-    entityController.add,
+    entityMiddleware.add,
+    entityBaseController.add,
   )
   .get(
     `/${entity.bundle.replace("_", "-")}/${
       entity.type.replace("_", "-")
     }/:title`,
     baseEntityMiddleware.contentNeedToBePublished,
-    entityController.view,
+    entityMiddleware.view,
+    entityBaseController.view,
   )
   .post(
     `/admin/${entity.bundle}/${entity.type}/add`,
     loggedMiddleware.needToBeLogged,
     cmsMiddleware.submittedByForm,
-    entityController.addPost,
-    entityBaseController.save,
+    entityMiddleware.addPost,
+    entityBaseController.addPost,
   )
   .get(
     `/admin/${entity.bundle}/${entity.type}/delete/:id`,
     loggedMiddleware.needToBeLogged,
     baseEntityMiddleware.needToBeContentAuthor,
-    entityController.delete,
+    entityMiddleware.delete,
+    entityBaseController.delete,
   )
   .post(
     `/admin/${entity.bundle}/${entity.type}/delete`,
     loggedMiddleware.needToBeLogged,
     baseEntityMiddleware.needToBeContentAuthor,
     cmsMiddleware.submittedByForm,
-    entityController.deletePost,
+    entityMiddleware.deletePost,
+    entityBaseController.deletePost,
   );
 
 export default router;
