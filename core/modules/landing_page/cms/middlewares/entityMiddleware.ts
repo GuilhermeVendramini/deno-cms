@@ -66,34 +66,22 @@ export default {
         data[field] = body.value.get(field);
       });
 
-      let references: any = [
-        "references",
-      ];
+      context["getRelation"] = {
+        entity: {},
+        references: [],
+      };
 
-      let referenceValues = new Array();
+      let entities = await entityReferenceHelper.setEntityRelation(
+        [
+          "references",
+        ],
+        context,
+      );
 
-      for (let field of references) {
-        let entities = new Array();
-        referenceValues = JSON.parse(body.value.get(field));
-
-        if (referenceValues && referenceValues.length > 0) {
-          for (let value of referenceValues) {
-            let loadedEntity: any = await entityReferenceHelper.entityLoad(
-              value.entity._id.$oid,
-              value.entity.bundle,
-            );
-
-            if (Object.keys(loadedEntity).length != 0) {
-              value.entity = loadedEntity;
-              entities.push(value);
-            }
-          }
-        }
-
-        if (entities.length > 0) {
-          data[field as string] = entities;
-        }
-      }
+      Object.keys(entities).map((field) => {
+        data[field] = entities[field];
+        context["getRelation"]["references"].push(data[field]);
+      });
 
       content = new ContentEntity(
         data,
@@ -130,8 +118,15 @@ export default {
         if (id) {
           await repository.updateOne(id, content);
         } else {
-          await repository.insertOne(content);
+          let result = await repository.insertOne(content);
+          id = result.$oid;
         }
+
+        context["getRelation"]["entity"] = {
+          id: id,
+          bundle: entity.bundle,
+          type: entity.type,
+        };
 
         context["getRedirect"] = path;
         await next();
@@ -227,8 +222,18 @@ export default {
       let content: any | undefined;
       content = await repository.findOneByID(id);
 
+      context["getRelation"] = {
+        entity: {},
+      };
+
       if (content && Object.keys(content).length != 0) {
         await repository.deleteOne(id);
+
+        context["getRelation"]["entity"] = {
+          id: id,
+          bundle: entity.bundle,
+          type: entity.type,
+        };
       }
 
       context["getRedirect"] = path;
