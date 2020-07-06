@@ -69,13 +69,13 @@ export default {
   },
 
   async addPost(context: Record<string, any>, next: Function) {
-    let data: any = {};
     let published: boolean = false;
     let page: any;
     let term: TaxonomyEntity | undefined;
     let id: string = "";
 
     try {
+      let data: any = {};
       let body = context.getBody;
       let currentUser = context.getCurrentUser;
       let validated: any;

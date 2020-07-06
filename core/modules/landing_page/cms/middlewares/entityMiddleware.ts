@@ -9,6 +9,7 @@ import entitySchema from "../../schemas/entitySchema.ts";
 import entityRepository from "../../../../../repositories/mongodb/entity/entityRepository.ts";
 import entity from "../../entity.ts";
 import pathauto from "../../../../../shared/utils/pathauto/defaultPathauto.ts";
+import entityReferenceHelper from "../../../entity_reference/utils/entityReferenceHelper.ts";
 
 const repository = entityRepository.getRepository(entity.bundle);
 
@@ -57,7 +58,6 @@ export default {
       id = body.value.get("id");
       let properties: any = [
         "title",
-        "body",
       ];
 
       published = body.value.get("published") ? true : false;
@@ -65,6 +65,35 @@ export default {
       properties.forEach(function (field: string) {
         data[field] = body.value.get(field);
       });
+
+      let references: any = [
+        "references",
+      ];
+
+      let referenceValues = new Array();
+
+      for (let field of references) {
+        let entities = new Array();
+        referenceValues = JSON.parse(body.value.get(field));
+
+        if (referenceValues && referenceValues.length > 0) {
+          for (let value of referenceValues) {
+            let loadedEntity: any = await entityReferenceHelper.entityLoad(
+              value.entity._id.$oid,
+              value.entity.bundle,
+            );
+
+            if (Object.keys(loadedEntity).length != 0) {
+              value.entity = loadedEntity;
+              entities.push(value);
+            }
+          }
+        }
+
+        if (entities.length > 0) {
+          data[field as string] = entities;
+        }
+      }
 
       content = new ContentEntity(
         data,
