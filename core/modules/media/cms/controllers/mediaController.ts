@@ -1,6 +1,7 @@
 export default {
   async getAssets(context: Record<string, any>) {
     const file = context.params.file;
+    context.response.headers.set("Content-Type", "application/javascript");
     context.response.body = await Deno.readFile(
       `${Deno.cwd()}/core/modules/media/assets/js/${file}`,
     );

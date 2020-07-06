@@ -74,6 +74,7 @@ export default {
     let page: any;
     let media: MediaEntity | undefined;
     let id: string = "";
+    let fileAssist = "";
 
     try {
       let data: any = {};
@@ -91,6 +92,8 @@ export default {
       properties.forEach(function (field: string) {
         data[field] = body.value.get(field);
       });
+
+      fileAssist = data["image"];
 
       validated = vs.applySchemaObject(
         entitySchema,
@@ -137,6 +140,10 @@ export default {
     } catch (error) {
       if (id) {
         media = await repository.findOneByID(id);
+      }
+
+      if (fileAssist) {
+        await mediaHelper.deleteFile(fileAssist);
       }
 
       page = {

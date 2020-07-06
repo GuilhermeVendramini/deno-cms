@@ -42,9 +42,6 @@ $(document).ready(function () {
       currentTempFile = tempName;
 
       mediapreview.html(preview);
-    } else {
-      mediaAlert.removeClass('d-none');
-      mediaAlert.html('Error uploading file');
     }
   });
 
@@ -125,6 +122,9 @@ $(document).ready(function () {
       if ("url" in file) {
         media.val(`${file.url}`);
       }
+    } else {
+      mediaAlert.removeClass('d-none');
+      mediaAlert.html('Error uploading file. Verify if size and file type are accept.');
     }
 
     return result;

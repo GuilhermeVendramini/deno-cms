@@ -21,6 +21,10 @@ router
         context.response.headers.set("Content-Type", "text/css");
       }
 
+      if (ext == "js") {
+        context.response.headers.set("Content-Type", "application/javascript");
+      }
+
       context.response.body = await Deno.readFile(
         `${Deno.cwd()}/core/themes/bootstrap/assets/${folder}/${file}`,
       );
