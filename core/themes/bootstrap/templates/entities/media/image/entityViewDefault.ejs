@@ -1,13 +1,13 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: media.data.title, currentUser: currentUser }) %>
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: page.media.data.title, currentUser: currentUser }) %>
 <div class="container">
   <% if (currentUser) { %>
-    <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: media}) %>
+    <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: page.media}) %>
   <% } %>
-  <% if (media.data) { %>
-  <h1 class="text-center mb-3"><%= media.data.title %></h1>
+  <% if (page?.media?.data) { %>
+  <h1 class="text-center mb-3"><%= page.media.data.title %></h1>
     <div class="media text-center">
-      <% if (media.data.image) { %>
-        <img src="/<%= media.data.image %>" height="200">
+      <% if (page.media.data?.image) { %>
+        <img src="/<%= page.media.data.image %>" height="200">
       <% } %>
     </div>
   <% } %>

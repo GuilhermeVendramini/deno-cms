@@ -97,15 +97,6 @@ export default {
         }
       }
 
-      content = new ContentEntity(
-        data,
-        entity.type,
-        currentUser,
-        Date.now(),
-        published,
-        "",
-      );
-
       validated = vs.applySchemaObject(
         entitySchema,
         { data: data, published: published },

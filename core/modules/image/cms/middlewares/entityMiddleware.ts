@@ -1,6 +1,6 @@
 import {
-  BlockEntity,
-} from "../../../../entities/src/BlockEntity.ts";
+  MediaEntity,
+} from "../../../../entities/src/MediaEntity.ts";
 import {
   Status,
 } from "oak";
@@ -9,17 +9,18 @@ import entitySchema from "../../schemas/entitySchema.ts";
 import entityRepository from "../../../../../repositories/mongodb/entity/entityRepository.ts";
 import entity from "../../entity.ts";
 import pathauto from "../../../../../shared/utils/pathauto/defaultPathauto.ts";
+import mediaHelper from "../../../media/utils/mediaHelper.ts";
 
 const repository = entityRepository.getRepository(entity.bundle);
 
 export default {
   async list(context: Record<string, any>, next: Function) {
     try {
-      let block: [] | undefined;
-      block = await repository.find(entity.type);
+      let media: [] | undefined;
+      media = await repository.find(entity.type);
 
       let page = {
-        block: block,
+        media: media,
         entity: entity,
         error: false,
         message: false,
@@ -41,14 +42,14 @@ export default {
   async add(context: Record<string, any>, next: Function) {
     try {
       let id: string = context.params?.id;
-      let block: {} | undefined;
+      let media: {} | undefined;
 
       if (id) {
-        block = await repository.findOneByID(id);
+        media = await repository.findOneByID(id);
       }
 
       let page = {
-        block: block,
+        media: media,
         entity: entity,
         error: false,
         message: false,
@@ -58,7 +59,7 @@ export default {
       await next();
     } catch (error) {
       let page = {
-        block: false,
+        media: false,
         entity: entity,
         error: true,
         message: error.message,
@@ -71,7 +72,7 @@ export default {
   async addPost(context: Record<string, any>, next: Function) {
     let published: boolean = false;
     let page: any;
-    let block: BlockEntity | undefined;
+    let media: MediaEntity | undefined;
     let id: string = "";
 
     try {
@@ -82,7 +83,7 @@ export default {
       id = body.value.get("id");
       let properties: any = [
         "title",
-        "body",
+        "image",
       ];
 
       published = body.value.get("published") ? true : false;
@@ -105,7 +106,7 @@ export default {
           id,
         );
 
-        block = new BlockEntity(
+        media = new MediaEntity(
           validated.data,
           entity.type,
           currentUser,
@@ -114,10 +115,18 @@ export default {
           path,
         );
 
+        let oldImage: string | undefined;
+
         if (id) {
-          await repository.updateOne(id, block);
+          let oldMedia: any = await repository.findOneByID(id);
+          oldImage = oldMedia?.data?.image;
+          await repository.updateOne(id, media);
         } else {
-          await repository.insertOne(block);
+          await repository.insertOne(media);
+        }
+
+        if (oldImage && oldImage != data?.image) {
+          await mediaHelper.deleteFile(oldImage);
         }
 
         context["getRedirect"] = path;
@@ -127,11 +136,11 @@ export default {
       context.throw(Status.NotAcceptable, "Not Acceptable");
     } catch (error) {
       if (id) {
-        block = await repository.findOneByID(id);
+        media = await repository.findOneByID(id);
       }
 
       page = {
-        block: block,
+        media: media,
         entity: entity,
         error: true,
         message: error.message,
@@ -145,12 +154,12 @@ export default {
   async view(context: Record<string, any>, next: Function) {
     try {
       let path: string = context.request.url.pathname;
-      let block: any | undefined;
-      block = await repository.findOneByFilters({ path: path });
+      let media: any | undefined;
+      media = await repository.findOneByFilters({ path: path });
 
-      if (block && Object.keys(block).length != 0) {
+      if (media && Object.keys(media).length != 0) {
         let page = {
-          block: block,
+          media: media,
           entity: entity,
           error: false,
           message: false,
@@ -163,7 +172,7 @@ export default {
       context.throw(Status.NotFound, "NotFound");
     } catch (error) {
       let page = {
-        block: false,
+        media: false,
         entity: entity,
         error: true,
         message: error.message,
@@ -176,12 +185,12 @@ export default {
   async delete(context: Record<string, any>, next: Function) {
     try {
       let id: string = context.params.id;
-      let block: any | undefined;
-      block = await repository.findOneByID(id);
+      let media: any | undefined;
+      media = await repository.findOneByID(id);
 
-      if (block && Object.keys(block).length != 0) {
+      if (media && Object.keys(media).length != 0) {
         let page = {
-          block: block,
+          media: media,
           entity: entity,
           error: false,
           message: false,
@@ -194,7 +203,7 @@ export default {
       context.throw(Status.NotFound, "NotFound");
     } catch (error) {
       let page = {
-        block: false,
+        media: false,
         entity: entity,
         error: true,
         message: error.message,
@@ -211,11 +220,15 @@ export default {
       let id: string;
       id = body.value.get("id");
 
-      let block: any | undefined;
-      block = await repository.findOneByID(id);
+      let media: any | undefined;
+      media = await repository.findOneByID(id);
 
-      if (block && Object.keys(block).length != 0) {
+      if (media && Object.keys(media).length != 0) {
         await repository.deleteOne(id);
+
+        if (media?.data?.image) {
+          await mediaHelper.deleteFile(media.data.image);
+        }
       }
 
       context["getRedirect"] = path;

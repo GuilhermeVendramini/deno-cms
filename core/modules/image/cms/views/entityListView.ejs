@@ -1,16 +1,16 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: entity.name, currentUser: currentUser }) %>
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: page.entity.name, currentUser: currentUser }) %>
 <div class="container">
-  <h1 class="text-center mb-3"><%= entity.name %></h1>
+  <h1 class="text-center mb-3"><%= page.entity.name %></h1>
   <fieldset class="border p-2">
     <legend  class="w-auto">Manager</legend>
     <div class="d-flex mb-3">
       <div class="mr-2">
-        <a href='/admin/<%= entity.bundle %>/<%= entity.type %>/add' class="btn btn-outline-secondary">Add new</a>
+        <a href='/admin/<%= page.entity.bundle %>/<%= page.entity.type %>/add' class="btn btn-outline-secondary">Add new</a>
       </div>
     </div>
   </fieldset>
   <div class="mt-3">
-    <% if (media) { %>
+    <% if (page?.media) { %>
     <table class="table">
       <thead>
         <tr>
@@ -24,17 +24,17 @@
         </tr>
       </thead>
       <tbody>
-        <% for(var i=0; i < media.length; i++) { %>
+        <% for(var i=0; i < page.media.length; i++) { %>
         <tr>
-          <th scope="row"><%= media[i]._id.$oid %></th>
-          <td><a href='<%= media[i].path %>'><%= media[i].data.title %></a></td>
-          <td><%= media[i].author.name %></td>
-          <td><%= media[i].created %></td>
-          <td><%= media[i].updated %></td>
-          <td><%= media[i].published %></td>
+          <th scope="row"><%= page.media[i]._id.$oid %></th>
+          <td><a href='<%= page.media[i].path %>'><%= page.media[i].data.title %></a></td>
+          <td><%= page.media[i].author.name %></td>
+          <td><%= page.media[i].created %></td>
+          <td><%= page.media[i].updated %></td>
+          <td><%= page.media[i].published %></td>
           <td>
-            <% if (currentUser._id.$oid == media[i].author._id.$oid || currentUser.roles.includes(0)) { %>
-              <a href='/admin/<%= entity.bundle %>/<%= media[i].type %>/edit/<%= media[i]._id.$oid %>'>edit</a> | <a href='/admin/<%= entity.bundle %>/<%= media[i].type %>/delete/<%= media[i]._id.$oid %>'>delete</a>
+            <% if (currentUser._id.$oid == page.media[i].author._id.$oid || currentUser.roles.includes(0)) { %>
+              <a href='/admin/<%= page.entity.bundle %>/<%= page.media[i].type %>/edit/<%= page.media[i]._id.$oid %>'>edit</a> | <a href='/admin/<%= page.entity.bundle %>/<%= page.media[i].type %>/delete/<%= page.media[i]._id.$oid %>'>delete</a>
             <% } %>
           </td>
         </tr>

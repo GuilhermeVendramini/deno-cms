@@ -90,15 +90,6 @@ export default {
         data[field] = body.value.get(field);
       });
 
-      term = new TaxonomyEntity(
-        data,
-        entity.type,
-        currentUser,
-        Date.now(),
-        published,
-        "",
-      );
-
       validated = vs.applySchemaObject(
         entitySchema,
         { data: data, published: published },
