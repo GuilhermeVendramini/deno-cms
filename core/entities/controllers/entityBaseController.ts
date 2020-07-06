@@ -6,6 +6,23 @@ import cmsErrors from "../../../shared/utils/errors/cms/cmsErrors.ts";
 import currentUserSession from "../../../shared/utils/sessions/currentUserSession.ts";
 
 export default {
+  async list(context: Record<string, any>) {
+    let page = context.getPage;
+
+    if (page.error) {
+      await cmsErrors.NotFoundError(context, Status.NotFound, page.message);
+      return;
+    }
+
+    context.response.body = await renderFileToString(
+      `${Deno.cwd()}/core/modules/${page.entity.type}/cms/views/entityListView.ejs`,
+      {
+        currentUser: context.getCurrentUser,
+        page: page,
+      },
+    );
+  },
+
   async addPost(context: Record<string, any>) {
     let path: string | undefined = context?.getRedirect;
 

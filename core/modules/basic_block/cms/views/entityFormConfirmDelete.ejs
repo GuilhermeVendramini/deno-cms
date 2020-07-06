@@ -1,8 +1,8 @@
 <%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: 'Confirm delete', currentUser: currentUser }) %>
 <div class="container">
-  <h1 class="text-center mb-3">Confirm delete <%= block.data.title %></h1>
-  <form action='/admin/block/<%= block.type %>/delete' method=post>
-    <input type="hidden" id="id" name="id" value="<%= block._id.$oid %>">
+  <h1 class="text-center mb-3">Confirm delete <%= page.block.data.title %></h1>
+  <form action='/admin/block/<%= page.block.type %>/delete' method=post>
+    <input type="hidden" id="id" name="id" value="<%= page.block._id.$oid %>">
     <div class="d-flex justify-content-center">
       <div class="mr-2">
         <a href="#" onclick="window.history.back();" class="btn btn-outline-secondary">Cancel</a>
