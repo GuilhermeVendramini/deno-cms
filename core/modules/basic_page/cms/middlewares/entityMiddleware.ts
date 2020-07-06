@@ -46,12 +46,15 @@ export default {
   async addPost(context: Record<string, any>, next: Function) {
     let data: any = {};
     let published: boolean = false;
+    let page: any;
+    let content: ContentEntity | undefined;
+    let id: string = "";
 
     try {
       let body = context.getBody;
       let currentUser = context.getCurrentUser;
       let validated: any;
-      let id: string = body.value.get("id");
+      id = body.value.get("id");
       let properties: any = [
         "title",
         "body",
@@ -63,12 +66,20 @@ export default {
         data[field] = body.value.get(field);
       });
 
+      content = new ContentEntity(
+        data,
+        entity.type,
+        currentUser,
+        Date.now(),
+        published,
+        "",
+      );
+
       validated = vs.applySchemaObject(
         entitySchema,
         { data: data, published: published },
       );
 
-      let content: ContentEntity | undefined;
       let path: string | undefined;
 
       if (validated) {
@@ -86,35 +97,25 @@ export default {
           validated.published,
           path,
         );
-      }
-
-      if (content && Object.keys(content).length != 0) {
-        let result: any;
 
         if (id) {
-          result = await repository.updateOne(id, content);
+          await repository.updateOne(id, content);
         } else {
-          result = await repository.insertOne(content);
-          id = result?.$oid;
+          await repository.insertOne(content);
         }
 
         context["getRedirect"] = path;
         await next();
         return;
       }
-
-      let page = {
-        content: { data: data, published: published },
-        entity: entity,
-        error: true,
-        message: "Error saving content. Please try again.",
-      };
-
-      context["getPage"] = page;
-      await next();
+      context.throw(Status.NotAcceptable, "Not Acceptable");
     } catch (error) {
-      let page = {
-        content: { data: data, published: published },
+      if (id) {
+        content = await repository.findOneByID(id);
+      }
+
+      page = {
+        content: content,
         entity: entity,
         error: true,
         message: error.message,

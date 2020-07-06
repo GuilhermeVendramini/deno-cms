@@ -1,16 +1,16 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: entity.name, currentUser: currentUser }) %>
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: page.entity.name, currentUser: currentUser }) %>
 <div class="container">
-  <h1 class="text-center mb-3"><%= entity.name %></h1>
+  <h1 class="text-center mb-3"><%= page.entity.name %></h1>
   <fieldset class="border p-2">
     <legend  class="w-auto">Manager</legend>
     <div class="d-flex mb-3">
       <div class="mr-2">
-        <a href='/admin/<%= entity.bundle %>/<%= entity.type %>/add' class="btn btn-outline-secondary">Add new</a>
+        <a href='/admin/<%= page.entity.bundle %>/<%= page.entity.type %>/add' class="btn btn-outline-secondary">Add new</a>
       </div>
     </div>
   </fieldset>
   <div class="mt-3">
-    <% if (term) { %>
+    <% if (page?.term) { %>
     <table class="table">
       <thead>
         <tr>
@@ -24,17 +24,17 @@
         </tr>
       </thead>
       <tbody>
-        <% for(var i=0; i < term.length; i++) { %>
+        <% for(var i=0; i < page?.term.length; i++) { %>
         <tr>
-          <th scope="row"><%= term[i]._id.$oid %></th>
-          <td><a href='<%= term[i].path %>'><%= term[i].data.title %></a></td>
-          <td><%= term[i].author.name %></td>
-          <td><%= term[i].created %></td>
-          <td><%= term[i].updated %></td>
-          <td><%= term[i].published %></td>
+          <th scope="row"><%= page.term[i]._id.$oid %></th>
+          <td><a href='<%= page.term[i].path %>'><%= page.term[i].data.title %></a></td>
+          <td><%= page.term[i].author.name %></td>
+          <td><%= page.term[i].created %></td>
+          <td><%= page.term[i].updated %></td>
+          <td><%= page.term[i].published %></td>
           <td>
-            <% if (currentUser._id.$oid == term[i].author._id.$oid || currentUser.roles.includes(0)) { %>
-              <a href='/admin/<%= entity.bundle %>/<%= term[i].type %>/edit/<%= term[i]._id.$oid %>'>edit</a> | <a href='/admin/<%= entity.bundle %>/<%= term[i].type %>/delete/<%= term[i]._id.$oid %>'>delete</a>
+            <% if (currentUser._id.$oid == page.term[i].author._id.$oid || currentUser.roles.includes(0)) { %>
+              <a href='/admin/<%= page.entity.bundle %>/<%= page.term[i].type %>/edit/<%= page.term[i]._id.$oid %>'>edit</a> | <a href='/admin/<%= page.entity.bundle %>/<%= page.term[i].type %>/delete/<%= page.term[i]._id.$oid %>'>delete</a>
             <% } %>
           </td>
         </tr>

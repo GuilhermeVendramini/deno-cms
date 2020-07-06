@@ -1,15 +1,15 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: term.data.title, currentUser: currentUser }) %>
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: page.term.data.title, currentUser: currentUser }) %>
 <div class="container">
   <% if (currentUser) { %>
-    <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: term}) %>
+    <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: page.term}) %>
   <% } %>
-  <% if (term.data) { %>
-  <h1 class="text-center mb-3"><%= term.data.title %></h1>
+  <% if (page.term.data) { %>
+  <h1 class="text-center mb-3"><%= page.term.data.title %></h1>
     <div class="term">
-      <% if (term.data.body) { %>
-        <%- term.data.body %>
+      <% if (page.term.data.body) { %>
+        <%- page.term.data.body %>
       <% } %>
     </div>
   <% } %>
-  </div>
+</div>
 <%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>

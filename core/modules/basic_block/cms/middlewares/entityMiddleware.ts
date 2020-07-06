@@ -71,12 +71,15 @@ export default {
   async addPost(context: Record<string, any>, next: Function) {
     let data: any = {};
     let published: boolean = false;
+    let page: any;
+    let block: BlockEntity | undefined;
+    let id: string = "";
 
     try {
       let body = context.getBody;
       let currentUser = context.getCurrentUser;
       let validated: any;
-      let id: string = body.value.get("id");
+      id = body.value.get("id");
       let properties: any = [
         "title",
         "body",
@@ -88,12 +91,20 @@ export default {
         data[field] = body.value.get(field);
       });
 
+      block = new BlockEntity(
+        data,
+        entity.type,
+        currentUser,
+        Date.now(),
+        published,
+        "",
+      );
+
       validated = vs.applySchemaObject(
         entitySchema,
         { data: data, published: published },
       );
 
-      let block: BlockEntity | undefined;
       let path: string | undefined;
 
       if (validated) {
@@ -111,35 +122,25 @@ export default {
           validated.published,
           path,
         );
-      }
-
-      if (block && Object.keys(block).length != 0) {
-        let result: any;
 
         if (id) {
-          result = await repository.updateOne(id, block);
+          await repository.updateOne(id, block);
         } else {
-          result = await repository.insertOne(block);
-          id = result?.$oid;
+          await repository.insertOne(block);
         }
 
         context["getRedirect"] = path;
         await next();
         return;
       }
-
-      let page = {
-        block: { data: data, published: published },
-        entity: entity,
-        error: true,
-        message: "Error saving block. Please try again.",
-      };
-
-      context["getPage"] = page;
-      await next();
+      context.throw(Status.NotAcceptable, "Not Acceptable");
     } catch (error) {
-      let page = {
-        block: { data: data, published: published },
+      if (id) {
+        block = await repository.findOneByID(id);
+      }
+
+      page = {
+        block: block,
         entity: entity,
         error: true,
         message: error.message,

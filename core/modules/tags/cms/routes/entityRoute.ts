@@ -1,50 +1,58 @@
 import router from "../../../../router.ts";
-import entityController from "../controllers/entityController.ts";
+import entityMiddleware from "../middlewares/entityMiddleware.ts";
 import loggedMiddleware from "../../../../../shared/middlewares/loggedMiddleware.ts";
 import entity from "../../entity.ts";
 import baseEntityMiddleware from "../../../../../shared/middlewares/baseEntityMiddleware.ts";
 import cmsMiddleware from "../../../../../shared/middlewares/cmsMiddleware.ts";
+import entityBaseController from "../../../../entities/controllers/entityBaseController.ts";
 
 router
   .get(
-    `/admin/taxonomy/${entity.type}`,
+    `/admin/${entity.bundle}/${entity.type}`,
     loggedMiddleware.needToBeLogged,
-    entityController.list,
+    entityMiddleware.list,
+    entityBaseController.list,
   )
   .get(
-    `/admin/taxonomy/${entity.type}/add`,
+    `/admin/${entity.bundle}/${entity.type}/add`,
     loggedMiddleware.needToBeLogged,
-    entityController.add,
+    entityMiddleware.add,
+    entityBaseController.add,
   )
   .get(
-    `/admin/taxonomy/${entity.type}/edit/:id`,
+    `/admin/${entity.bundle}/${entity.type}/edit/:id`,
     loggedMiddleware.needToBeLogged,
     baseEntityMiddleware.needToBeTaxonomyAuthor,
-    entityController.add,
+    entityMiddleware.add,
+    entityBaseController.add,
   )
   .get(
-    `/taxonomy/${entity.type}/:id`,
+    `/${entity.bundle}/${entity.type}/:id`,
     baseEntityMiddleware.taxonomyNeedToBePublished,
-    entityController.view,
+    entityMiddleware.view,
+    entityBaseController.view,
   )
   .post(
-    `/admin/taxonomy/${entity.type}/add`,
+    `/admin/${entity.bundle}/${entity.type}/add`,
     loggedMiddleware.needToBeLogged,
     cmsMiddleware.submittedByForm,
-    entityController.addPost,
+    entityMiddleware.addPost,
+    entityBaseController.addPost,
   )
   .get(
-    `/admin/taxonomy/${entity.type}/delete/:id`,
+    `/admin/${entity.bundle}/${entity.type}/delete/:id`,
     loggedMiddleware.needToBeLogged,
     baseEntityMiddleware.needToBeTaxonomyAuthor,
-    entityController.delete,
+    entityMiddleware.delete,
+    entityBaseController.delete,
   )
   .post(
-    `/admin/taxonomy/${entity.type}/delete`,
+    `/admin/${entity.bundle}/${entity.type}/delete`,
     loggedMiddleware.needToBeLogged,
     baseEntityMiddleware.needToBeTaxonomyAuthor,
     cmsMiddleware.submittedByForm,
-    entityController.deletePost,
+    entityMiddleware.deletePost,
+    entityBaseController.deletePost,
   );
 
 export default router;
