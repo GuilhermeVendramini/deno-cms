@@ -1,21 +1,21 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: entity.name, currentUser: currentUser }) %>
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: page.entity.name, currentUser: currentUser }) %>
 <div class="container">
-  <h1 class="text-center mb-3"><%= entity.name %></h1>
-  <% if (message) { %>
+  <h1 class="text-center mb-3"><%= page.entity.name %></h1>
+  <% if (page?.message) { %>
     <div class="alert alert-danger">
-      <%= message %>
+      <%= page.message %>
     </div>
   <% } %>
-  <form id="entity-form" action='/admin/content/<%= entity.type %>/add' method=post>
-    <input id="id" name="id" type="hidden" value='<%= content?._id?.$oid %>'>
+  <form id="entity-form" action='/admin/content/<%= page.entity.type %>/add' method=post>
+    <input id="id" name="id" type="hidden" value='<%= page?.content?._id?.$oid %>'>
     <div class="form-group">
       <label>Title</label>
-      <input type="text" required value="<%= content?.data?.title %>" name="title" class="form-control">
+      <input type="text" required value="<%= page?.content?.data?.title %>" name="title" class="form-control">
     </div>
     <div class="form-group">
       <label>Body</label>
       <textarea id="body" name="body" rows="10" cols="33" class="form-control">
-        <%= content?.data?.body %>
+        <%= page?.content?.data?.body %>
       </textarea>
     </div>
     <div class="form-group">
@@ -27,7 +27,7 @@
           entities: {
             "media": ["image"],
           },
-          data: content?.data?.images
+          data: page?.content?.data?.images
         }
       ) %>
     </div>
@@ -40,12 +40,12 @@
           entities: {
             "taxonomy": ["tags"],
           },
-          data: content?.data?.tags
+          data: page?.content?.data?.tags
         }
       ) %>
     </div>
     <div class="form-check mb-3">
-      <% let checked = content?.published ? "checked" : "" %>
+      <% let checked = page?.content?.published ? "checked" : "" %>
       <input <%= checked %> type="checkbox" name="published" value="true" class="form-check-input" id="published">
       <label class="form-check-label" for="published">Published</label>
     </div>
@@ -53,9 +53,9 @@
       <div class="mr-2">
         <button type="submit" class="btn btn-primary">Save</button>
       </div>
-      <% if (content?._id) { %>
+      <% if (page?.content?._id) { %>
         <div class="mr-2">
-          <a href='/admin/<%= content.bundle %>/<%= content.type %>/delete/<%= content._id.$oid %>' class="btn btn-danger">Delete</a>
+          <a href='/admin/<%= page?.content.bundle %>/<%= page?.content.type %>/delete/<%= page?.content._id.$oid %>' class="btn btn-danger">Delete</a>
         </div>
       <% } %>
     </div>
