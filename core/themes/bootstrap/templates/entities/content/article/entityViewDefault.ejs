@@ -26,7 +26,7 @@
         <div class="field-tags">
           <% let tags = page.content.data.tags.sort(function(a, b){return a.weight - b.weight}) %>
           <% for(var i=0; i < tags.length; i++) { %>
-            <a href='/taxonomy/<%= tags[i].entity.type %>/<%= tags[i].entity._id.$oid %>' class="badge badge-primary"><%= tags[i].entity.data.title %></a>
+            <a href='<%= tags[i].entity.path %>' class="badge badge-primary"><%= tags[i].entity.data.title %></a>
           <% } %>
         </div>
       </div>
