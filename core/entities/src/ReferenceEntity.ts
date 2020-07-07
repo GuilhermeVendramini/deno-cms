@@ -1,17 +1,20 @@
-interface IReference {
+interface IEntity {
   id: string;
   bundle: string;
   type: string;
-};
+}
 
 export class ReferenceEntity {
-  protected entity: IReference;
-  protected reference: IReference;
+  protected field: string;
+  protected entity: IEntity;
+  protected reference: IEntity;
 
   constructor(
-    entity: IReference,
-    reference: IReference,
+    field: string,
+    entity: IEntity,
+    reference: IEntity,
   ) {
+    this.field = field;
     this.entity = entity;
     this.reference = reference;
   }

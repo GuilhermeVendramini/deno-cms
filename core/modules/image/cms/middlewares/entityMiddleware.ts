@@ -125,13 +125,23 @@ export default {
           oldImage = oldMedia?.data?.image;
           await repository.updateOne(id, media);
         } else {
-          await repository.insertOne(media);
+          let result = await repository.insertOne(media);
+          id = result.$oid;
         }
 
         if (oldImage && oldImage != data?.image) {
           await mediaHelper.deleteFile(oldImage);
         }
 
+        page = {
+          id: id,
+          media: media,
+          entity: entity,
+          error: false,
+          message: false,
+        };
+
+        context["getPage"] = page;
         context["getRedirect"] = path;
         await next();
         return;
@@ -147,6 +157,7 @@ export default {
       }
 
       page = {
+        id: id,
         media: media,
         entity: entity,
         error: true,

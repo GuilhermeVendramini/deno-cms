@@ -117,9 +117,19 @@ export default {
         if (id) {
           await repository.updateOne(id, block);
         } else {
-          await repository.insertOne(block);
+          let result = await repository.insertOne(block);
+          id = result.$oid;
         }
 
+        page = {
+          id: id,
+          block: block,
+          entity: entity,
+          error: false,
+          message: false,
+        };
+
+        context["getPage"] = page;
         context["getRedirect"] = path;
         await next();
         return;
@@ -131,6 +141,7 @@ export default {
       }
 
       page = {
+        id: id,
         block: block,
         entity: entity,
         error: true,

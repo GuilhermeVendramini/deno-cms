@@ -1,5 +1,6 @@
 import { ReferenceEntity } from "../../../entities/src/ReferenceEntity.ts";
 import referenceRepository from "../../../../repositories/mongodb/reference/referenceRepository.ts";
+import entityReferenceHelper from "../utils/entityReferenceHelper.ts";
 
 export default {
   async add(context: Record<string, any>, next: Function) {
@@ -11,11 +12,12 @@ export default {
         relation.references.forEach(function (reference: []) {
           reference.forEach(async function (value: any) {
             entityReference = new ReferenceEntity(
+              value.field,
               relation.entity,
               {
                 id: value.entity._id.$oid,
-                type: value.entity.type,
                 bundle: value.entity.bundle,
+                type: value.entity.type,
               },
             );
             await referenceRepository.insertOne(entityReference);
@@ -34,6 +36,33 @@ export default {
     try {
       await referenceRepository.deleteManyByEntity(context.getRelation.entity);
 
+      await next();
+    } catch (error) {
+      console.log(error);
+      await next();
+    }
+  },
+
+  async update(context: Record<string, any>, next: Function) {
+    try {
+      let page = context.getPage;
+      let result: [] | undefined;
+      if (!page.error) {
+        result = await referenceRepository.findByFilters(
+          {
+            reference: {
+              id: page.id,
+              bundle: page.entity.bundle,
+              type: page.entity.type,
+            },
+          },
+        );
+      }
+
+      if (result) {
+        result.forEach((e: any) => entityReferenceHelper.updateEntity(e)
+        );
+      }
       await next();
     } catch (error) {
       console.log(error);

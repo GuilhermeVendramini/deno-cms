@@ -92,9 +92,19 @@ export default {
         if (id) {
           await repository.updateOne(id, content);
         } else {
-          await repository.insertOne(content);
+          let result = await repository.insertOne(content);
+          id = result.$oid;
         }
 
+        page = {
+          id: id,
+          content: content,
+          entity: entity,
+          error: false,
+          message: false,
+        };
+
+        context["getPage"] = page;
         context["getRedirect"] = path;
         await next();
         return;
@@ -106,6 +116,7 @@ export default {
       }
 
       page = {
+        id: id,
         content: content,
         entity: entity,
         error: true,

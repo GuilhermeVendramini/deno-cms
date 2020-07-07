@@ -5,6 +5,7 @@ import entity from "../../entity.ts";
 import baseEntityMiddleware from "../../../../../shared/middlewares/baseEntityMiddleware.ts";
 import cmsMiddleware from "../../../../../shared/middlewares/cmsMiddleware.ts";
 import entityBaseController from "../../../../entities/controllers/entityBaseController.ts";
+import entityReferenceMiddleware from "../../../entity_reference/middlewares/entityReferenceMiddleware.ts";
 
 router
   .get(
@@ -37,6 +38,7 @@ router
     loggedMiddleware.needToBeLogged,
     cmsMiddleware.submittedByForm,
     entityMiddleware.addPost,
+    entityReferenceMiddleware.update,
     entityBaseController.addPost,
   )
   .get(

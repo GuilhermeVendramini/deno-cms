@@ -121,6 +121,15 @@ export default {
           type: entity.type,
         };
 
+        page = {
+          id: id,
+          content: content,
+          entity: entity,
+          error: false,
+          message: false,
+        };
+
+        context["getPage"] = page;
         context["getRedirect"] = path;
         await next();
         return;
@@ -132,6 +141,7 @@ export default {
       }
 
       page = {
+        id: id,
         content: content,
         entity: entity,
         error: true,

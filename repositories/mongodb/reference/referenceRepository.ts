@@ -63,4 +63,14 @@ export default {
 
     return {};
   },
+
+  async findByFilters(filters: {}): Promise<[]> {
+    let result: any;
+
+    result = await data.find(filters);
+
+    if (result) return result;
+
+    return [];
+  },
 };
