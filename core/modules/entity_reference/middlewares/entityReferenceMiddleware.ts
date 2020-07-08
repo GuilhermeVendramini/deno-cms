@@ -1,6 +1,6 @@
 import { ReferenceEntity } from "../../../entities/src/ReferenceEntity.ts";
 import referenceRepository from "../../../../repositories/mongodb/reference/referenceRepository.ts";
-import entityReferenceHelper from "../utils/entityReferenceHelper.ts";
+import entityReferenceHelper from "../helpers/entityReferenceHelper.ts";
 
 export default {
   async addRelation(context: Record<string, any>, next: Function) {

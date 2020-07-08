@@ -10,7 +10,7 @@ import entityRepository from "../../../../../repositories/mongodb/entity/entityR
 import entity from "../../entity.ts";
 import pathauto from "../../../../../shared/utils/pathauto/defaultPathauto.ts";
 import mediaHelper from "../../../media/utils/mediaHelper.ts";
-import entityReferenceHelper from "../../../entity_reference/utils/entityReferenceHelper.ts";
+import entityReferenceHelper from "../../../entity_reference/helpers/entityReferenceHelper.ts";
 
 const repository = entityRepository.getRepository(entity.bundle);
 
