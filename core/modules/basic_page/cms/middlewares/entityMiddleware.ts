@@ -192,22 +192,42 @@ export default {
 
   async deletePost(context: Record<string, any>, next: Function) {
     let path = `/admin/${entity.bundle}`;
+    let id: string = "";
+    let content: any | undefined;
+    
     try {
       let body = context.getBody;
-      let id: string;
       id = body.value.get("id");
 
-      let content: any | undefined;
       content = await repository.findOneByID(id);
 
       if (content && Object.keys(content).length != 0) {
         await repository.deleteOne(id);
       }
 
+      let page = {
+        id: id,
+        content: content,
+        entity: entity,
+        error: false,
+        message: false,
+      };
+
+      context["getPage"] = page;
       context["getRedirect"] = path;
       await next();
     } catch (error) {
       console.log(error);
+
+      let page = {
+        id: id,
+        content: content,
+        entity: entity,
+        error: true,
+        message: true,
+      };
+
+      context["getPage"] = page;
       context["getRedirect"] = path;
       await next();
     }

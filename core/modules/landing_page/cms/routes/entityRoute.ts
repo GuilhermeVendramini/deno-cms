@@ -34,7 +34,7 @@ router
     loggedMiddleware.needToBeLogged,
     cmsMiddleware.submittedByForm,
     entityMiddleware.addPost,
-    entityReferenceMiddleware.add,
+    entityReferenceMiddleware.addRelation,
     entityBaseController.addPost,
   )
   .get(
@@ -50,7 +50,7 @@ router
     baseEntityMiddleware.needToBeContentAuthor,
     cmsMiddleware.submittedByForm,
     entityMiddleware.deletePost,
-    entityReferenceMiddleware.delete,
+    entityReferenceMiddleware.deleteRelation,
     entityBaseController.deletePost,
   );
 

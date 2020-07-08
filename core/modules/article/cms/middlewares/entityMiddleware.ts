@@ -72,7 +72,7 @@ export default {
         references: [],
       };
 
-      let entities = await entityReferenceHelper.setEntityRelation(
+      let entities = await entityReferenceHelper.addEntityRelation(
         [
           "tags",
           "images",

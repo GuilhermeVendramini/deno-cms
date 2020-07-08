@@ -29,7 +29,7 @@ export default {
       await next();
     } catch (error) {
       let page = {
-        block: false,
+        media: false,
         entity: entity,
         error: true,
         message: error.message,
@@ -40,8 +40,10 @@ export default {
   },
 
   async add(context: Record<string, any>, next: Function) {
+    let id: string = "";
+
     try {
-      let id: string = context.params?.id;
+      id = context.params?.id;
       let media: {} | undefined;
 
       if (id) {
@@ -49,6 +51,7 @@ export default {
       }
 
       let page = {
+        id: id,
         media: media,
         entity: entity,
         error: false,
@@ -59,6 +62,7 @@ export default {
       await next();
     } catch (error) {
       let page = {
+        id: id,
         media: false,
         entity: entity,
         error: true,
@@ -201,13 +205,16 @@ export default {
   },
 
   async delete(context: Record<string, any>, next: Function) {
+    let id: string = "";
+
     try {
-      let id: string = context.params.id;
+      id = context.params.id;
       let media: any | undefined;
       media = await repository.findOneByID(id);
 
       if (media && Object.keys(media).length != 0) {
         let page = {
+          id: id,
           media: media,
           entity: entity,
           error: false,
@@ -221,6 +228,7 @@ export default {
       context.throw(Status.NotFound, "NotFound");
     } catch (error) {
       let page = {
+        id: id,
         media: false,
         entity: entity,
         error: true,
@@ -233,12 +241,13 @@ export default {
 
   async deletePost(context: Record<string, any>, next: Function) {
     let path = `/admin/${entity.bundle}/${entity.type}`;
+    let media: any | undefined;
+    let id: string = "";
+
     try {
       let body = context.getBody;
-      let id: string;
       id = body.value.get("id");
 
-      let media: any | undefined;
       media = await repository.findOneByID(id);
 
       if (media && Object.keys(media).length != 0) {
@@ -249,10 +258,29 @@ export default {
         }
       }
 
+      let page = {
+        id: id,
+        media: media,
+        entity: entity,
+        error: false,
+        message: false,
+      };
+
+      context["getPage"] = page;
       context["getRedirect"] = path;
       await next();
     } catch (error) {
       console.log(error);
+
+      let page = {
+        id: id,
+        media: media,
+        entity: entity,
+        error: true,
+        message: true,
+      };
+
+      context["getPage"] = page;
       context["getRedirect"] = path;
       await next();
     }

@@ -39,8 +39,10 @@ export default {
   },
 
   async add(context: Record<string, any>, next: Function) {
+    let id: string = "";
+
     try {
-      let id: string = context.params?.id;
+      id = context.params?.id;
       let term: {} | undefined;
 
       if (id) {
@@ -48,6 +50,7 @@ export default {
       }
 
       let page = {
+        id: id,
         term: term,
         entity: entity,
         error: false,
@@ -58,6 +61,7 @@ export default {
       await next();
     } catch (error) {
       let page = {
+        id: id,
         term: false,
         entity: entity,
         error: true,
@@ -184,13 +188,16 @@ export default {
   },
 
   async delete(context: Record<string, any>, next: Function) {
+    let id: string = "";
+
     try {
-      let id: string = context.params.id;
+      id = context.params.id;
       let term: any | undefined;
       term = await repository.findOneByID(id);
 
       if (term && Object.keys(term).length != 0) {
         let page = {
+          id: id,
           term: term,
           entity: entity,
           error: false,
@@ -204,11 +211,13 @@ export default {
       context.throw(Status.NotFound, "NotFound");
     } catch (error) {
       let page = {
+        id: id,
         term: false,
         entity: entity,
         error: true,
         message: error.message,
       };
+      context["getPage"] = page;
       context["getPage"] = page;
       await next();
     }
@@ -216,22 +225,42 @@ export default {
 
   async deletePost(context: Record<string, any>, next: Function) {
     let path = `/admin/${entity.bundle}/${entity.type}`;
+    let term: any | undefined;
+    let id: string = "";
+
     try {
       let body = context.getBody;
-      let id: string;
       id = body.value.get("id");
 
-      let term: any | undefined;
       term = await repository.findOneByID(id);
 
       if (term && Object.keys(term).length != 0) {
         await repository.deleteOne(id);
       }
 
+      let page = {
+        id: id,
+        term: term,
+        entity: entity,
+        error: false,
+        message: false,
+      };
+
+      context["getPage"] = page;
       context["getRedirect"] = path;
       await next();
     } catch (error) {
       console.log(error);
+
+      let page = {
+        id: id,
+        term: term,
+        entity: entity,
+        error: true,
+        message: true,
+      };
+
+      context["getPage"] = page;
       context["getRedirect"] = path;
       await next();
     }

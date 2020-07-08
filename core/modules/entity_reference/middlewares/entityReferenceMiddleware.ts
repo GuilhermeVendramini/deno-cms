@@ -3,7 +3,7 @@ import referenceRepository from "../../../../repositories/mongodb/reference/refe
 import entityReferenceHelper from "../utils/entityReferenceHelper.ts";
 
 export default {
-  async add(context: Record<string, any>, next: Function) {
+  async addRelation(context: Record<string, any>, next: Function) {
     try {
       let relation: any = context.getRelation;
       await referenceRepository.deleteManyByEntity(relation.entity);
@@ -32,7 +32,7 @@ export default {
     }
   },
 
-  async delete(context: Record<string, any>, next: Function) {
+  async deleteRelation(context: Record<string, any>, next: Function) {
     try {
       await referenceRepository.deleteManyByEntity(context.getRelation.entity);
 
@@ -43,7 +43,7 @@ export default {
     }
   },
 
-  async update(context: Record<string, any>, next: Function) {
+  async updateRelation(context: Record<string, any>, next: Function) {
     try {
       let page = context.getPage;
       let result: [] | undefined;
@@ -60,7 +60,7 @@ export default {
       }
 
       if (result) {
-        result.forEach((e: any) => entityReferenceHelper.updateEntity(e)
+        result.forEach((e: any) => entityReferenceHelper.updateEntityWithRelation(e)
         );
       }
       await next();
