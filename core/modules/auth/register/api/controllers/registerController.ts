@@ -56,7 +56,7 @@ export default {
       }
       context.throw(Status.BadRequest, "Bad Request");
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
       context.response.body = { error: error.message };
       context.response.status = Status.BadRequest;
       context.response.type = "json";

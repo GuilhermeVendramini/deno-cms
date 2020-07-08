@@ -7,6 +7,10 @@ import cmsMiddleware from "../../../../../shared/middlewares/cmsMiddleware.ts";
 import entityBaseController from "../../../../entities/controllers/entityBaseController.ts";
 import entityReferenceMiddleware from "../../../entity_reference/middlewares/entityReferenceMiddleware.ts";
 
+const skipMiddleware = async (_: any, next: Function) => {
+  await next();
+};
+
 router
   .get(
     `/admin/${entity.bundle}/${entity.type}/add`,
@@ -34,7 +38,11 @@ router
     loggedMiddleware.needToBeLogged,
     cmsMiddleware.submittedByForm,
     entityMiddleware.addPost,
-    entityReferenceMiddleware.updateRelation,
+    entity.references.length > 0
+      ? entityReferenceMiddleware.addRelation
+      : skipMiddleware,
+    entity.canBeReferenced ? entityReferenceMiddleware.updateRelatedEntities
+    : skipMiddleware,
     entityBaseController.addPost,
   )
   .get(
@@ -50,7 +58,10 @@ router
     baseEntityMiddleware.needToBeContentAuthor,
     cmsMiddleware.submittedByForm,
     entityMiddleware.deletePost,
-    entityReferenceMiddleware.updateRelation,
+    entity.references.length > 0 ? entityReferenceMiddleware.deleteRelation
+    : skipMiddleware,
+    entity.canBeReferenced ? entityReferenceMiddleware.updateRelatedEntities
+    : skipMiddleware,
     entityBaseController.deletePost,
   );
 

@@ -27,7 +27,7 @@ export default {
 
       await next();
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
       await next();
     }
   },
@@ -38,12 +38,12 @@ export default {
 
       await next();
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
       await next();
     }
   },
 
-  async updateRelation(context: Record<string, any>, next: Function) {
+  async updateRelatedEntities(context: Record<string, any>, next: Function) {
     try {
       let page = context.getPage;
       let result: [] | undefined;
@@ -58,14 +58,14 @@ export default {
           },
         );
       }
-
-      if (result) {
+      
+      if (result && result.length > 0) {
         result.forEach((e: any) => entityReferenceHelper.updateEntityWithRelation(e)
         );
       }
       await next();
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
       await next();
     }
   },

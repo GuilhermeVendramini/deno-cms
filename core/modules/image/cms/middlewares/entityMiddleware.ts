@@ -10,6 +10,7 @@ import entityRepository from "../../../../../repositories/mongodb/entity/entityR
 import entity from "../../entity.ts";
 import pathauto from "../../../../../shared/utils/pathauto/defaultPathauto.ts";
 import mediaHelper from "../../../media/utils/mediaHelper.ts";
+import entityReferenceHelper from "../../../entity_reference/utils/entityReferenceHelper.ts";
 
 const repository = entityRepository.getRepository(entity.bundle);
 
@@ -78,7 +79,7 @@ export default {
     let page: any;
     let media: MediaEntity | undefined;
     let id: string = "";
-    let fileAssist = "";
+    let fileHelper = "";
 
     try {
       let data: any = {};
@@ -86,18 +87,30 @@ export default {
       let currentUser = context.getCurrentUser;
       let validated: any;
       id = body.value.get("id");
-      let properties: any = [
-        "title",
-        "image",
-      ];
-
       published = body.value.get("published") ? true : false;
 
-      properties.forEach(function (field: string) {
+      entity.fields.forEach(function (field: string) {
         data[field] = body.value.get(field);
       });
 
-      fileAssist = data["image"];
+      if (entity.references.length > 0) {
+        context["getRelation"] = {
+          entity: {},
+          references: [],
+        };
+
+        let entities = await entityReferenceHelper.addEntityRelation(
+          entity.references,
+          context,
+        );
+
+        Object.keys(entities).map((field) => {
+          data[field] = entities[field];
+          context["getRelation"]["references"].push(data[field]);
+        });
+      }
+
+      fileHelper = data["image"];
 
       validated = vs.applySchemaObject(
         entitySchema,
@@ -137,6 +150,14 @@ export default {
           await mediaHelper.deleteFile(oldImage);
         }
 
+        if (entity.references.length > 0) {
+          context["getRelation"]["entity"] = {
+            id: id,
+            bundle: entity.bundle,
+            type: entity.type,
+          };
+        }
+
         page = {
           id: id,
           media: media,
@@ -156,8 +177,8 @@ export default {
         media = await repository.findOneByID(id);
       }
 
-      if (fileAssist) {
-        await mediaHelper.deleteFile(fileAssist);
+      if (fileHelper) {
+        await mediaHelper.deleteFile(fileHelper);
       }
 
       page = {
@@ -246,15 +267,28 @@ export default {
 
     try {
       let body = context.getBody;
-
       id = body.value.get("id");
       media = await repository.findOneByID(id);
+
+      if (entity.references.length > 0) {
+        context["getRelation"] = {
+          entity: {},
+        };
+      }
 
       if (media && Object.keys(media).length != 0) {
         await repository.deleteOne(id);
 
         if (media?.data?.image) {
           await mediaHelper.deleteFile(media.data.image);
+        }
+
+        if (entity.references.length > 0) {
+          context["getRelation"]["entity"] = {
+            id: id,
+            bundle: entity.bundle,
+            type: entity.type,
+          };
         }
       }
 
@@ -270,7 +304,7 @@ export default {
       context["getRedirect"] = path;
       await next();
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
 
       let page = {
         id: id,

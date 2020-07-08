@@ -46,11 +46,10 @@ export default {
       );
 
       result = await repository.findOneByID(relation.entity.id);
-
       if (!result || Object.keys(result).length <= 0) {
         return;
       }
-
+    
       let fieldValues: any[] = result.data[relation.field];
       let loadedEntity: any | undefined;
 
@@ -67,17 +66,14 @@ export default {
           } else {
             result.data[relation.field].splice(index, 1);
             await repository.updateOne(relation.entity.id, result);
+            await referenceRepository.deleteOne(relation._id.$oid);
           }
         }
       });
 
-      if (!loadedEntity || Object.keys(loadedEntity).length <= 0) {
-        await referenceRepository.deleteOne(relation._id.$oid);
-      }
-
       return;
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
       return;
     }
   },

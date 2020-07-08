@@ -9,6 +9,7 @@ import entitySchema from "../../schemas/entitySchema.ts";
 import entityRepository from "../../../../../repositories/mongodb/entity/entityRepository.ts";
 import entity from "../../entity.ts";
 import pathauto from "../../../../../shared/utils/pathauto/defaultPathauto.ts";
+import entityReferenceHelper from "../../../entity_reference/utils/entityReferenceHelper.ts";
 
 const repository = entityRepository.getRepository(entity.bundle);
 
@@ -55,16 +56,29 @@ export default {
       let currentUser = context.getCurrentUser;
       let validated: any;
       id = body.value.get("id");
-      let properties: any = [
-        "title",
-        "body",
-      ];
 
       published = body.value.get("published") ? true : false;
 
-      properties.forEach(function (field: string) {
+      entity.fields.forEach(function (field: string) {
         data[field] = body.value.get(field);
       });
+
+      if (entity.references.length > 0) {
+        context["getRelation"] = {
+          entity: {},
+          references: [],
+        };
+
+        let entities = await entityReferenceHelper.addEntityRelation(
+          entity.references,
+          context,
+        );
+
+        Object.keys(entities).map((field) => {
+          data[field] = entities[field];
+          context["getRelation"]["references"].push(data[field]);
+        });
+      }
 
       validated = vs.applySchemaObject(
         entitySchema,
@@ -94,6 +108,14 @@ export default {
         } else {
           let result = await repository.insertOne(content);
           id = result.$oid;
+        }
+
+        if (entity.references.length > 0) {
+          context["getRelation"]["entity"] = {
+            id: id,
+            bundle: entity.bundle,
+            type: entity.type,
+          };
         }
 
         page = {
@@ -192,17 +214,30 @@ export default {
 
   async deletePost(context: Record<string, any>, next: Function) {
     let path = `/admin/${entity.bundle}`;
-    let id: string = "";
     let content: any | undefined;
-    
+    let id: string = "";
+
     try {
       let body = context.getBody;
       id = body.value.get("id");
-
       content = await repository.findOneByID(id);
+
+      if (entity.references.length > 0) {
+        context["getRelation"] = {
+          entity: {},
+        };
+      }
 
       if (content && Object.keys(content).length != 0) {
         await repository.deleteOne(id);
+
+        if (entity.references.length > 0) {
+          context["getRelation"]["entity"] = {
+            id: id,
+            bundle: entity.bundle,
+            type: entity.type,
+          };
+        }
       }
 
       let page = {
@@ -217,7 +252,7 @@ export default {
       context["getRedirect"] = path;
       await next();
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
 
       let page = {
         id: id,

@@ -83,7 +83,7 @@ export default {
       );
       return;
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
       context.response.body = await renderFileToString(
         `${Deno.cwd()}/core/modules/auth/register/cms/views/registerView.ejs`,
         {

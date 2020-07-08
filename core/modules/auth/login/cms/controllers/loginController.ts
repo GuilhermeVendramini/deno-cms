@@ -71,7 +71,7 @@ export default {
       );
       return;
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
       context.response.body = await renderFileToString(
         `${Deno.cwd()}/core/modules/auth/login/cms/views/loginView.ejs`,
         {
