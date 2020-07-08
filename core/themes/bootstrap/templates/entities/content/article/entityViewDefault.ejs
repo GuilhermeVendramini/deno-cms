@@ -1,16 +1,16 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: page.content.data.title, currentUser: currentUser }) %>
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: page?.content?.data?.title, currentUser: currentUser }) %>
 <div class="container">
-  <% if (currentUser) { %>
+  <% if ((currentUser && currentUser._id.$oid == page?.content?.author?._id?.$oid) || (currentUser && currentUser?.roles.includes(0))) { %>
     <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: page.content}) %>
   <% } %>
   <% if (page?.content?.data) { %>
-  <h1 class="text-center mb-3"><%= page.content.data.title %></h1>
-    <% if (page?.content?.data?.body) { %>
+  <h1 class="text-center mb-3"><%= page.content.data?.title %></h1>
+    <% if (page.content.data?.body) { %>
       <div class="content">
         <%- page.content.data.body %>
       </div>
     <% } %>
-    <% if (page?.content?.data?.images && page.content.data.images.length > 0) { %>
+    <% if (page.content.data?.images && page.content.data.images.length > 0) { %>
       <div class="mb-3">
         <div class="field-images text-center">
           <% let images = page.content.data.images.sort(function(a, b){return a.weight - b.weight}) %>

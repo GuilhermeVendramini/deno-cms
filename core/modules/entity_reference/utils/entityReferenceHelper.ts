@@ -1,4 +1,5 @@
 import entityRepository from "../../../../repositories/mongodb/entity/entityRepository.ts";
+import referenceRepository from "../../../../repositories/mongodb/reference/referenceRepository.ts";
 
 async function entityLoad(id: string, bundle: string) {
   let repository: any = entityRepository.getRepository(bundle);
@@ -43,23 +44,23 @@ export default {
       let repository: any = entityRepository.getRepository(
         relation.entity.bundle,
       );
-  
+
       result = await repository.findOneByID(relation.entity.id);
-  
-      if (!result && Object.keys(result).length <= 0) {
+
+      if (!result || Object.keys(result).length <= 0) {
         return;
       }
-  
+
       let fieldValues: any[] = result.data[relation.field];
-  
+      let loadedEntity: any | undefined;
+
       fieldValues.forEach(async (value: any, index: number) => {
         if (relation.reference.id == value.entity._id.$oid) {
-          let loadedEntity: any | undefined;
           loadedEntity = await entityLoad(
             value.entity._id.$oid,
             value.entity.bundle,
           );
-  
+
           if (loadedEntity && Object.keys(loadedEntity).length != 0) {
             result.data[relation.field][index].entity = loadedEntity;
             await repository.updateOne(relation.entity.id, result);
@@ -69,10 +70,15 @@ export default {
           }
         }
       });
+
+      if (!loadedEntity || Object.keys(loadedEntity).length <= 0) {
+        await referenceRepository.deleteOne(relation._id.$oid);
+      }
+
+      return;
     } catch (error) {
       console.log(error);
       return;
     }
-    return;
   },
 };
