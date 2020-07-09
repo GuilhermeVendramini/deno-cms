@@ -15,40 +15,82 @@
       </div>
     </div>
   </fieldset>
+  <fieldset class="border p-2">
+    <legend  class="w-auto">Filter</legend>
+    <div class="d-flex mb-3">
+      <form action="/admin/content" method="get">
+        <div class="row">
+          <div class="col form-group">
+            <label for="type">Type</label>
+            <select class="form-control form-control-sm" id="type" name="type">
+              <option value="any">Any</option>
+              <option value="basic_page" <%- filters.type == "basic_page" ? "selected" : '' %>>Basic page</option>
+              <option value="article" <%- filters.type == "article" ? "selected" : '' %> >Article</option>
+              <option value="lading_page" <%- filters.type == "lading_page" ? "selected" : '' %>>Landing page</option>
+            </select>
+          </div>
+          <div class="col form-group">
+            <label for="published">Published</label>
+            <select class="form-control form-control-sm" id="published" name="published">
+              <option value="any">Any</option>
+              <option value="true" <%- filters.published === true ? "selected" : '' %>>Yes</option>
+              <option value="false" <%- filters.published === false ? "selected" : '' %>>No</option>
+            </select>
+          </div>
+        </div>
+        <input type="hidden" id="pageNumber" name="pageNumber" value="0">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+  </fieldset>
   <div class="mt-3">
     <% if (content) { %>
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">ID</th>
-          <th scope="col">Title</th>
-          <th scope="col">Type</th>
-          <th scope="col">Author</th>
-          <th scope="col">Created</th>
-          <th scope="col">Updated</th>
-          <th scope="col">Published</th>
-          <th scope="col">Operations</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% for(var i=0; i < content.length; i++) { %>
-        <tr>
-          <th scope="row"><%= content[i]._id.$oid %></th>
-          <td><a href='<%= content[i].path %>'><%= content[i].data.title %></a></td>
-          <td><%= content[i].type %></td>
-          <td><%= content[i].author.name %></td>
-          <td><%= content[i].created %></td>
-          <td><%= content[i].updated %></td>
-          <td><%= content[i].published %></td>
-          <td>
-            <% if (currentUser._id.$oid == content[i].author._id.$oid || currentUser.roles.includes(0)) { %>
-              <a href='/admin/content/<%= content[i].type %>/edit/<%= content[i]._id.$oid %>'>edit</a> | <a href='/admin/content/<%= content[i].type %>/delete/<%= content[i]._id.$oid %>'>delete</a>
-            <% } %>
-          </td>
-        </tr>
-        <% } %>
-      </tbody>
-    </table>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Title</th>
+            <th scope="col">Type</th>
+            <th scope="col">Author</th>
+            <th scope="col">Created</th>
+            <th scope="col">Updated</th>
+            <th scope="col">Published</th>
+            <th scope="col">Operations</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for(var i=0; i < content.length; i++) { %>
+          <tr>
+            <th scope="row"><%= content[i]._id.$oid %></th>
+            <td><a href='<%= content[i].path %>'><%= content[i].data.title %></a></td>
+            <td><%= content[i].type %></td>
+            <td><%= content[i].author.name %></td>
+            <td><%= content[i].created %></td>
+            <td><%= content[i].updated %></td>
+            <td><%= content[i].published %></td>
+            <td>
+              <% if (currentUser._id.$oid == content[i].author._id.$oid || currentUser.roles.includes(0)) { %>
+                <a href='/admin/content/<%= content[i].type %>/edit/<%= content[i]._id.$oid %>'>edit</a> | <a href='/admin/content/<%= content[i].type %>/delete/<%= content[i]._id.$oid %>'>delete</a>
+              <% } %>
+            </td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+      <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+          <% if (pager.previous !== false ) { %>
+            <li class="page-item">
+              <a class="page-link" href="?type=<%= filters.type %>&published=<%= filters.published %>&pageNumber=<%= pager.previous %>" aria-label="Previous">&laquo; Previous</a>
+            </li>
+          <% } %>
+          <% if (pager.next) { %>
+            <li class="page-item">
+              <a class="page-link" href="?type=<%= filters.type %>&published=<%= filters.published %>&pageNumber=<%= pager.next %>" aria-label="Next">Next &raquo;</a>
+            </li>
+          <% } %>
+        </ul>
+      </nav>
     <% } %>
   </div>
 </div>
