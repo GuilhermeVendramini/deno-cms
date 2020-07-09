@@ -19,6 +19,9 @@
     <legend  class="w-auto">Filter</legend>
     <div class="d-flex mb-3">
       <form action="/admin/content" method="get">
+        <div class="form-group">
+          <input class="form-control form-control-sm" name="title" value="<%= filters.title %>" type="text" placeholder="Title">
+        </div>
         <div class="row">
           <div class="col form-group">
             <label for="type">Type</label>
@@ -37,9 +40,11 @@
               <option value="false" <%- filters.published === false ? "selected" : '' %>>No</option>
             </select>
           </div>
+          <div class="col form-group d-flex align-items-end">
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
         </div>
         <input type="hidden" id="pageNumber" name="pageNumber" value="0">
-        <button type="submit" class="btn btn-primary">Submit</button>
       </form>
     </div>
   </fieldset>
@@ -81,12 +86,12 @@
         <ul class="pagination justify-content-center">
           <% if (pager.previous !== false ) { %>
             <li class="page-item">
-              <a class="page-link" href="?type=<%= filters.type %>&published=<%= filters.published %>&pageNumber=<%= pager.previous %>" aria-label="Previous">&laquo; Previous</a>
+              <a class="page-link" href="?title=<%= filters.title %>&type=<%= filters.type %>&published=<%= filters.published %>&pageNumber=<%= pager.previous %>" aria-label="Previous">&laquo; Previous</a>
             </li>
           <% } %>
           <% if (pager.next) { %>
             <li class="page-item">
-              <a class="page-link" href="?type=<%= filters.type %>&published=<%= filters.published %>&pageNumber=<%= pager.next %>" aria-label="Next">Next &raquo;</a>
+              <a class="page-link" href="?title=<%= filters.title %>&published=<%= filters.published %>&pageNumber=<%= pager.next %>" aria-label="Next">Next &raquo;</a>
             </li>
           <% } %>
         </ul>

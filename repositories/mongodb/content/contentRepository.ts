@@ -75,6 +75,7 @@ export default {
   },
 
   async search(
+    title: string | undefined,
     type: string | undefined,
     published: boolean | undefined,
     skip: number = 0,
@@ -86,6 +87,18 @@ export default {
       { $skip: skip },
       { $limit: limit },
     ];
+
+    if (title) {
+      aggregate.unshift({
+        $addFields: {
+          searchIndex: { $indexOfCP: ["$data.title", title] },
+        },
+      }, {
+        $match: {
+          searchIndex: { $ne: -1 },
+        },
+      });
+    }
 
     if (typeof published !== "undefined") {
       aggregate.unshift({ $match: { published: published } });

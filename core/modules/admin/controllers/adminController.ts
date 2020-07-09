@@ -6,12 +6,17 @@ export default {
     let content: any[] = [];
     let pageNumber: number = 0;
     let skip = 0;
-    let limit = 4;
+    let limit = 10;
+    let title: string | undefined;
     let type: string | undefined;
     let published: any | undefined;
 
     if (context.request.url.searchParams.has("pageNumber")) {
       pageNumber = context.request.url.searchParams.get("pageNumber");
+    }
+
+    if (context.request.url.searchParams.has("title")) {
+      title = context.request.url.searchParams.get("title");
     }
 
     if (context.request.url.searchParams.has("type")) {
@@ -32,7 +37,13 @@ export default {
     if (!Number(pageNumber)) pageNumber = 0;
 
     skip = pageNumber * limit;
-    content = await contentRepository.search(type, published, skip, limit);
+    content = await contentRepository.search(
+      title,
+      type,
+      published,
+      skip,
+      limit,
+    );
 
     context.response.body = await renderFileToString(
       `${Deno.cwd()}/core/modules/admin/views/contentView.ejs`,
@@ -44,6 +55,7 @@ export default {
           previous: pageNumber == 0 ? false : Number(pageNumber) - 1,
         },
         filters: {
+          title: title ? title : "",
           type: type ? type : "",
           published: published,
         },
