@@ -2,14 +2,14 @@ import { UserRoles } from "../../core/modules/users/roles/UserRoles.ts";
 import {
   Status,
 } from "oak";
-import entityRepository from "../../repositories/mongodb/entity/entityRepository.ts";
+import EntityRepository from "../../repositories/mongodb/entity/EntityRepository.ts";
 import { renderFileToString } from "dejs";
 import currentUserSession from "../utils/sessions/currentUserSession.ts";
 
-const taxonomyRepository = entityRepository.getRepository("taxonomy");
-const contentRepository = entityRepository.getRepository("content");
-const mediaRepository = entityRepository.getRepository("media");
-const blockRepository = entityRepository.getRepository("block");
+const taxonomyRepository = new EntityRepository("taxonomy");
+const contentRepository = new EntityRepository("content");
+const mediaRepository = new EntityRepository("media");
+const blockRepository = new EntityRepository("block");
 
 async function needTobeAuthor(
   context: Record<string, any>,

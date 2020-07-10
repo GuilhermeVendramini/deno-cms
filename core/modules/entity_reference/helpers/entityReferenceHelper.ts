@@ -1,8 +1,8 @@
-import entityRepository from "../../../../repositories/mongodb/entity/entityRepository.ts";
+import EntityRepository from "../../../../repositories/mongodb/entity/EntityRepository.ts";
 import referenceRepository from "../../../../repositories/mongodb/reference/referenceRepository.ts";
 
 async function entityLoad(id: string, bundle: string) {
-  let repository: any = entityRepository.getRepository(bundle);
+  let repository: any = new EntityRepository(bundle);
   let result: any | undefined;
   result = await repository.findOneByID(id);
   return result;
@@ -41,7 +41,7 @@ export default {
   async updateEntityWithRelation(relation: any) {
     try {
       let result: any | undefined;
-      let repository: any = entityRepository.getRepository(
+      let repository: any = new EntityRepository(
         relation.entity.bundle,
       );
 

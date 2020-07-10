@@ -1,48 +1,52 @@
 import DB from "../db.ts";
 import { ObjectId } from "mongo";
 
-const data = DB.collection("content");
+class EntityRepository {
+  private db: any;
 
-export default {
-  async insertOne(content: any): Promise<any> {
-    return await data.insertOne(content);
-  },
+  constructor(collection: string) {
+    this.db = DB.collection(collection);
+  }
 
-  async updateOne(id: string, content: any): Promise<any> {
-    return await data.updateOne(
+  async insertOne(entity: any): Promise<any> {
+    return await this.db.insertOne(entity);
+  }
+
+  async updateOne(id: string, entity: any): Promise<any> {
+    return await this.db.updateOne(
       { _id: ObjectId(id) },
       {
         $set: {
-          data: content.data,
-          updated: content.updated,
-          published: content.published,
-          path: content.path,
+          data: entity.data,
+          updated: entity.updated,
+          published: entity.published,
+          path: entity.path,
         },
       },
     );
-  },
+  }
 
   async findOneByID(id: string, type: string = ""): Promise<{}> {
     let result: any;
 
     if (type != "") {
-      result = await data.findOne({ _id: ObjectId(id), type: type });
+      result = await this.db.findOne({ _id: ObjectId(id), type: type });
     } else {
-      result = await data.findOne({ _id: ObjectId(id) });
+      result = await this.db.findOne({ _id: ObjectId(id) });
     }
 
     if (result) return result;
 
     return {};
-  },
+  }
 
   async find(type: string = ""): Promise<[]> {
     let result: any;
 
     if (type != "") {
-      result = await data.find({ type: type });
+      result = await this.db.find({ type: type });
     } else {
-      result = await data.find();
+      result = await this.db.find();
     }
 
     if (result) {
@@ -58,21 +62,21 @@ export default {
     }
 
     return [];
-  },
+  }
 
   async deleteOne(id: string): Promise<any> {
-    return await data.deleteOne({ _id: ObjectId(id) });
-  },
+    return await this.db.deleteOne({ _id: ObjectId(id) });
+  }
 
   async findOneByFilters(filters: {}): Promise<{}> {
     let result: any;
 
-    result = await data.findOne(filters);
+    result = await this.db.findOne(filters);
 
     if (result) return result;
 
     return {};
-  },
+  }
 
   async search(
     title: string | undefined,
@@ -108,10 +112,12 @@ export default {
       aggregate.unshift({ $match: { type: type } });
     }
 
-    result = await data.aggregate(aggregate);
+    result = await this.db.aggregate(aggregate);
 
     if (result) return result;
 
     return [];
-  },
-};
+  }
+}
+
+export default EntityRepository;

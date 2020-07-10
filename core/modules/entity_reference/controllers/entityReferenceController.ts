@@ -1,4 +1,4 @@
-import entityRepository from "../../../../repositories/mongodb/entity/entityRepository.ts";
+import EntityRepository from "../../../../repositories/mongodb/entity/EntityRepository.ts";
 
 export default {
   async list(context: Record<string, any>) {
@@ -15,7 +15,7 @@ export default {
         return;
       }
 
-      let repository = entityRepository.getRepository(bundle as string);
+      let repository = new EntityRepository(bundle as string);
 
       if (!repository) {
         context.response.body = "{}";

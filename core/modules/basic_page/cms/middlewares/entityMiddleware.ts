@@ -6,12 +6,12 @@ import {
 } from "oak";
 import vs from "value_schema";
 import entitySchema from "../../schemas/entitySchema.ts";
-import entityRepository from "../../../../../repositories/mongodb/entity/entityRepository.ts";
+import EntityRepository from "../../../../../repositories/mongodb/entity/EntityRepository.ts";
 import entity from "../../entity.ts";
 import pathauto from "../../../../../shared/utils/pathauto/defaultPathauto.ts";
 import entityReferenceHelper from "../../../entity_reference/helpers/entityReferenceHelper.ts";
 
-const repository = entityRepository.getRepository(entity.bundle);
+const repository = new EntityRepository(entity.bundle);
 
 export default {
   async add(context: Record<string, any>, next: Function) {
@@ -134,7 +134,7 @@ export default {
       context.throw(Status.NotAcceptable, "Not Acceptable");
     } catch (error) {
       if (id) {
-        content = await repository.findOneByID(id);
+        content = await repository.findOneByID(id) as ContentEntity;
       }
 
       page = {

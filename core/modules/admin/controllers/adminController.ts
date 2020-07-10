@@ -1,5 +1,7 @@
 import { renderFileToString } from "dejs";
-import contentRepository from "../../../../repositories/mongodb/content/contentRepository.ts";
+import EntityRepository from "../../../../repositories/mongodb/entity/EntityRepository.ts";
+
+const repository = new EntityRepository('content');
 
 export default {
   async content(context: Record<string, any>) {
@@ -37,7 +39,7 @@ export default {
     if (!Number(pageNumber)) pageNumber = 0;
 
     skip = pageNumber * limit;
-    content = await contentRepository.search(
+    content = await repository.search(
       title,
       type,
       published,

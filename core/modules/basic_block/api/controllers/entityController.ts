@@ -1,9 +1,11 @@
 import {
   Status,
 } from "oak";
-import blockRepository from "../../../../../repositories/mongodb/block/blockRepository.ts";
+import EntityRepository from "../../../../../repositories/mongodb/entity/EntityRepository.ts";
 import entity from "../../entity.ts";
 import apiErrors from "../../../../../shared/utils/errors/api/apiErrors.ts";
+
+const repository = new EntityRepository("block");
 
 export default {
   async view(context: Record<string, any>) {
@@ -13,9 +15,9 @@ export default {
       let block: any | undefined;
 
       if (id) {
-        block = await blockRepository.findOneByID(id, entity.type);
+        block = await repository.findOneByID(id, entity.type);
       } else {
-        block = await blockRepository.find(entity.type);
+        block = await repository.find(entity.type);
       }
 
       if (block && Object.keys(block).length != 0) {

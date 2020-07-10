@@ -1,4 +1,4 @@
-import entityRepository from "../../../repositories/mongodb/entity/entityRepository.ts";
+import EntityRepository from "../../../repositories/mongodb/entity/EntityRepository.ts";
 
 function replaceElements(string: string) {
   let i: any =
@@ -45,14 +45,14 @@ async function generatePath(
   id: any = false,
   index: any = false,
 ) {
-  let repository = entityRepository.getRepository(bundle);
+  let repository = new EntityRepository(bundle);
   let path: string = "/" + generateCleanPath(fragments);
 
   if (index) {
     path = path + "-" + index;
   }
 
-  let result = await repository.findOneByFilters({ path: path });
+  let result : any = await repository.findOneByFilters({ path: path });
 
   if (Object.keys(result).length != 0 && id != result._id.$oid) {
     path = await generatePath(bundle, fragments, id, index + 1);

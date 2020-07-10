@@ -1,11 +1,11 @@
 import {
   Status,
 } from "oak";
-import entityRepository from "../../../../../repositories/mongodb/entity/entityRepository.ts";
+import EntityRepository from "../../../../../repositories/mongodb/entity/EntityRepository.ts";
 import entity from "../../entity.ts";
 import apiErrors from "../../../../../shared/utils/errors/api/apiErrors.ts";
 
-const repository = entityRepository.getRepository(entity.bundle);
+const repository = new EntityRepository(entity.bundle);
 
 export default {
   async view(context: Record<string, any>) {
