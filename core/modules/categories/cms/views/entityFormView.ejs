@@ -10,7 +10,7 @@
     <input id="id" name="id" type="hidden" value='<%= page?.term?._id?.$oid %>'>
     <div class="form-group">
       <label>Title</label>
-      <input type="text" required value="<%= page?.term?.data?.title %>" name="title" class="form-control">
+      <input type="text" required value="<%= page?.term?.title %>" name="title" class="form-control">
     </div>
     <div class="form-check mb-3">
       <% let checked = page?.term?.published ? "checked" : "" %>

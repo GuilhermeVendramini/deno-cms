@@ -6,6 +6,7 @@ export class ContentEntity extends BaseEntity {
 
   constructor(
     data: any,
+    title: string,
     type: string,
     author: UserBaseEntity | undefined,
     created: number,
@@ -13,6 +14,7 @@ export class ContentEntity extends BaseEntity {
     path: string,
   ) {
     super(
+      title,
       type,
       "content",
       author,

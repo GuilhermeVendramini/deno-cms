@@ -1,9 +1,7 @@
 const type: string = "categories";
 const bundle: string = "taxonomy";
 const name: string = "Categories";
-const fields: string[] = [
-  "title",
-];
+const fields: string[] = [];
 const references: string[] = [];
 const canBeReferenced: boolean = true;
 

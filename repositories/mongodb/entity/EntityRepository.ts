@@ -18,6 +18,7 @@ class EntityRepository {
       {
         $set: {
           data: entity.data,
+          title: entity.title,
           updated: entity.updated,
           published: entity.published,
           path: entity.path,
@@ -95,7 +96,7 @@ class EntityRepository {
     if (title) {
       aggregate.unshift({
         $addFields: {
-          searchIndex: { $indexOfCP: ["$data.title", title] },
+          searchIndex: { $indexOfCP: ["$title", title] },
         },
       }, {
         $match: {

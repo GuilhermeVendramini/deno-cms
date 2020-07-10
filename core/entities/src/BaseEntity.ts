@@ -1,6 +1,7 @@
 import { UserBaseEntity } from "../../modules/users/entities/UserBaseEntity.ts";
 
 export abstract class BaseEntity {
+  protected title: string;
   protected type: string;
   protected bundle: string;
   protected author: UserBaseEntity | undefined;
@@ -10,6 +11,7 @@ export abstract class BaseEntity {
   protected path: string;
 
   constructor(
+    title: string,
     type: string,
     bundle: string,
     author: UserBaseEntity | undefined,
@@ -17,6 +19,7 @@ export abstract class BaseEntity {
     published: boolean,
     path: string,
   ) {
+    this.title = title;
     this.type = type;
     this.bundle = bundle;
     this.author = author;

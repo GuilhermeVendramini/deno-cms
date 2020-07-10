@@ -115,6 +115,7 @@ export default {
   },
 
   async addPost(context: Record<string, any>, next: Function) {
+    let title: string;
     let published: boolean = false;
     let page: any;
     let block: BlockEntity | undefined;
@@ -125,13 +126,16 @@ export default {
       let body = context.getBody;
       let currentUser = context.getCurrentUser;
       let validated: any;
-      id = body.value.get("id");
 
+      id = body.value.get("id");
+      title = body.value.get("title");
       published = body.value.get("published") ? true : false;
 
-      entity.fields.forEach(function (field: string) {
-        data[field] = body.value.get(field);
-      });
+      if (entity.fields.length > 0) {
+        entity.fields.forEach(function (field: string) {
+          data[field] = body.value.get(field);
+        });
+      }
 
       if (entity.references.length > 0) {
         context["getRelation"] = {
@@ -152,7 +156,7 @@ export default {
 
       validated = vs.applySchemaObject(
         entitySchema,
-        { data: data, published: published },
+        { title: title, data: data, published: published },
       );
 
       let path: string | undefined;
@@ -160,12 +164,13 @@ export default {
       if (validated) {
         path = await pathauto.generate(
           entity.bundle,
-          [entity.bundle, entity.type, validated.data.title],
+          [entity.bundle, entity.type, validated.title],
           id,
         );
 
         block = new BlockEntity(
           validated.data,
+          validated.title,
           entity.type,
           currentUser,
           Date.now(),

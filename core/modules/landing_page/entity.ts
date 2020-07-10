@@ -1,9 +1,7 @@
 const type: string = "landing_page";
 const bundle: string = "content";
 const name: string = "Landing Page";
-const fields: string[] = [
-  "title",
-];
+const fields: string[] = [];
 const references: string[] = [
   "references",
 ];

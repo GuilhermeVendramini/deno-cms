@@ -6,6 +6,7 @@ export class BlockEntity extends BaseEntity {
 
   constructor(
     data: any,
+    title: string,
     type: string,
     author: UserBaseEntity | undefined,
     created: number,
@@ -13,6 +14,7 @@ export class BlockEntity extends BaseEntity {
     path: string,
   ) {
     super(
+      title,
       type,
       "block",
       author,

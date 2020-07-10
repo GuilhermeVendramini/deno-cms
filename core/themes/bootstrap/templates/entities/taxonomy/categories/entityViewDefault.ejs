@@ -1,10 +1,10 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: page?.term?.data?.title, currentUser: currentUser }) %>
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: page?.term?.title, currentUser: currentUser }) %>
 <div class="container">
   <% if ((currentUser && currentUser._id.$oid == page?.term?.author?._id?.$oid) || (currentUser && currentUser?.roles.includes(0))) { %>
     <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: page.term}) %>
   <% } %>
   <% if (page?.term?.data) { %>
-  <h1 class="text-center mb-3"><%= page.term.data?.title %></h1>
+  <h1 class="text-center mb-3"><%= page.term.title %></h1>
   <% } %>
 </div>
 <%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>

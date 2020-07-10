@@ -51,7 +51,7 @@
         <% for(var i=0; i < page.block.length; i++) { %>
         <tr>
           <th scope="row"><%= page.block[i]._id.$oid %></th>
-          <td><a href='<%= page.block[i].path %>'><%= page.block[i].data.title %></a></td>
+          <td><a href='<%= page.block[i].path %>'><%= page.block[i].title %></a></td>
           <td><%= page.block[i].author.name %></td>
           <td><%= page.block[i].created %></td>
           <td><%= page.block[i].updated %></td>
