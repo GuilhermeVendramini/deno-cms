@@ -18,13 +18,54 @@ export default {
   async list(context: Record<string, any>, next: Function) {
     try {
       let media: [] | undefined;
-      media = await repository.find(entity.type);
+      let pageNumber: number = 0;
+      let skip = 0;
+      let limit = 10;
+      let title: string | undefined;
+      let published: any | undefined;
+
+      if (context.request.url.searchParams.has("pageNumber")) {
+        pageNumber = context.request.url.searchParams.get("pageNumber");
+      }
+
+      if (context.request.url.searchParams.has("title")) {
+        title = context.request.url.searchParams.get("title");
+      }
+
+      if (context.request.url.searchParams.has("published")) {
+        published = context.request.url.searchParams.get("published");
+      }
+
+      if (published === "true" || published === "false") {
+        published = (published === "true");
+      } else {
+        published = undefined;
+      }
+
+      if (!Number(pageNumber)) pageNumber = 0;
+
+      skip = pageNumber * limit;
+      media = await repository.search(
+        title,
+        entity.type,
+        published,
+        skip,
+        limit,
+      );
 
       let page = {
         media: media,
         entity: entity,
         error: false,
         message: false,
+        pager: {
+          next: media && media.length >= limit ? Number(pageNumber) + 1 : false,
+          previous: pageNumber == 0 ? false : Number(pageNumber) - 1,
+        },
+        filters: {
+          title: title ? title : "",
+          published: published,
+        },
       };
       context["getPage"] = page;
       await next();

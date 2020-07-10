@@ -73,4 +73,45 @@ export default {
 
     return {};
   },
+
+  async search(
+    title: string | undefined,
+    type: string | undefined,
+    published: boolean | undefined,
+    skip: number = 0,
+    limit = 10,
+  ): Promise<[]> {
+    let result: any;
+    let aggregate: any[] = [
+      { $sort: { updated: -1 } },
+      { $skip: skip },
+      { $limit: limit },
+    ];
+
+    if (title) {
+      aggregate.unshift({
+        $addFields: {
+          searchIndex: { $indexOfCP: ["$data.title", title] },
+        },
+      }, {
+        $match: {
+          searchIndex: { $ne: -1 },
+        },
+      });
+    }
+
+    if (typeof published !== "undefined") {
+      aggregate.unshift({ $match: { published: published } });
+    }
+
+    if (type) {
+      aggregate.unshift({ $match: { type: type } });
+    }
+
+    result = await data.aggregate(aggregate);
+
+    if (result) return result;
+
+    return [];
+  },
 };

@@ -17,19 +17,60 @@ export default {
   async list(context: Record<string, any>, next: Function) {
     try {
       let term: [] | undefined;
-      term = await repository.find(entity.type);
+      let pageNumber: number = 0;
+      let skip = 0;
+      let limit = 10;
+      let title: string | undefined;
+      let published: any | undefined;
+
+      if (context.request.url.searchParams.has("pageNumber")) {
+        pageNumber = context.request.url.searchParams.get("pageNumber");
+      }
+
+      if (context.request.url.searchParams.has("title")) {
+        title = context.request.url.searchParams.get("title");
+      }
+
+      if (context.request.url.searchParams.has("published")) {
+        published = context.request.url.searchParams.get("published");
+      }
+
+      if (published === "true" || published === "false") {
+        published = (published === "true");
+      } else {
+        published = undefined;
+      }
+
+      if (!Number(pageNumber)) pageNumber = 0;
+
+      skip = pageNumber * limit;
+      term = await repository.search(
+        title,
+        entity.type,
+        published,
+        skip,
+        limit,
+      );
 
       let page = {
         term: term,
         entity: entity,
         error: false,
         message: false,
+        pager: {
+          next: term && term.length >= limit ? Number(pageNumber) + 1 : false,
+          previous: pageNumber == 0 ? false : Number(pageNumber) - 1,
+        },
+        filters: {
+          title: title ? title : "",
+          published: published,
+        },
       };
       context["getPage"] = page;
       await next();
     } catch (error) {
       let page = {
-        term: false,
+        media: false,
         entity: entity,
         error: true,
         message: error.message,

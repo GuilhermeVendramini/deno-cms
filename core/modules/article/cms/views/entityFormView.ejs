@@ -67,6 +67,7 @@
 <script>
 	ClassicEditor
 		.create( document.querySelector('#body'), {
+      toolbar: [ 'heading', '|', 'bold', 'italic', 'link' ]
 		} )
 		.then( editor => {
 			window.editor = editor;

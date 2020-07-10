@@ -9,6 +9,30 @@
       </div>
     </div>
   </fieldset>
+  <fieldset class="border p-2">
+    <legend  class="w-auto">Filter</legend>
+    <div class="d-flex mb-3">
+      <form action="/admin/<%= page.entity.bundle %>/<%= page.entity.type %>" method="get">
+        <div class="form-group">
+          <input class="form-control form-control-sm" name="title" value="<%= page.filters.title %>" type="text" placeholder="Title">
+        </div>
+        <div class="row">
+          <div class="col form-group">
+            <label for="published">Published</label>
+            <select class="form-control form-control-sm" id="published" name="published">
+              <option value="any">Any</option>
+              <option value="true" <%- page.filters.published === true ? "selected" : '' %>>Yes</option>
+              <option value="false" <%- page.filters.published === false ? "selected" : '' %>>No</option>
+            </select>
+          </div>
+          <div class="col form-group d-flex align-items-end">
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </div>
+        <input type="hidden" id="pageNumber" name="pageNumber" value="0">
+      </form>
+    </div>
+  </fieldset>
   <div class="mt-3">
     <% if (page.block) { %>
     <table class="table">
@@ -41,6 +65,20 @@
         <% } %>
       </tbody>
     </table>
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-center">
+        <% if (page.pager.previous !== false ) { %>
+          <li class="page-item">
+            <a class="page-link" href="?title=<%= page.filters.title %>&type=<%= page.filters.type %>&published=<%= page.filters.published %>&pageNumber=<%= page.pager.previous %>" aria-label="Previous">&laquo; Previous</a>
+          </li>
+        <% } %>
+        <% if (page.pager.next) { %>
+          <li class="page-item">
+            <a class="page-link" href="?title=<%= page.filters.title %>&published=<%= page.filters.published %>&pageNumber=<%= page.pager.next %>" aria-label="Next">Next &raquo;</a>
+          </li>
+        <% } %>
+      </ul>
+    </nav>
     <% } %>
   </div>
 </div>
