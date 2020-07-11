@@ -1,31 +1,37 @@
 import {
   ContentEntity,
-} from "../../../../entities/src/ContentEntity.ts";
+} from "../../src/ContentEntity.ts";
 import {
   Status,
 } from "oak";
 import vs from "value_schema";
-import entitySchema from "../../schemas/entitySchema.ts";
-import EntityRepository from "../../../../../repositories/mongodb/entity/EntityRepository.ts";
-import entity from "../../entity.ts";
-import pathauto from "../../../../../shared/utils/pathauto/defaultPathauto.ts";
-import entityReferenceHelper from "../../../entity_reference/helpers/entityReferenceHelper.ts";
+import EntityRepository from "../../../../repositories/mongodb/entity/EntityRepository.ts";
+import pathauto from "../../../../shared/utils/pathauto/defaultPathauto.ts";
+import entityReferenceHelper from "../../../modules/entity_reference/helpers/entityReferenceHelper.ts";
 
-const repository = new EntityRepository(entity.bundle);
+abstract class EntityMiddleware {
+  private static repository: any;
+  private static entitySchema: any;
+  private static entity: any;
 
-export default {
+  constructor(entity: any, entitySchema: any) {
+    EntityMiddleware.repository = new EntityRepository(entity.bundle);
+    EntityMiddleware.entity = entity;
+    EntityMiddleware.entitySchema = entitySchema;
+  }
+
   async add(context: Record<string, any>, next: Function) {
     try {
       let id: string = context.params?.id;
       let content: {} | undefined;
 
       if (id) {
-        content = await repository.findOneByID(id);
+        content = await EntityMiddleware.repository.findOneByID(id);
       }
 
       let page = {
         content: content,
-        entity: entity,
+        entity: EntityMiddleware.entity,
         error: false,
         message: false,
       };
@@ -33,16 +39,18 @@ export default {
       context["getPage"] = page;
       await next();
     } catch (error) {
+      console.log(error.message);
+
       let page = {
         content: false,
-        entity: entity,
+        entity: EntityMiddleware.entity,
         error: true,
         message: error.message,
       };
       context["getPage"] = page;
       await next();
     }
-  },
+  }
 
   async addPost(context: Record<string, any>, next: Function) {
     let title: string;
@@ -61,20 +69,20 @@ export default {
       title = body.value.get("title");
       published = body.value.get("published") ? true : false;
 
-      if (entity.fields.length > 0) {
-        entity.fields.forEach(function (field: string) {
+      if (EntityMiddleware.entity.fields.length > 0) {
+        EntityMiddleware.entity.fields.forEach(function (field: string) {
           data[field] = body.value.get(field);
         });
       }
 
-      if (entity.references.length > 0) {
+      if (EntityMiddleware.entity.references.length > 0) {
         context["getRelation"] = {
           entity: {},
           references: [],
         };
 
         let entities = await entityReferenceHelper.addEntityRelation(
-          entity.references,
+          EntityMiddleware.entity.references,
           context,
         );
 
@@ -85,7 +93,7 @@ export default {
       }
 
       validated = vs.applySchemaObject(
-        entitySchema,
+        EntityMiddleware.entitySchema,
         { title: title, data: data, published: published },
       );
 
@@ -93,15 +101,19 @@ export default {
 
       if (validated) {
         path = await pathauto.generate(
-          entity.bundle,
-          [entity.bundle, entity.type, validated.title],
+          EntityMiddleware.entity.bundle,
+          [
+            EntityMiddleware.entity.bundle,
+            EntityMiddleware.entity.type,
+            validated.title,
+          ],
           id,
         );
 
         content = new ContentEntity(
           validated.data,
           validated.title,
-          entity.type,
+          EntityMiddleware.entity.type,
           currentUser,
           Date.now(),
           validated.published,
@@ -109,24 +121,24 @@ export default {
         );
 
         if (id) {
-          await repository.updateOne(id, content);
+          await EntityMiddleware.repository.updateOne(id, content);
         } else {
-          let result = await repository.insertOne(content);
+          let result = await EntityMiddleware.repository.insertOne(content);
           id = result.$oid;
         }
 
-        if (entity.references.length > 0) {
+        if (EntityMiddleware.entity.references.length > 0) {
           context["getRelation"]["entity"] = {
             id: id,
-            bundle: entity.bundle,
-            type: entity.type,
+            bundle: EntityMiddleware.entity.bundle,
+            type: EntityMiddleware.entity.type,
           };
         }
 
         page = {
           id: id,
           content: content,
-          entity: entity,
+          entity: EntityMiddleware.entity,
           error: false,
           message: false,
         };
@@ -138,14 +150,18 @@ export default {
       }
       context.throw(Status.NotAcceptable, "Not Acceptable");
     } catch (error) {
+      console.log(error.message);
+
       if (id) {
-        content = await repository.findOneByID(id) as ContentEntity;
+        content = await EntityMiddleware.repository.findOneByID(
+          id,
+        ) as ContentEntity;
       }
 
       page = {
         id: id,
         content: content,
-        entity: entity,
+        entity: EntityMiddleware.entity,
         error: true,
         message: error.message,
       };
@@ -153,18 +169,21 @@ export default {
       context["getPage"] = page;
       await next();
     }
-  },
+  }
 
-  async view(context: Record<string, any>, next: Function) {
+  public async view(context: Record<string, any>, next: Function) {
     try {
       let path: string = context.request.url.pathname;
       let content: any | undefined;
-      content = await repository.findOneByFilters({ path: path });
+
+      content = await EntityMiddleware.repository.findOneByFilters(
+        { path: path },
+      );
 
       if (content && Object.keys(content).length != 0) {
         let page = {
           content: content,
-          entity: entity,
+          entity: EntityMiddleware.entity,
           error: false,
           message: false,
         };
@@ -175,27 +194,29 @@ export default {
       }
       context.throw(Status.NotFound, "NotFound");
     } catch (error) {
+      console.log(error.message);
+
       let page = {
         content: false,
-        entity: entity,
+        entity: EntityMiddleware.entity,
         error: true,
         message: error.message,
       };
       context["getPage"] = page;
       await next();
     }
-  },
+  }
 
   async delete(context: Record<string, any>, next: Function) {
     try {
       let id: string = context.params.id;
       let content: any | undefined;
-      content = await repository.findOneByID(id);
+      content = await EntityMiddleware.repository.findOneByID(id);
 
       if (content && Object.keys(content).length != 0) {
         let page = {
           content: content,
-          entity: entity,
+          entity: EntityMiddleware.entity,
           error: false,
           message: false,
         };
@@ -206,41 +227,43 @@ export default {
       }
       context.throw(Status.NotFound, "NotFound");
     } catch (error) {
+      console.log(error.message);
+
       let page = {
         content: false,
-        entity: entity,
+        entity: EntityMiddleware.entity,
         error: true,
         message: error.message,
       };
       context["getPage"] = page;
       await next();
     }
-  },
+  }
 
   async deletePost(context: Record<string, any>, next: Function) {
-    let path = `/admin/${entity.bundle}`;
+    let path = `/admin/${EntityMiddleware.entity.bundle}`;
     let content: any | undefined;
     let id: string = "";
 
     try {
       let body = context.getBody;
       id = body.value.get("id");
-      content = await repository.findOneByID(id);
+      content = await EntityMiddleware.repository.findOneByID(id);
 
-      if (entity.references.length > 0) {
+      if (EntityMiddleware.entity.references.length > 0) {
         context["getRelation"] = {
           entity: {},
         };
       }
 
       if (content && Object.keys(content).length != 0) {
-        await repository.deleteOne(id);
+        await EntityMiddleware.repository.deleteOne(id);
 
-        if (entity.references.length > 0) {
+        if (EntityMiddleware.entity.references.length > 0) {
           context["getRelation"]["entity"] = {
             id: id,
-            bundle: entity.bundle,
-            type: entity.type,
+            bundle: EntityMiddleware.entity.bundle,
+            type: EntityMiddleware.entity.type,
           };
         }
       }
@@ -248,7 +271,7 @@ export default {
       let page = {
         id: id,
         content: content,
-        entity: entity,
+        entity: EntityMiddleware.entity,
         error: false,
         message: false,
       };
@@ -262,7 +285,7 @@ export default {
       let page = {
         id: id,
         content: content,
-        entity: entity,
+        entity: EntityMiddleware.entity,
         error: true,
         message: true,
       };
@@ -271,5 +294,7 @@ export default {
       context["getRedirect"] = path;
       await next();
     }
-  },
-};
+  }
+}
+
+export default EntityMiddleware;
