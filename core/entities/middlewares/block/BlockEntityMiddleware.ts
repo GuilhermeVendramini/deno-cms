@@ -1,19 +1,25 @@
 import {
   BlockEntity,
-} from "../../../../entities/src/BlockEntity.ts";
+} from "../../../entities/src/BlockEntity.ts";
 import {
   Status,
 } from "oak";
 import vs from "value_schema";
-import entitySchema from "../../schemas/entitySchema.ts";
-import EntityRepository from "../../../../../repositories/mongodb/entity/EntityRepository.ts";
-import entity from "../../entity.ts";
-import pathauto from "../../../../../shared/utils/pathauto/defaultPathauto.ts";
-import entityReferenceHelper from "../../../entity_reference/helpers/entityReferenceHelper.ts";
+import EntityRepository from "../../../../repositories/mongodb/entity/EntityRepository.ts";
+import pathauto from "../../../../shared/utils/pathauto/defaultPathauto.ts";
+import entityReferenceHelper from "../../../modules/entity_reference/helpers/entityReferenceHelper.ts";
 
-const repository = new EntityRepository(entity.bundle);
+abstract class EntityMiddleware {
+  private static repository: any;
+  private static entitySchema: any;
+  private static entity: any;
 
-export default {
+  constructor(entity: any, entitySchema: any) {
+    EntityMiddleware.repository = new EntityRepository(entity.bundle);
+    EntityMiddleware.entity = entity;
+    EntityMiddleware.entitySchema = entitySchema;
+  }
+
   async list(context: Record<string, any>, next: Function) {
     try {
       let block: any[] | undefined;
@@ -44,9 +50,9 @@ export default {
       if (!Number(pageNumber)) pageNumber = 0;
 
       skip = pageNumber * limit;
-      block = await repository.search(
+      block = await EntityMiddleware.repository.search(
         title,
-        entity.type,
+        EntityMiddleware.entity.type,
         published,
         skip,
         limit,
@@ -54,7 +60,7 @@ export default {
 
       let page = {
         block: block,
-        entity: entity,
+        entity: EntityMiddleware.entity,
         error: false,
         message: false,
         pager: {
@@ -69,16 +75,18 @@ export default {
       context["getPage"] = page;
       await next();
     } catch (error) {
+      console.log(error.message);
+
       let page = {
         block: false,
-        entity: entity,
+        entity: EntityMiddleware.entity,
         error: true,
         message: error.message,
       };
       context["getPage"] = page;
       await next();
     }
-  },
+  }
 
   async add(context: Record<string, any>, next: Function) {
     let id: string = "";
@@ -88,13 +96,13 @@ export default {
       let block: {} | undefined;
 
       if (id) {
-        block = await repository.findOneByID(id);
+        block = await EntityMiddleware.repository.findOneByID(id);
       }
 
       let page = {
         id: id,
         block: block,
-        entity: entity,
+        entity: EntityMiddleware.entity,
         error: false,
         message: false,
       };
@@ -102,17 +110,19 @@ export default {
       context["getPage"] = page;
       await next();
     } catch (error) {
+      console.log(error.message);
+
       let page = {
         id: id,
         block: false,
-        entity: entity,
+        entity: EntityMiddleware.entity,
         error: true,
         message: error.message,
       };
       context["getPage"] = page;
       await next();
     }
-  },
+  }
 
   async addPost(context: Record<string, any>, next: Function) {
     let title: string;
@@ -131,20 +141,20 @@ export default {
       title = body.value.get("title");
       published = body.value.get("published") ? true : false;
 
-      if (entity.fields.length > 0) {
-        entity.fields.forEach(function (field: string) {
+      if (EntityMiddleware.entity.fields.length > 0) {
+        EntityMiddleware.entity.fields.forEach(function (field: string) {
           data[field] = body.value.get(field);
         });
       }
 
-      if (entity.references.length > 0) {
+      if (EntityMiddleware.entity.references.length > 0) {
         context["getRelation"] = {
           entity: {},
           references: [],
         };
 
         let entities = await entityReferenceHelper.addEntityRelation(
-          entity.references,
+          EntityMiddleware.entity.references,
           context,
         );
 
@@ -155,7 +165,7 @@ export default {
       }
 
       validated = vs.applySchemaObject(
-        entitySchema,
+        EntityMiddleware.entitySchema,
         { title: title, data: data, published: published },
       );
 
@@ -163,15 +173,19 @@ export default {
 
       if (validated) {
         path = await pathauto.generate(
-          entity.bundle,
-          [entity.bundle, entity.type, validated.title],
+          EntityMiddleware.entity.bundle,
+          [
+            EntityMiddleware.entity.bundle,
+            EntityMiddleware.entity.type,
+            validated.title,
+          ],
           id,
         );
 
         block = new BlockEntity(
           validated.data,
           validated.title,
-          entity.type,
+          EntityMiddleware.entity.type,
           currentUser,
           Date.now(),
           validated.published,
@@ -179,24 +193,24 @@ export default {
         );
 
         if (id) {
-          await repository.updateOne(id, block);
+          await EntityMiddleware.repository.updateOne(id, block);
         } else {
-          let result = await repository.insertOne(block);
+          let result = await EntityMiddleware.repository.insertOne(block);
           id = result.$oid;
         }
 
-        if (entity.references.length > 0) {
+        if (EntityMiddleware.entity.references.length > 0) {
           context["getRelation"]["entity"] = {
             id: id,
-            bundle: entity.bundle,
-            type: entity.type,
+            bundle: EntityMiddleware.entity.bundle,
+            type: EntityMiddleware.entity.type,
           };
         }
 
         page = {
           id: id,
           block: block,
-          entity: entity,
+          entity: EntityMiddleware.entity,
           error: false,
           message: false,
         };
@@ -208,14 +222,18 @@ export default {
       }
       context.throw(Status.NotAcceptable, "Not Acceptable");
     } catch (error) {
+      console.log(error.message);
+
       if (id) {
-        block = await repository.findOneByID(id) as BlockEntity;
+        block = await EntityMiddleware.repository.findOneByID(
+          id,
+        ) as BlockEntity;
       }
 
       page = {
         id: id,
         block: block,
-        entity: entity,
+        entity: EntityMiddleware.entity,
         error: true,
         message: error.message,
       };
@@ -223,18 +241,20 @@ export default {
       context["getPage"] = page;
       await next();
     }
-  },
+  }
 
   async view(context: Record<string, any>, next: Function) {
     try {
       let path: string = context.request.url.pathname;
       let block: any | undefined;
-      block = await repository.findOneByFilters({ path: path });
+      block = await EntityMiddleware.repository.findOneByFilters(
+        { path: path },
+      );
 
       if (block && Object.keys(block).length != 0) {
         let page = {
           block: block,
-          entity: entity,
+          entity: EntityMiddleware.entity,
           error: false,
           message: false,
         };
@@ -245,16 +265,18 @@ export default {
       }
       context.throw(Status.NotFound, "NotFound");
     } catch (error) {
+      console.log(error.message);
+
       let page = {
         block: false,
-        entity: entity,
+        entity: EntityMiddleware.entity,
         error: true,
         message: error.message,
       };
       context["getPage"] = page;
       await next();
     }
-  },
+  }
 
   async delete(context: Record<string, any>, next: Function) {
     let id: string = "";
@@ -262,13 +284,13 @@ export default {
 
     try {
       id = context.params.id;
-      block = await repository.findOneByID(id);
+      block = await EntityMiddleware.repository.findOneByID(id);
 
       if (block && Object.keys(block).length != 0) {
         let page = {
           id: id,
           block: block,
-          entity: entity,
+          entity: EntityMiddleware.entity,
           error: false,
           message: false,
         };
@@ -279,20 +301,23 @@ export default {
       }
       context.throw(Status.NotFound, "NotFound");
     } catch (error) {
+      console.log(error.message);
+
       let page = {
         id: id,
         block: false,
-        entity: entity,
+        entity: EntityMiddleware.entity,
         error: true,
         message: error.message,
       };
       context["getPage"] = page;
       await next();
     }
-  },
+  }
 
   async deletePost(context: Record<string, any>, next: Function) {
-    let path = `/admin/${entity.bundle}/${entity.type}`;
+    let path =
+      `/admin/${EntityMiddleware.entity.bundle}/${EntityMiddleware.entity.type}`;
     let id: string = "";
     let block: any | undefined;
 
@@ -300,22 +325,22 @@ export default {
       let body = context.getBody;
       id = body.value.get("id");
 
-      block = await repository.findOneByID(id);
+      block = await EntityMiddleware.repository.findOneByID(id);
 
-      if (entity.references.length > 0) {
+      if (EntityMiddleware.entity.references.length > 0) {
         context["getRelation"] = {
           entity: {},
         };
       }
 
       if (block && Object.keys(block).length != 0) {
-        await repository.deleteOne(id);
+        await EntityMiddleware.repository.deleteOne(id);
 
-        if (entity.references.length > 0) {
+        if (EntityMiddleware.entity.references.length > 0) {
           context["getRelation"]["entity"] = {
             id: id,
-            bundle: entity.bundle,
-            type: entity.type,
+            bundle: EntityMiddleware.entity.bundle,
+            type: EntityMiddleware.entity.type,
           };
         }
       }
@@ -323,7 +348,7 @@ export default {
       let page = {
         id: id,
         block: block,
-        entity: entity,
+        entity: EntityMiddleware.entity,
         error: false,
         message: false,
       };
@@ -337,7 +362,7 @@ export default {
       let page = {
         id: id,
         block: block,
-        entity: entity,
+        entity: EntityMiddleware.entity,
         error: true,
         message: true,
       };
@@ -346,5 +371,7 @@ export default {
       context["getRedirect"] = path;
       await next();
     }
-  },
-};
+  }
+}
+
+export default EntityMiddleware;
