@@ -1,11 +1,11 @@
-const type: string = "video";
-const bundle: string = "media";
-const name: string = "Video";
-const fields: string[] = [
+let type: string = "video";
+let bundle: string = "media";
+let name: string = "Video";
+let fields: string[] = [
   "video",
 ];
-const references: string[] = [];
-const canBeReferenced: boolean = true;
+let references: string[] = [];
+let canBeReferenced: boolean = true;
 
 export default {
   type,

@@ -12,7 +12,7 @@ router
     "/entity-reference/assets/js/:file",
     loggedMiddleware.needToBeLogged,
     async (context: Record<string, any>) => {
-      const file = context.params.file;
+      let file = context.params.file;
       context.response.body = await Deno.readFile(
         `${Deno.cwd()}/core/modules/entity_reference/assets/js/${file}`,
       );

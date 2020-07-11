@@ -1,5 +1,5 @@
 import router from "../../../../router.ts";
-import EntityMiddleware from "../middlewares/EntityMiddleware.ts";
+import entityMiddleware from "../middlewares/entityMiddleware.ts";
 import loggedMiddleware from "../../../../../shared/middlewares/loggedMiddleware.ts";
 import entity from "../../entity.ts";
 import baseEntityMiddleware from "../../../../../shared/middlewares/baseEntityMiddleware.ts";
@@ -7,11 +7,9 @@ import cmsMiddleware from "../../../../../shared/middlewares/cmsMiddleware.ts";
 import entityBaseController from "../../../../entities/controllers/entityBaseController.ts";
 import entityReferenceMiddleware from "../../../entity_reference/middlewares/entityReferenceMiddleware.ts";
 
-const skipMiddleware = async (_: any, next: Function) => {
+let skipMiddleware = async (_: any, next: Function) => {
   await next();
 };
-
-const entityMiddleware = new EntityMiddleware();
 
 router
   .get(

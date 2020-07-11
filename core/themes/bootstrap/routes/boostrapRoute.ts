@@ -13,9 +13,9 @@ router
   .get(
     "/core/themes/boostrap/assets/:folder/:file",
     async (context: Record<string, any>) => {
-      const folder = context.params.folder;
-      const file = context.params.file;
-      const ext = file?.split(".").pop();
+      let folder = context.params.folder;
+      let file = context.params.file;
+      let ext = file?.split(".").pop();
 
       if (ext == "css") {
         context.response.headers.set("Content-Type", "text/css");

@@ -2,6 +2,6 @@ import {
   Router,
 } from "oak";
 
-const router = new Router();
+let router = new Router();
 
 export default router;

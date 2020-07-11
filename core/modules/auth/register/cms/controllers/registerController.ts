@@ -24,7 +24,7 @@ export default {
         context.throw(Status.BadRequest, "Bad Request");
       }
 
-      const body = await context.request.body();
+      let body = await context.request.body();
 
       if (body.type !== "form") {
         context.throw(Status.BadRequest, "Bad Request");

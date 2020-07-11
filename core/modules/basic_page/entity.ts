@@ -1,11 +1,11 @@
-const type: string = "basic_page";
-const bundle: string = "content";
-const name: string = "Basic Page";
-const fields: string[] = [
+let type: string = "basic_page";
+let bundle: string = "content";
+let name: string = "Basic Page";
+let fields: string[] = [
   "body",
 ];
-const references: string[] = [];
-const canBeReferenced: boolean = true;
+let references: string[] = [];
+let canBeReferenced: boolean = true;
 
 export default {
   type,

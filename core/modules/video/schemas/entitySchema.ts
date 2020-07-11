@@ -1,6 +1,6 @@
 import vs from "value_schema";
 
-const entitySchema = {
+let entitySchema = {
   title: vs.string({
     trims: true,
     maxLength: {

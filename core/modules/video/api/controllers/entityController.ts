@@ -5,7 +5,7 @@ import EntityRepository from "../../../../../repositories/mongodb/entity/EntityR
 import entity from "../../entity.ts";
 import apiErrors from "../../../../../shared/utils/errors/api/apiErrors.ts";
 
-const repository = new EntityRepository(entity.bundle);
+let repository = new EntityRepository(entity.bundle);
 
 export default {
   async view(context: Record<string, any>) {

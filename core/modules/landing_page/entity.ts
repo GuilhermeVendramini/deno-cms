@@ -1,11 +1,11 @@
-const type: string = "landing_page";
-const bundle: string = "content";
-const name: string = "Landing Page";
-const fields: string[] = [];
-const references: string[] = [
+let type: string = "landing_page";
+let bundle: string = "content";
+let name: string = "Landing Page";
+let fields: string[] = [];
+let references: string[] = [
   "references",
 ];
-const canBeReferenced: boolean = false;
+let canBeReferenced: boolean = false;
 
 export default {
   type,

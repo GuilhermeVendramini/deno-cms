@@ -7,7 +7,7 @@ import cmsMiddleware from "../../../../../shared/middlewares/cmsMiddleware.ts";
 import entityBaseController from "../../../../entities/controllers/entityBaseController.ts";
 import entityReferenceMiddleware from "../../../entity_reference/middlewares/entityReferenceMiddleware.ts";
 
-const skipMiddleware = async (_: any, next: Function) => {
+let skipMiddleware = async (_: any, next: Function) => {
   await next();
 };
 

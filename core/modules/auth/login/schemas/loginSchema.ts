@@ -1,6 +1,6 @@
 import vs from "value_schema";
 
-const loginSchema = {
+let loginSchema = {
   email: vs.email(),
   password: vs.string({
     minLength: 8,

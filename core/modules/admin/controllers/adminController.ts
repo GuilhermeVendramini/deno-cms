@@ -1,7 +1,7 @@
 import { renderFileToString } from "dejs";
 import EntityRepository from "../../../../repositories/mongodb/entity/EntityRepository.ts";
 
-const repository = new EntityRepository('content');
+let repository = new EntityRepository('content');
 
 export default {
   async content(context: Record<string, any>) {

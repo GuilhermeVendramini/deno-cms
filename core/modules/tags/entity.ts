@@ -1,9 +1,9 @@
-const type: string = "tags";
-const bundle: string = "taxonomy";
-const name: string = "Tags";
-const fields: string[] = [];
-const references: string[] = [];
-const canBeReferenced: boolean = true;
+let type: string = "tags";
+let bundle: string = "taxonomy";
+let name: string = "Tags";
+let fields: string[] = [];
+let references: string[] = [];
+let canBeReferenced: boolean = true;
 
 export default {
   type,

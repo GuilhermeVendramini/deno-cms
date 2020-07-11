@@ -12,7 +12,7 @@ import pathauto from "../../../../../shared/utils/pathauto/defaultPathauto.ts";
 import mediaHelper from "../../../media/utils/mediaHelper.ts";
 import entityReferenceHelper from "../../../entity_reference/helpers/entityReferenceHelper.ts";
 
-const repository = new EntityRepository(entity.bundle);
+let repository = new EntityRepository(entity.bundle);
 
 export default {
   async list(context: Record<string, any>, next: Function) {

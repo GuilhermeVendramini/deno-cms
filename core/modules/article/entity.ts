@@ -1,14 +1,14 @@
-const type: string = "article";
-const bundle: string = "content";
-const name: string = "Article";
-const fields: string[] = [
+let type: string = "article";
+let bundle: string = "content";
+let name: string = "Article";
+let fields: string[] = [
   "body",
 ];
-const references: string[] = [
+let references: string[] = [
   "tags",
   "images",
 ];
-const canBeReferenced: boolean = true;
+let canBeReferenced: boolean = true;
 
 export default {
   type,

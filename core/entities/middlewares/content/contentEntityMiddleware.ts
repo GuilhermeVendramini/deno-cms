@@ -5,33 +5,27 @@ import {
   Status,
 } from "oak";
 import vs from "value_schema";
-import EntityRepository from "../../../../repositories/mongodb/entity/EntityRepository.ts";
 import pathauto from "../../../../shared/utils/pathauto/defaultPathauto.ts";
 import entityReferenceHelper from "../../../modules/entity_reference/helpers/entityReferenceHelper.ts";
 
-abstract class EntityMiddleware {
-  private static repository: any;
-  private static entitySchema: any;
-  private static entity: any;
-
-  constructor(entity: any, entitySchema: any) {
-    EntityMiddleware.repository = new EntityRepository(entity.bundle);
-    EntityMiddleware.entity = entity;
-    EntityMiddleware.entitySchema = entitySchema;
-  }
-
-  async add(context: Record<string, any>, next: Function) {
+export default {
+  async add(
+    context: Record<string, any>,
+    next: Function,
+    entity: any,
+    repository: any,
+  ) {
     try {
       let id: string = context.params?.id;
       let content: {} | undefined;
 
       if (id) {
-        content = await EntityMiddleware.repository.findOneByID(id);
+        content = await repository.findOneByID(id);
       }
 
       let page = {
         content: content,
-        entity: EntityMiddleware.entity,
+        entity: entity,
         error: false,
         message: false,
       };
@@ -43,16 +37,22 @@ abstract class EntityMiddleware {
 
       let page = {
         content: false,
-        entity: EntityMiddleware.entity,
+        entity: entity,
         error: true,
         message: error.message,
       };
       context["getPage"] = page;
       await next();
     }
-  }
+  },
 
-  async addPost(context: Record<string, any>, next: Function) {
+  async addPost(
+    context: Record<string, any>,
+    next: Function,
+    entity: any,
+    repository: any,
+    entitySchema: any,
+  ) {
     let title: string;
     let published: boolean = false;
     let page: any;
@@ -69,20 +69,20 @@ abstract class EntityMiddleware {
       title = body.value.get("title");
       published = body.value.get("published") ? true : false;
 
-      if (EntityMiddleware.entity.fields.length > 0) {
-        EntityMiddleware.entity.fields.forEach(function (field: string) {
+      if (entity.fields.length > 0) {
+        entity.fields.forEach(function (field: string) {
           data[field] = body.value.get(field);
         });
       }
 
-      if (EntityMiddleware.entity.references.length > 0) {
+      if (entity.references.length > 0) {
         context["getRelation"] = {
           entity: {},
           references: [],
         };
 
         let entities = await entityReferenceHelper.addEntityRelation(
-          EntityMiddleware.entity.references,
+          entity.references,
           context,
         );
 
@@ -93,7 +93,7 @@ abstract class EntityMiddleware {
       }
 
       validated = vs.applySchemaObject(
-        EntityMiddleware.entitySchema,
+        entitySchema,
         { title: title, data: data, published: published },
       );
 
@@ -101,10 +101,10 @@ abstract class EntityMiddleware {
 
       if (validated) {
         path = await pathauto.generate(
-          EntityMiddleware.entity.bundle,
+          entity.bundle,
           [
-            EntityMiddleware.entity.bundle,
-            EntityMiddleware.entity.type,
+            entity.bundle,
+            entity.type,
             validated.title,
           ],
           id,
@@ -113,7 +113,7 @@ abstract class EntityMiddleware {
         content = new ContentEntity(
           validated.data,
           validated.title,
-          EntityMiddleware.entity.type,
+          entity.type,
           currentUser,
           Date.now(),
           validated.published,
@@ -121,24 +121,24 @@ abstract class EntityMiddleware {
         );
 
         if (id) {
-          await EntityMiddleware.repository.updateOne(id, content);
+          await repository.updateOne(id, content);
         } else {
-          let result = await EntityMiddleware.repository.insertOne(content);
+          let result = await repository.insertOne(content);
           id = result.$oid;
         }
 
-        if (EntityMiddleware.entity.references.length > 0) {
+        if (entity.references.length > 0) {
           context["getRelation"]["entity"] = {
             id: id,
-            bundle: EntityMiddleware.entity.bundle,
-            type: EntityMiddleware.entity.type,
+            bundle: entity.bundle,
+            type: entity.type,
           };
         }
 
         page = {
           id: id,
           content: content,
-          entity: EntityMiddleware.entity,
+          entity: entity,
           error: false,
           message: false,
         };
@@ -153,7 +153,7 @@ abstract class EntityMiddleware {
       console.log(error.message);
 
       if (id) {
-        content = await EntityMiddleware.repository.findOneByID(
+        content = await repository.findOneByID(
           id,
         ) as ContentEntity;
       }
@@ -161,7 +161,7 @@ abstract class EntityMiddleware {
       page = {
         id: id,
         content: content,
-        entity: EntityMiddleware.entity,
+        entity: entity,
         error: true,
         message: error.message,
       };
@@ -169,21 +169,26 @@ abstract class EntityMiddleware {
       context["getPage"] = page;
       await next();
     }
-  }
+  },
 
-  public async view(context: Record<string, any>, next: Function) {
+  async view(
+    context: Record<string, any>,
+    next: Function,
+    entity: any,
+    repository: any,
+  ) {
     try {
       let path: string = context.request.url.pathname;
       let content: any | undefined;
 
-      content = await EntityMiddleware.repository.findOneByFilters(
+      content = await repository.findOneByFilters(
         { path: path },
       );
 
       if (content && Object.keys(content).length != 0) {
         let page = {
           content: content,
-          entity: EntityMiddleware.entity,
+          entity: entity,
           error: false,
           message: false,
         };
@@ -198,25 +203,30 @@ abstract class EntityMiddleware {
 
       let page = {
         content: false,
-        entity: EntityMiddleware.entity,
+        entity: entity,
         error: true,
         message: error.message,
       };
       context["getPage"] = page;
       await next();
     }
-  }
+  },
 
-  async delete(context: Record<string, any>, next: Function) {
+  async delete(
+    context: Record<string, any>,
+    next: Function,
+    entity: any,
+    repository: any,
+  ) {
     try {
       let id: string = context.params.id;
       let content: any | undefined;
-      content = await EntityMiddleware.repository.findOneByID(id);
+      content = await repository.findOneByID(id);
 
       if (content && Object.keys(content).length != 0) {
         let page = {
           content: content,
-          entity: EntityMiddleware.entity,
+          entity: entity,
           error: false,
           message: false,
         };
@@ -231,39 +241,44 @@ abstract class EntityMiddleware {
 
       let page = {
         content: false,
-        entity: EntityMiddleware.entity,
+        entity: entity,
         error: true,
         message: error.message,
       };
       context["getPage"] = page;
       await next();
     }
-  }
+  },
 
-  async deletePost(context: Record<string, any>, next: Function) {
-    let path = `/admin/${EntityMiddleware.entity.bundle}`;
+  async deletePost(
+    context: Record<string, any>,
+    next: Function,
+    entity: any,
+    repository: any,
+  ) {
+    let path = `/admin/${entity.bundle}`;
     let content: any | undefined;
     let id: string = "";
 
     try {
       let body = context.getBody;
       id = body.value.get("id");
-      content = await EntityMiddleware.repository.findOneByID(id);
+      content = await repository.findOneByID(id);
 
-      if (EntityMiddleware.entity.references.length > 0) {
+      if (entity.references.length > 0) {
         context["getRelation"] = {
           entity: {},
         };
       }
 
       if (content && Object.keys(content).length != 0) {
-        await EntityMiddleware.repository.deleteOne(id);
+        await repository.deleteOne(id);
 
-        if (EntityMiddleware.entity.references.length > 0) {
+        if (entity.references.length > 0) {
           context["getRelation"]["entity"] = {
             id: id,
-            bundle: EntityMiddleware.entity.bundle,
-            type: EntityMiddleware.entity.type,
+            bundle: entity.bundle,
+            type: entity.type,
           };
         }
       }
@@ -271,7 +286,7 @@ abstract class EntityMiddleware {
       let page = {
         id: id,
         content: content,
-        entity: EntityMiddleware.entity,
+        entity: entity,
         error: false,
         message: false,
       };
@@ -285,7 +300,7 @@ abstract class EntityMiddleware {
       let page = {
         id: id,
         content: content,
-        entity: EntityMiddleware.entity,
+        entity: entity,
         error: true,
         message: true,
       };
@@ -294,7 +309,5 @@ abstract class EntityMiddleware {
       context["getRedirect"] = path;
       await next();
     }
-  }
-}
-
-export default EntityMiddleware;
+  },
+};

@@ -1,11 +1,11 @@
-const type: string = "image";
-const bundle: string = "media";
-const name: string = "Image";
-const fields: string[] = [
+let type: string = "image";
+let bundle: string = "media";
+let name: string = "Image";
+let fields: string[] = [
   "image",
 ];
-const references: string[] = [];
-const canBeReferenced: boolean = true;
+let references: string[] = [];
+let canBeReferenced: boolean = true;
 
 export default {
   type,

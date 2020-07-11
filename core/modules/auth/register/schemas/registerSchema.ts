@@ -1,6 +1,6 @@
 import vs from "value_schema";
 
-const registerSchema = {
+let registerSchema = {
   name: vs.string({
     minLength: 2,
     maxLength: {

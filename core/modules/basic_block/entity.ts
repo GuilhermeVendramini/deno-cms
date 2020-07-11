@@ -1,11 +1,11 @@
-const type: string = "basic_block";
-const bundle: string = "block";
-const name: string = "Basic Block";
-const fields: string[] = [
+let type: string = "basic_block";
+let bundle: string = "block";
+let name: string = "Basic Block";
+let fields: string[] = [
   "body",
 ];
-const references: string[] = [];
-const canBeReferenced: boolean = true;
+let references: string[] = [];
+let canBeReferenced: boolean = true;
 
 export default {
   type,
