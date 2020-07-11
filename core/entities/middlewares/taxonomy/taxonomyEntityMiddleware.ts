@@ -1,6 +1,6 @@
 import {
-  BlockEntity,
-} from "../../src/BlockEntity.ts";
+  TaxonomyEntity,
+} from "../../src/TaxonomyEntity.ts";
 import {
   Status,
 } from "oak";
@@ -16,7 +16,7 @@ export default {
     repository: any,
   ) {
     try {
-      let block: any[] | undefined;
+      let term: [] | undefined;
       let pageNumber: number = 0;
       let skip = 0;
       let limit = 10;
@@ -44,7 +44,7 @@ export default {
       if (!Number(pageNumber)) pageNumber = 0;
 
       skip = pageNumber * limit;
-      block = await repository.search(
+      term = await repository.search(
         title,
         entity.type,
         published,
@@ -53,12 +53,12 @@ export default {
       );
 
       let page = {
-        block: block,
+        term: term,
         entity: entity,
         error: false,
         message: false,
         pager: {
-          next: block && block.length >= limit ? Number(pageNumber) + 1 : false,
+          next: term && term.length >= limit ? Number(pageNumber) + 1 : false,
           previous: pageNumber == 0 ? false : Number(pageNumber) - 1,
         },
         filters: {
@@ -69,10 +69,8 @@ export default {
       context["getPage"] = page;
       await next();
     } catch (error) {
-      console.log(error.message);
-
       let page = {
-        block: false,
+        media: false,
         entity: entity,
         error: true,
         message: error.message,
@@ -92,15 +90,15 @@ export default {
 
     try {
       id = context.params?.id;
-      let block: {} | undefined;
+      let term: {} | undefined;
 
       if (id) {
-        block = await repository.findOneByID(id);
+        term = await repository.findOneByID(id);
       }
 
       let page = {
         id: id,
-        block: block,
+        term: term,
         entity: entity,
         error: false,
         message: false,
@@ -109,11 +107,9 @@ export default {
       context["getPage"] = page;
       await next();
     } catch (error) {
-      console.log(error.message);
-
       let page = {
         id: id,
-        block: false,
+        term: false,
         entity: entity,
         error: true,
         message: error.message,
@@ -133,7 +129,7 @@ export default {
     let title: string;
     let published: boolean = false;
     let page: any;
-    let block: BlockEntity | undefined;
+    let term: TaxonomyEntity | undefined;
     let id: string = "";
 
     try {
@@ -179,15 +175,11 @@ export default {
       if (validated) {
         path = await pathauto.generate(
           entity.bundle,
-          [
-            entity.bundle,
-            entity.type,
-            validated.title,
-          ],
+          [entity.bundle, entity.type, validated.title],
           id,
         );
 
-        block = new BlockEntity(
+        term = new TaxonomyEntity(
           validated.data,
           validated.title,
           entity.type,
@@ -198,9 +190,9 @@ export default {
         );
 
         if (id) {
-          await repository.updateOne(id, block);
+          await repository.updateOne(id, term);
         } else {
-          let result = await repository.insertOne(block);
+          let result = await repository.insertOne(term);
           id = result.$oid;
         }
 
@@ -214,7 +206,7 @@ export default {
 
         page = {
           id: id,
-          block: block,
+          term: term,
           entity: entity,
           error: false,
           message: false,
@@ -227,17 +219,13 @@ export default {
       }
       context.throw(Status.NotAcceptable, "Not Acceptable");
     } catch (error) {
-      console.log(error.message);
-
       if (id) {
-        block = await repository.findOneByID(
-          id,
-        ) as BlockEntity;
+        term = await repository.findOneByID(id) as TaxonomyEntity;
       }
 
       page = {
         id: id,
-        block: block,
+        term: term,
         entity: entity,
         error: true,
         message: error.message,
@@ -256,14 +244,12 @@ export default {
   ) {
     try {
       let path: string = context.request.url.pathname;
-      let block: any | undefined;
-      block = await repository.findOneByFilters(
-        { path: path },
-      );
+      let term: any | undefined;
+      term = await repository.findOneByFilters({ path: path });
 
-      if (block && Object.keys(block).length != 0) {
+      if (term && Object.keys(term).length != 0) {
         let page = {
-          block: block,
+          term: term,
           entity: entity,
           error: false,
           message: false,
@@ -275,10 +261,8 @@ export default {
       }
       context.throw(Status.NotFound, "NotFound");
     } catch (error) {
-      console.log(error.message);
-
       let page = {
-        block: false,
+        term: false,
         entity: entity,
         error: true,
         message: error.message,
@@ -295,16 +279,16 @@ export default {
     repository: any,
   ) {
     let id: string = "";
-    let block: any | undefined;
 
     try {
       id = context.params.id;
-      block = await repository.findOneByID(id);
+      let term: any | undefined;
+      term = await repository.findOneByID(id);
 
-      if (block && Object.keys(block).length != 0) {
+      if (term && Object.keys(term).length != 0) {
         let page = {
           id: id,
-          block: block,
+          term: term,
           entity: entity,
           error: false,
           message: false,
@@ -316,15 +300,14 @@ export default {
       }
       context.throw(Status.NotFound, "NotFound");
     } catch (error) {
-      console.log(error.message);
-
       let page = {
         id: id,
-        block: false,
+        term: false,
         entity: entity,
         error: true,
         message: error.message,
       };
+      context["getPage"] = page;
       context["getPage"] = page;
       await next();
     }
@@ -337,14 +320,13 @@ export default {
     repository: any,
   ) {
     let path = `/admin/${entity.bundle}/${entity.type}`;
+    let term: any | undefined;
     let id: string = "";
-    let block: any | undefined;
 
     try {
       let body = context.getBody;
       id = body.value.get("id");
-
-      block = await repository.findOneByID(id);
+      term = await repository.findOneByID(id);
 
       if (entity.references.length > 0) {
         context["getRelation"] = {
@@ -352,7 +334,7 @@ export default {
         };
       }
 
-      if (block && Object.keys(block).length != 0) {
+      if (term && Object.keys(term).length != 0) {
         await repository.deleteOne(id);
 
         if (entity.references.length > 0) {
@@ -366,7 +348,7 @@ export default {
 
       let page = {
         id: id,
-        block: block,
+        term: term,
         entity: entity,
         error: false,
         message: false,
@@ -380,7 +362,7 @@ export default {
 
       let page = {
         id: id,
-        block: block,
+        term: term,
         entity: entity,
         error: true,
         message: true,
