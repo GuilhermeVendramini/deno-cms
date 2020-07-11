@@ -18,8 +18,8 @@
         `${Deno.cwd()}/core/modules/media/cms/views/mediaFormView.ejs`,
         {
           type: 'video',
-          name: 'video',
-          value: page?.media?.data?.video,
+          name: 'file',
+          value: page?.media?.data?.file,
         }
       ) %>
       <small class="form-text text-muted">Accept: mp4, webm. Max 20mb.</small>

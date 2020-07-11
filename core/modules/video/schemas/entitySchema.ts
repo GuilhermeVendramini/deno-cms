@@ -1,6 +1,6 @@
 import vs from "value_schema";
 
-let entitySchema = {
+const entitySchema = {
   title: vs.string({
     trims: true,
     maxLength: {
@@ -10,7 +10,7 @@ let entitySchema = {
   }),
   data: vs.object({
     schemaObject: {
-      video: vs.string(),
+      file: vs.string(),
     },
   }),
   published: vs.boolean({ ifUndefined: false }),

@@ -10,7 +10,7 @@ let entitySchema = {
   }),
   data: vs.object({
     schemaObject: {
-      image: vs.string(),
+      file: vs.string(),
     },
   }),
   published: vs.boolean({ ifUndefined: false }),

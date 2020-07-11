@@ -12,10 +12,10 @@
           <% for(var i=0; i < references.length; i++) { %>
             <div class="mb-4">
               <% if (references[i].entity.type == 'image') { %>
-                <img src="/<%= references[i].entity.data.image %>" height="300">
+                <img src="/<%= references[i].entity.data.file %>" height="300">
               <% } else if (references[i].entity.type == 'video') { %>
                 <video height="300" controls="controls">
-                  <source src="/<%= references[i].entity.data.video %>">
+                  <source src="/<%= references[i].entity.data.file %>">
                 </video>
               <% } else if (references[i].entity.type == 'basic_block') { %>
                 <h2><%= references[i].entity.title %></h2>

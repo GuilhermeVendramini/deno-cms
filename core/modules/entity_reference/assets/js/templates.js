@@ -34,7 +34,7 @@ function getMediaImageTemplate(field, data, picked) {
   let classStatus = picked ? 'btn-secondary' : 'btn-outline-primary';
   let template = `
     <a id="op-${field}-${data._id.$oid}" data-id="${data._id.$oid}" class=" ${data._id.$oid} btn ${classStatus} btn-sm m-2" href="#" role="button">
-      <img src="/${data.data.image}" height="50">
+      <img src="/${data.data.file}" height="50">
       ${data.title}
     </a>`;
   return template;

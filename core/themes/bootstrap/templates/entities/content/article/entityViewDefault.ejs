@@ -15,7 +15,7 @@
         <div class="field-images text-center">
           <% let images = page.content.data.images.sort(function(a, b){return a.weight - b.weight}) %>
           <% for(var i=0; i < images.length; i++) { %>
-            <img src="/<%= images[i].entity.data.image %>" height="200">
+            <img src="/<%= images[i].entity.data.file %>" height="200">
           <% } %>
         </div>
       </div>

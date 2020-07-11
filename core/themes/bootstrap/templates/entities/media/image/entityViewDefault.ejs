@@ -6,8 +6,8 @@
   <% if (page?.media?.data) { %>
   <h1 class="text-center mb-3"><%= page.media.title %></h1>
     <div class="media text-center">
-      <% if (page.media.data?.image) { %>
-        <img src="/<%= page.media.data.image %>" height="200">
+      <% if (page.media.data?.file) { %>
+        <img src="/<%= page.media.data.file %>" height="200">
       <% } %>
     </div>
   <% } %>

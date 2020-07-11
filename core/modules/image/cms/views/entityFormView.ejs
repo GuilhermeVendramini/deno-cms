@@ -18,8 +18,8 @@
         `${Deno.cwd()}/core/modules/media/cms/views/mediaFormView.ejs`,
         {
           type: 'image',
-          name: 'image',
-          value: page?.media?.data?.image,
+          name: 'file',
+          value: page?.media?.data?.file,
         }
       ) %>
       <small class="form-text text-muted">Accept: jpg, png. Max 2.5mb.</small>

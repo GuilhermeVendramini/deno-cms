@@ -1,9 +1,7 @@
 let type: string = "video";
 let bundle: string = "media";
 let name: string = "Video";
-let fields: string[] = [
-  "video",
-];
+let fields: string[] = [];
 let references: string[] = [];
 let canBeReferenced: boolean = true;
 

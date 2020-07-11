@@ -6,9 +6,9 @@
   <% if (page?.media?.data) { %>
   <h1 class="text-center mb-3"><%= page.media.title %></h1>
     <div class="media text-center">
-      <% if (page.media.data?.video) { %>
+      <% if (page.media.data?.file) { %>
         <video height="200" controls>
-          <source src="/<%= page.media.data.video %>">
+          <source src="/<%= page.media.data.file %>">
         </video>
       <% } %>
     </div>
