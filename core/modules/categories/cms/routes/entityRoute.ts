@@ -15,33 +15,58 @@ router
   .get(
     `/admin/${entity.bundle}/${entity.type}`,
     loggedMiddleware.needToBeLogged,
-    entityMiddleware.list,
+    async (
+      context: Record<string, any>,
+      next: Function,
+    ) => {
+      await entityMiddleware.list(context, next);
+    },
     entityBaseController.list,
   )
   .get(
     `/admin/${entity.bundle}/${entity.type}/add`,
     loggedMiddleware.needToBeLogged,
-    entityMiddleware.add,
+    async (
+      context: Record<string, any>,
+      next: Function,
+    ) => {
+      await entityMiddleware.add(context, next);
+    },
     entityBaseController.add,
   )
   .get(
     `/admin/${entity.bundle}/${entity.type}/edit/:id`,
     loggedMiddleware.needToBeLogged,
     baseEntityMiddleware.needToBeTaxonomyAuthor,
-    entityMiddleware.add,
+    async (
+      context: Record<string, any>,
+      next: Function,
+    ) => {
+      await entityMiddleware.add(context, next);
+    },
     entityBaseController.add,
   )
   .get(
     `/${entity.bundle}/${entity.type}/:id`,
     baseEntityMiddleware.taxonomyNeedToBePublished,
-    entityMiddleware.view,
+    async (
+      context: Record<string, any>,
+      next: Function,
+    ) => {
+      await entityMiddleware.view(context, next);
+    },
     entityBaseController.view,
   )
   .post(
     `/admin/${entity.bundle}/${entity.type}/add`,
     loggedMiddleware.needToBeLogged,
     cmsMiddleware.submittedByForm,
-    entityMiddleware.addPost,
+    async (
+      context: Record<string, any>,
+      next: Function,
+    ) => {
+      await entityMiddleware.addPost(context, next);
+    },
     entity.references.length > 0
       ? entityReferenceMiddleware.addRelation
       : skipMiddleware,
@@ -53,7 +78,12 @@ router
     `/admin/${entity.bundle}/${entity.type}/delete/:id`,
     loggedMiddleware.needToBeLogged,
     baseEntityMiddleware.needToBeTaxonomyAuthor,
-    entityMiddleware.delete,
+    async (
+      context: Record<string, any>,
+      next: Function,
+    ) => {
+      await entityMiddleware.delete(context, next);
+    },
     entityBaseController.delete,
   )
   .post(
@@ -61,7 +91,12 @@ router
     loggedMiddleware.needToBeLogged,
     baseEntityMiddleware.needToBeTaxonomyAuthor,
     cmsMiddleware.submittedByForm,
-    entityMiddleware.deletePost,
+    async (
+      context: Record<string, any>,
+      next: Function,
+    ) => {
+      await entityMiddleware.deletePost(context, next);
+    },
     entity.references.length > 0 ? entityReferenceMiddleware.deleteRelation
     : skipMiddleware,
     entity.canBeReferenced ? entityReferenceMiddleware.updateRelatedEntities

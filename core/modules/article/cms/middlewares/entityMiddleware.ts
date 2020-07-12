@@ -1,66 +1,27 @@
 import entity from "../../entity.ts";
 import entitySchema from "../../schemas/entitySchema.ts";
-import contentEntityMiddleware from "../../../../entities/middlewares/content/contentEntityMiddleware.ts";
+import ContentEntityMiddleware from "../../../../entities/middlewares/content/ContentEntityMiddleware.ts";
 import EntityRepository from "../../../../../repositories/mongodb/entity/EntityRepository.ts";
 
 let repository = new EntityRepository(entity.bundle);
 
-export default {
-  async add(context: Record<string, any>, next: Function) {
-    return await contentEntityMiddleware.add(
-      context,
-      next,
-      entity,
-      repository,
-    );
-  },
+class EntityMiddleware extends ContentEntityMiddleware {
+  protected entity: any;
+  protected repository: any;
+  protected entitySchema: any;
 
-  async addPost(
-    context: Record<string, any>,
-    next: Function,
-  ) {
-    return await contentEntityMiddleware.addPost(
-      context,
-      next,
-      entity,
-      repository,
-      entitySchema,
-    );
-  },
+  constructor(entity: any, repository: any, entitySchema: any) {
+    super(entity, repository, entitySchema);
+    this.entity = entity;
+    this.repository = repository;
+    this.entitySchema = entitySchema;
+  }
 
-  async view(
-    context: Record<string, any>,
-    next: Function,
-  ) {
-    return await contentEntityMiddleware.view(
-      context,
-      next,
-      entity,
-      repository,
-    );
-  },
+  /**
+   * Add or change custom methods here!
+   */
+}
 
-  async delete(
-    context: Record<string, any>,
-    next: Function,
-  ) {
-    return await contentEntityMiddleware.delete(
-      context,
-      next,
-      entity,
-      repository,
-    );
-  },
+let entityMiddleware = new EntityMiddleware(entity, repository, entitySchema);
 
-  async deletePost(
-    context: Record<string, any>,
-    next: Function,
-  ) {
-    return await contentEntityMiddleware.deletePost(
-      context,
-      next,
-      entity,
-      repository,
-    );
-  },
-};
+export default entityMiddleware;

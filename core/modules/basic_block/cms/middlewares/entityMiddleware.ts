@@ -1,75 +1,27 @@
 import entity from "../../entity.ts";
 import entitySchema from "../../schemas/entitySchema.ts";
-import blockEntityMiddleware from "../../../../entities/middlewares/block/blockEntityMiddleware.ts";
+import BlockEntityMiddleware from "../../../../entities/middlewares/block/BlockEntityMiddleware.ts";
 import EntityRepository from "../../../../../repositories/mongodb/entity/EntityRepository.ts";
 
 let repository = new EntityRepository(entity.bundle);
 
-export default {
-  async list(context: Record<string, any>, next: Function) {
-    return await blockEntityMiddleware.list(
-      context,
-      next,
-      entity,
-      repository,
-    );
-  },
+class EntityMiddleware extends BlockEntityMiddleware {
+  protected entity: any;
+  protected repository: any;
+  protected entitySchema: any;
 
-  async add(context: Record<string, any>, next: Function) {
-    return await blockEntityMiddleware.add(
-      context,
-      next,
-      entity,
-      repository,
-    );
-  },
+  constructor(entity: any, repository: any, entitySchema: any) {
+    super(entity, repository, entitySchema);
+    this.entity = entity;
+    this.repository = repository;
+    this.entitySchema = entitySchema;
+  }
 
-  async addPost(
-    context: Record<string, any>,
-    next: Function,
-  ) {
-    return await blockEntityMiddleware.addPost(
-      context,
-      next,
-      entity,
-      repository,
-      entitySchema,
-    );
-  },
+  /**
+   * Add or change custom methods here!
+   */
+}
 
-  async view(
-    context: Record<string, any>,
-    next: Function,
-  ) {
-    return await blockEntityMiddleware.view(
-      context,
-      next,
-      entity,
-      repository,
-    );
-  },
+let entityMiddleware = new EntityMiddleware(entity, repository, entitySchema);
 
-  async delete(
-    context: Record<string, any>,
-    next: Function,
-  ) {
-    return await blockEntityMiddleware.delete(
-      context,
-      next,
-      entity,
-      repository,
-    );
-  },
-
-  async deletePost(
-    context: Record<string, any>,
-    next: Function,
-  ) {
-    return await blockEntityMiddleware.deletePost(
-      context,
-      next,
-      entity,
-      repository,
-    );
-  },
-};
+export default entityMiddleware;

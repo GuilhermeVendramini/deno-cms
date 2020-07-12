@@ -9,12 +9,20 @@ import pathauto from "../../../../shared/utils/pathauto/defaultPathauto.ts";
 import entityReferenceHelper from "../../../modules/entity_reference/helpers/entityReferenceHelper.ts";
 import mediaHelper from "../../../modules/media/utils/mediaHelper.ts";
 
-export default {
+export default abstract class MediaEntityMiddleware {
+  protected entity: any;
+  protected repository: any;
+  protected entitySchema: any;
+
+  constructor(entity: any, repository: any, entitySchema: any) {
+    entity = entity;
+    repository = repository;
+    entitySchema = entitySchema;
+  }
+
   async list(
     context: Record<string, any>,
     next: Function,
-    entity: any,
-    repository: any,
   ) {
     try {
       let media: [] | undefined;
@@ -45,9 +53,9 @@ export default {
       if (!Number(pageNumber)) pageNumber = 0;
 
       skip = pageNumber * limit;
-      media = await repository.search(
+      media = await this.repository.search(
         title,
-        entity.type,
+        this.entity.type,
         published,
         skip,
         limit,
@@ -55,7 +63,7 @@ export default {
 
       let page = {
         media: media,
-        entity: entity,
+        entity: this.entity,
         error: false,
         message: false,
         pager: {
@@ -72,20 +80,18 @@ export default {
     } catch (error) {
       let page = {
         media: false,
-        entity: entity,
+        entity: this.entity,
         error: true,
         message: error.message,
       };
       context["getPage"] = page;
       await next();
     }
-  },
+  }
 
   async add(
     context: Record<string, any>,
     next: Function,
-    entity: any,
-    repository: any,
   ) {
     let id: string = "";
 
@@ -94,13 +100,13 @@ export default {
       let media: {} | undefined;
 
       if (id) {
-        media = await repository.findOneByID(id);
+        media = await this.repository.findOneByID(id);
       }
 
       let page = {
         id: id,
         media: media,
-        entity: entity,
+        entity: this.entity,
         error: false,
         message: false,
       };
@@ -111,21 +117,18 @@ export default {
       let page = {
         id: id,
         media: false,
-        entity: entity,
+        entity: this.entity,
         error: true,
         message: error.message,
       };
       context["getPage"] = page;
       await next();
     }
-  },
+  }
 
   async addPost(
     context: Record<string, any>,
     next: Function,
-    entity: any,
-    repository: any,
-    entitySchema: any,
   ) {
     let title: string;
     let published: boolean = false;
@@ -146,18 +149,18 @@ export default {
       published = body.value.get("published") ? true : false;
       data["file"] = file;
 
-      entity.fields.forEach(function (field: string) {
+      this.entity.fields.forEach(function (field: string) {
         data[field] = body.value.get(field);
       });
 
-      if (entity.references.length > 0) {
+      if (this.entity.references.length > 0) {
         context["getRelation"] = {
           entity: {},
           references: [],
         };
 
         let entities = await entityReferenceHelper.addEntityRelation(
-          entity.references,
+          this.entity.references,
           context,
         );
 
@@ -168,7 +171,7 @@ export default {
       }
 
       validated = vs.applySchemaObject(
-        entitySchema,
+        this.entitySchema,
         { title: title, data: data, published: published },
       );
 
@@ -176,15 +179,15 @@ export default {
 
       if (validated) {
         path = await pathauto.generate(
-          entity.bundle,
-          [entity.bundle, entity.type, validated.title],
+          this.entity.bundle,
+          [this.entity.bundle, this.entity.type, validated.title],
           id,
         );
 
         media = new MediaEntity(
           validated.data,
           validated.title,
-          entity.type,
+          this.entity.type,
           currentUser,
           Date.now(),
           validated.published,
@@ -194,11 +197,11 @@ export default {
         let oldFile: string | undefined;
 
         if (id) {
-          let oldMedia: any = await repository.findOneByID(id);
+          let oldMedia: any = await this.repository.findOneByID(id);
           oldFile = oldMedia?.data?.file;
-          await repository.updateOne(id, media);
+          await this.repository.updateOne(id, media);
         } else {
-          let result = await repository.insertOne(media);
+          let result = await this.repository.insertOne(media);
           id = result.$oid;
         }
 
@@ -206,18 +209,18 @@ export default {
           await mediaHelper.deleteFile(oldFile);
         }
 
-        if (entity.references.length > 0) {
+        if (this.entity.references.length > 0) {
           context["getRelation"]["entity"] = {
             id: id,
-            bundle: entity.bundle,
-            type: entity.type,
+            bundle: this.entity.bundle,
+            type: this.entity.type,
           };
         }
 
         page = {
           id: id,
           media: media,
-          entity: entity,
+          entity: this.entity,
           error: false,
           message: false,
         };
@@ -230,7 +233,7 @@ export default {
       context.throw(Status.NotAcceptable, "Not Acceptable");
     } catch (error) {
       if (id) {
-        media = await repository.findOneByID(id) as MediaEntity;
+        media = await this.repository.findOneByID(id) as MediaEntity;
       }
 
       if (file) {
@@ -240,7 +243,7 @@ export default {
       page = {
         id: id,
         media: media,
-        entity: entity,
+        entity: this.entity,
         error: true,
         message: error.message,
       };
@@ -248,23 +251,21 @@ export default {
       context["getPage"] = page;
       await next();
     }
-  },
+  }
 
   async view(
     context: Record<string, any>,
     next: Function,
-    entity: any,
-    repository: any,
   ) {
     try {
       let path: string = context.request.url.pathname;
       let media: any | undefined;
-      media = await repository.findOneByFilters({ path: path });
+      media = await this.repository.findOneByFilters({ path: path });
 
       if (media && Object.keys(media).length != 0) {
         let page = {
           media: media,
-          entity: entity,
+          entity: this.entity,
           error: false,
           message: false,
         };
@@ -277,33 +278,31 @@ export default {
     } catch (error) {
       let page = {
         media: false,
-        entity: entity,
+        entity: this.entity,
         error: true,
         message: error.message,
       };
       context["getPage"] = page;
       await next();
     }
-  },
+  }
 
   async delete(
     context: Record<string, any>,
     next: Function,
-    entity: any,
-    repository: any,
   ) {
     let id: string = "";
 
     try {
       id = context.params.id;
       let media: any | undefined;
-      media = await repository.findOneByID(id);
+      media = await this.repository.findOneByID(id);
 
       if (media && Object.keys(media).length != 0) {
         let page = {
           id: id,
           media: media,
-          entity: entity,
+          entity: this.entity,
           error: false,
           message: false,
         };
@@ -317,48 +316,46 @@ export default {
       let page = {
         id: id,
         media: false,
-        entity: entity,
+        entity: this.entity,
         error: true,
         message: error.message,
       };
       context["getPage"] = page;
       await next();
     }
-  },
+  }
 
   async deletePost(
     context: Record<string, any>,
     next: Function,
-    entity: any,
-    repository: any,
   ) {
-    let path = `/admin/${entity.bundle}/${entity.type}`;
+    let path = `/admin/${this.entity.bundle}/${this.entity.type}`;
     let media: any | undefined;
     let id: string = "";
 
     try {
       let body = context.getBody;
       id = body.value.get("id");
-      media = await repository.findOneByID(id);
+      media = await this.repository.findOneByID(id);
 
-      if (entity.references.length > 0) {
+      if (this.entity.references.length > 0) {
         context["getRelation"] = {
           entity: {},
         };
       }
 
       if (media && Object.keys(media).length != 0) {
-        await repository.deleteOne(id);
+        await this.repository.deleteOne(id);
 
         if (media?.data?.file) {
           await mediaHelper.deleteFile(media.data.file);
         }
 
-        if (entity.references.length > 0) {
+        if (this.entity.references.length > 0) {
           context["getRelation"]["entity"] = {
             id: id,
-            bundle: entity.bundle,
-            type: entity.type,
+            bundle: this.entity.bundle,
+            type: this.entity.type,
           };
         }
       }
@@ -366,7 +363,7 @@ export default {
       let page = {
         id: id,
         media: media,
-        entity: entity,
+        entity: this.entity,
         error: false,
         message: false,
       };
@@ -380,7 +377,7 @@ export default {
       let page = {
         id: id,
         media: media,
-        entity: entity,
+        entity: this.entity,
         error: true,
         message: true,
       };
@@ -389,5 +386,5 @@ export default {
       context["getRedirect"] = path;
       await next();
     }
-  },
-};
+  }
+}

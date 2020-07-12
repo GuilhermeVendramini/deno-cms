@@ -1,75 +1,27 @@
 import entity from "../../entity.ts";
 import entitySchema from "../../schemas/entitySchema.ts";
-import mediaEntityMiddleware from "../../../../entities/middlewares/media/mediaEntityMiddleware.ts";
+import MediaEntityMiddleware from "../../../../entities/middlewares/media/MediaEntityMiddleware.ts";
 import EntityRepository from "../../../../../repositories/mongodb/entity/EntityRepository.ts";
 
 let repository = new EntityRepository(entity.bundle);
 
-export default {
-  async list(context: Record<string, any>, next: Function) {
-    return await mediaEntityMiddleware.list(
-      context,
-      next,
-      entity,
-      repository,
-    );
-  },
+class EntityMiddleware extends MediaEntityMiddleware {
+  protected entity: any;
+  protected repository: any;
+  protected entitySchema: any;
 
-  async add(context: Record<string, any>, next: Function) {
-    return await mediaEntityMiddleware.add(
-      context,
-      next,
-      entity,
-      repository,
-    );
-  },
+  constructor(entity: any, repository: any, entitySchema: any) {
+    super(entity, repository, entitySchema);
+    this.entity = entity;
+    this.repository = repository;
+    this.entitySchema = entitySchema;
+  }
 
-  async addPost(
-    context: Record<string, any>,
-    next: Function,
-  ) {
-    return await mediaEntityMiddleware.addPost(
-      context,
-      next,
-      entity,
-      repository,
-      entitySchema,
-    );
-  },
+  /**
+   * Add or change custom methods here!
+   */
+}
 
-  async view(
-    context: Record<string, any>,
-    next: Function,
-  ) {
-    return await mediaEntityMiddleware.view(
-      context,
-      next,
-      entity,
-      repository,
-    );
-  },
+let entityMiddleware = new EntityMiddleware(entity, repository, entitySchema);
 
-  async delete(
-    context: Record<string, any>,
-    next: Function,
-  ) {
-    return await mediaEntityMiddleware.delete(
-      context,
-      next,
-      entity,
-      repository,
-    );
-  },
-
-  async deletePost(
-    context: Record<string, any>,
-    next: Function,
-  ) {
-    return await mediaEntityMiddleware.deletePost(
-      context,
-      next,
-      entity,
-      repository,
-    );
-  },
-};
+export default entityMiddleware;

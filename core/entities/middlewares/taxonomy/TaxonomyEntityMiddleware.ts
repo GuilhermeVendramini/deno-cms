@@ -1,6 +1,6 @@
 import {
-  BlockEntity,
-} from "../../src/BlockEntity.ts";
+  TaxonomyEntity,
+} from "../../src/TaxonomyEntity.ts";
 import {
   Status,
 } from "oak";
@@ -8,15 +8,23 @@ import vs from "value_schema";
 import pathauto from "../../../../shared/utils/pathauto/defaultPathauto.ts";
 import entityReferenceHelper from "../../../modules/entity_reference/helpers/entityReferenceHelper.ts";
 
-export default {
+export default abstract class TaxonomyEntityMiddleware {
+  protected entity: any;
+  protected repository: any;
+  protected entitySchema: any;
+
+  constructor(entity: any, repository: any, entitySchema: any) {
+    entity = entity;
+    repository = repository;
+    entitySchema = entitySchema;
+  }
+
   async list(
     context: Record<string, any>,
     next: Function,
-    entity: any,
-    repository: any,
   ) {
     try {
-      let block: any[] | undefined;
+      let term: [] | undefined;
       let pageNumber: number = 0;
       let skip = 0;
       let limit = 10;
@@ -44,21 +52,21 @@ export default {
       if (!Number(pageNumber)) pageNumber = 0;
 
       skip = pageNumber * limit;
-      block = await repository.search(
+      term = await this.repository.search(
         title,
-        entity.type,
+        this.entity.type,
         published,
         skip,
         limit,
       );
 
       let page = {
-        block: block,
-        entity: entity,
+        term: term,
+        entity: this.entity,
         error: false,
         message: false,
         pager: {
-          next: block && block.length >= limit ? Number(pageNumber) + 1 : false,
+          next: term && term.length >= limit ? Number(pageNumber) + 1 : false,
           previous: pageNumber == 0 ? false : Number(pageNumber) - 1,
         },
         filters: {
@@ -72,36 +80,34 @@ export default {
       console.log(error.message);
 
       let page = {
-        block: false,
-        entity: entity,
+        media: false,
+        entity: this.entity,
         error: true,
         message: error.message,
       };
       context["getPage"] = page;
       await next();
     }
-  },
+  }
 
   async add(
     context: Record<string, any>,
     next: Function,
-    entity: any,
-    repository: any,
   ) {
     let id: string = "";
 
     try {
       id = context.params?.id;
-      let block: {} | undefined;
+      let term: {} | undefined;
 
       if (id) {
-        block = await repository.findOneByID(id);
+        term = await this.repository.findOneByID(id);
       }
 
       let page = {
         id: id,
-        block: block,
-        entity: entity,
+        term: term,
+        entity: this.entity,
         error: false,
         message: false,
       };
@@ -109,31 +115,26 @@ export default {
       context["getPage"] = page;
       await next();
     } catch (error) {
-      console.log(error.message);
-
       let page = {
         id: id,
-        block: false,
-        entity: entity,
+        term: false,
+        entity: this.entity,
         error: true,
         message: error.message,
       };
       context["getPage"] = page;
       await next();
     }
-  },
+  }
 
   async addPost(
     context: Record<string, any>,
     next: Function,
-    entity: any,
-    repository: any,
-    entitySchema: any,
   ) {
     let title: string;
     let published: boolean = false;
     let page: any;
-    let block: BlockEntity | undefined;
+    let term: TaxonomyEntity | undefined;
     let id: string = "";
 
     try {
@@ -146,20 +147,20 @@ export default {
       title = body.value.get("title");
       published = body.value.get("published") ? true : false;
 
-      if (entity.fields.length > 0) {
-        entity.fields.forEach(function (field: string) {
+      if (this.entity.fields.length > 0) {
+        this.entity.fields.forEach(function (field: string) {
           data[field] = body.value.get(field);
         });
       }
 
-      if (entity.references.length > 0) {
+      if (this.entity.references.length > 0) {
         context["getRelation"] = {
           entity: {},
           references: [],
         };
 
         let entities = await entityReferenceHelper.addEntityRelation(
-          entity.references,
+          this.entity.references,
           context,
         );
 
@@ -170,7 +171,7 @@ export default {
       }
 
       validated = vs.applySchemaObject(
-        entitySchema,
+        this.entitySchema,
         { title: title, data: data, published: published },
       );
 
@@ -178,19 +179,15 @@ export default {
 
       if (validated) {
         path = await pathauto.generate(
-          entity.bundle,
-          [
-            entity.bundle,
-            entity.type,
-            validated.title,
-          ],
+          this.entity.bundle,
+          [this.entity.bundle, this.entity.type, validated.title],
           id,
         );
 
-        block = new BlockEntity(
+        term = new TaxonomyEntity(
           validated.data,
           validated.title,
-          entity.type,
+          this.entity.type,
           currentUser,
           Date.now(),
           validated.published,
@@ -198,24 +195,24 @@ export default {
         );
 
         if (id) {
-          await repository.updateOne(id, block);
+          await this.repository.updateOne(id, term);
         } else {
-          let result = await repository.insertOne(block);
+          let result = await this.repository.insertOne(term);
           id = result.$oid;
         }
 
-        if (entity.references.length > 0) {
+        if (this.entity.references.length > 0) {
           context["getRelation"]["entity"] = {
             id: id,
-            bundle: entity.bundle,
-            type: entity.type,
+            bundle: this.entity.bundle,
+            type: this.entity.type,
           };
         }
 
         page = {
           id: id,
-          block: block,
-          entity: entity,
+          term: term,
+          entity: this.entity,
           error: false,
           message: false,
         };
@@ -227,18 +224,14 @@ export default {
       }
       context.throw(Status.NotAcceptable, "Not Acceptable");
     } catch (error) {
-      console.log(error.message);
-
       if (id) {
-        block = await repository.findOneByID(
-          id,
-        ) as BlockEntity;
+        term = await this.repository.findOneByID(id) as TaxonomyEntity;
       }
 
       page = {
         id: id,
-        block: block,
-        entity: entity,
+        term: term,
+        entity: this.entity,
         error: true,
         message: error.message,
       };
@@ -246,25 +239,21 @@ export default {
       context["getPage"] = page;
       await next();
     }
-  },
+  }
 
   async view(
     context: Record<string, any>,
     next: Function,
-    entity: any,
-    repository: any,
   ) {
     try {
       let path: string = context.request.url.pathname;
-      let block: any | undefined;
-      block = await repository.findOneByFilters(
-        { path: path },
-      );
+      let term: any | undefined;
+      term = await this.repository.findOneByFilters({ path: path });
 
-      if (block && Object.keys(block).length != 0) {
+      if (term && Object.keys(term).length != 0) {
         let page = {
-          block: block,
-          entity: entity,
+          term: term,
+          entity: this.entity,
           error: false,
           message: false,
         };
@@ -275,37 +264,33 @@ export default {
       }
       context.throw(Status.NotFound, "NotFound");
     } catch (error) {
-      console.log(error.message);
-
       let page = {
-        block: false,
-        entity: entity,
+        term: false,
+        entity: this.entity,
         error: true,
         message: error.message,
       };
       context["getPage"] = page;
       await next();
     }
-  },
+  }
 
   async delete(
     context: Record<string, any>,
     next: Function,
-    entity: any,
-    repository: any,
   ) {
     let id: string = "";
-    let block: any | undefined;
 
     try {
       id = context.params.id;
-      block = await repository.findOneByID(id);
+      let term: any | undefined;
+      term = await this.repository.findOneByID(id);
 
-      if (block && Object.keys(block).length != 0) {
+      if (term && Object.keys(term).length != 0) {
         let page = {
           id: id,
-          block: block,
-          entity: entity,
+          term: term,
+          entity: this.entity,
           error: false,
           message: false,
         };
@@ -316,58 +301,54 @@ export default {
       }
       context.throw(Status.NotFound, "NotFound");
     } catch (error) {
-      console.log(error.message);
-
       let page = {
         id: id,
-        block: false,
-        entity: entity,
+        term: false,
+        entity: this.entity,
         error: true,
         message: error.message,
       };
       context["getPage"] = page;
+      context["getPage"] = page;
       await next();
     }
-  },
+  }
 
   async deletePost(
     context: Record<string, any>,
     next: Function,
-    entity: any,
-    repository: any,
   ) {
-    let path = `/admin/${entity.bundle}/${entity.type}`;
+    let path = `/admin/${this.entity.bundle}/${this.entity.type}`;
+    let term: any | undefined;
     let id: string = "";
-    let block: any | undefined;
 
     try {
       let body = context.getBody;
       id = body.value.get("id");
+      term = await this.repository.findOneByID(id);
 
-      block = await repository.findOneByID(id);
-
-      if (entity.references.length > 0) {
+      if (this.entity.references.length > 0) {
         context["getRelation"] = {
           entity: {},
         };
       }
 
-      if (block && Object.keys(block).length != 0) {
-        await repository.deleteOne(id);
+      if (term && Object.keys(term).length != 0) {
+        await this.repository.deleteOne(id);
 
-        if (entity.references.length > 0) {
+        if (this.entity.references.length > 0) {
           context["getRelation"]["entity"] = {
             id: id,
-            bundle: entity.bundle,
-            type: entity.type,
+            bundle: this.entity.bundle,
+            type: this.entity.type,
           };
         }
       }
 
       let page = {
         id: id,
-        block: block,
-        entity: entity,
+        term: term,
+        entity: this.entity,
         error: false,
         message: false,
       };
@@ -380,8 +361,8 @@ export default {
 
       let page = {
         id: id,
-        block: block,
-        entity: entity,
+        term: term,
+        entity: this.entity,
         error: true,
         message: true,
       };
@@ -390,5 +371,5 @@ export default {
       context["getRedirect"] = path;
       await next();
     }
-  },
-};
+  }
+}
