@@ -48,6 +48,7 @@ $(document).ready(function () {
                   </div>
                 </div>
                 <div class="items clearfix"></div>
+                <div class="paginator"></div>
               </div>`
             );
 
@@ -63,6 +64,11 @@ $(document).ready(function () {
                 );
                 clickAction(field, data);
               });
+        
+              if (entities.data.length >= 2) {
+                let paginator = entityContainer.find('.type.' + type + ' > .paginator').first();
+                buildPaginator(paginator, field, bundle, type, 0, 0, 1);
+              }
             }
           });
         });
@@ -70,10 +76,97 @@ $(document).ready(function () {
     }
   }
 
-  async function getEntities(bundle, type) {
+  function buildPaginator(paginator, field, bundle, type, current, previous, next) {
+    let previousItem = current > 0 ? `<li class="page-item previous">
+      <a data-field="${field}" data-entity="${bundle}" data-type="${type}" class="page-link" href="#" aria-label="Previous">&laquo; Previous</a>
+    </li>` : '';
+
+    let nextItem = current != next ? `<li class="page-item next">
+      <a data-field="${field}" data-entity="${bundle}" data-type="${type}" class="page-link" href="#" aria-label="Next">Next &raquo;</a>
+    </li>` : '';
+
+    let html = `
+    <nav aria-label="page navigation">
+      <ul data-page-current="${current}" data-page-previous="${previous}" data-page-next="${next}" class="mt-3 pagination justify-content-center">
+          ${previousItem}
+          ${nextItem}
+      </ul>
+    </nav>`;
+    paginator.html('');
+    paginator.append(html);
+    actionPaginator(paginator);
+  }
+
+
+  function actionPaginator(paginator) {
+    paginator.find('.previous > a').click(async function (e) {
+      e.preventDefault();
+      let parent = $(this).parents('ul').first();
+      let current = parent.data('page-current');
+      let previous = parent.data('page-previous');
+      let bundle = $(this).data('entity');
+      let field = $(this).data('field');
+      let type = $(this).data('type');
+      let entities = await getEntities(bundle, type, previous * 2);
+
+      if (entities && entities.data) {
+        let itemsList = $('.field-' + field + '.entity.' + bundle + ' .type.' + type + ' > .items');
+        itemsList.html('');
+        $.each(entities.data, function (_, data) {
+          let picked = getPickedItem(field, data._id.$oid) ? true : false;
+          itemsList.append(
+            getTemplate(field, bundle, type, data, picked)
+          );
+          clickAction(field, data);
+        });
+
+        if (entities.data.length >= 2) {
+          previous = current == 1 ? 0 : previous - 1;
+          buildPaginator(paginator, field, bundle, type, current - 1, previous, current);
+          return;
+        }
+      }
+    });
+
+    paginator.find('.next > a').click(async function (e) {
+      e.preventDefault();
+      let parent = $(this).parents('ul').first();
+      let current = parent.data('page-current');
+      let next = parent.data('page-next');
+      let previous = parent.data('page-previous');
+      let bundle = $(this).data('entity');
+      let field = $(this).data('field');
+      let type = $(this).data('type');
+      let entities = await getEntities(bundle, type, next * 2);
+      if (entities && entities.data) {
+        let itemsList = $('.field-' + field + '.entity.' + bundle + ' .type.' + type + ' > .items');
+        itemsList.html('');
+        $.each(entities.data, function (_, data) {
+          let picked = getPickedItem(field, data._id.$oid) ? true : false;
+          itemsList.append(
+            getTemplate(field, bundle, type, data, picked)
+          );
+          clickAction(field, data);
+        });
+
+        if (entities.data.length >= 2) {
+          buildPaginator(paginator, field, bundle, type, current + 1, current, next + 1);
+          return;
+        }
+
+        buildPaginator(paginator, field, bundle, type, current + 1, current, current + 1);
+        return;
+      }
+      buildPaginator(paginator, field, bundle, type, current, previous, current);
+      return;
+    });
+
+  }
+
+  async function getEntities(bundle, type, skip = 0) {
     let result = null;
     await $.ajax({
-      url: '/entity-reference/' + bundle + '/' + type,
+      url: '/entity-reference/' + bundle + '/' + type + '?skip=' + skip + '&limit=' + 2,
       type: 'get',
       dataType: 'json',
       async: true,
@@ -96,21 +189,26 @@ $(document).ready(function () {
   function refreshEntities() {
     $('.refresh > a').click(async function (e) {
       e.preventDefault();
-      let entity = $(this).data('entity');
+      let bundle = $(this).data('entity');
       let field = $(this).data('field');
       let type = $(this).data('type');
-      let entities = await getEntities(entity, type);
+      let entities = await getEntities(bundle, type);
 
       if (entities && entities.data) {
-        let itemsList = $('.field-' + field + '.entity.' + entity + ' .type.' + type + ' > .items');
+        let itemsList = $('.field-' + field + '.entity.' + bundle + ' .type.' + type + ' > .items');
         itemsList.html('');
         $.each(entities.data, function (_, data) {
           let picked = getPickedItem(field, data._id.$oid) ? true : false;
           itemsList.append(
-            getTemplate(field, entity, type, data, picked)
+            getTemplate(field, bundle, type, data, picked)
           );
           clickAction(field, data);
         });
+
+        if (entities.data.length >= 2) {
+          let paginator = itemsList.next('.paginator');
+          buildPaginator(paginator, field, bundle, type, 0, 0, 1);
+        }
       }
     });
   }

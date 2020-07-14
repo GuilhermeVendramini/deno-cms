@@ -69,7 +69,7 @@
       <ul class="pagination justify-content-center">
         <% if (page.pager.previous !== false ) { %>
           <li class="page-item">
-            <a class="page-link" href="?title=<%= page.filters.title %>&type=<%= page.filters.type %>&published=<%= page.filters.published %>&pageNumber=<%= page.pager.previous %>" aria-label="Previous">&laquo; Previous</a>
+            <a class="page-link" href="?title=<%= page.filters.title %>&published=<%= page.filters.published %>&pageNumber=<%= page.pager.previous %>" aria-label="Previous">&laquo; Previous</a>
           </li>
         <% } %>
         <% if (page.pager.next) { %>

@@ -5,6 +5,8 @@ export default {
     try {
       let bundle: string | undefined;
       let type: string | undefined;
+      let skip = 0;
+      let limit = 10;
 
       bundle = context.params.bundle;
       type = context.params.type;
@@ -23,17 +25,23 @@ export default {
         return;
       }
 
+      if (context.request.url.searchParams.has("skip")) {
+        skip = Number(context.request.url.searchParams.get("skip"));
+      }
+
+      if (context.request.url.searchParams.has("limit")) {
+        limit = Number(context.request.url.searchParams.get("limit"));
+      }
+
       let entities: any | undefined;
-      entities = await repository.find(type as string);
+      entities = await repository.search(undefined, type, true, skip, limit);
 
       let result = {};
       if (entities && Object.keys(entities).length != 0) {
         result = {
           bundle: bundle,
           type: type,
-          data: entities.filter((entity: any) => {
-            return entity.published === true;
-          }),
+          data: entities,
         };
       }
 
