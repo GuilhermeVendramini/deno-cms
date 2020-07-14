@@ -43,7 +43,7 @@ $(document).ready(function () {
                       <a target="_blank" class="btn btn-outline-secondary btn-sm" href="/admin/${bundle}/${type}/add">+</a>
                     </span>
                     <span class="refresh">
-                      <a data-field="${field}" data-entity="${bundle}" data-type="${type}" class="btn btn-outline-secondary btn-sm" href="#">↻</a>
+                      <a data-field="${field}" data-bundle="${bundle}" data-type="${type}" class="btn btn-outline-secondary btn-sm" href="#">↻</a>
                     </span>
                   </div>
                 </div>
@@ -78,11 +78,11 @@ $(document).ready(function () {
 
   function buildPaginator(paginator, field, bundle, type, current, previous, next) {
     let previousItem = current > 0 ? `<li class="page-item previous">
-      <a data-field="${field}" data-entity="${bundle}" data-type="${type}" class="page-link" href="#" aria-label="Previous">&laquo; Previous</a>
+      <a data-field="${field}" data-bundle="${bundle}" data-type="${type}" class="page-link" href="#" aria-label="Previous">&laquo; Previous</a>
     </li>` : '';
 
     let nextItem = current != next ? `<li class="page-item next">
-      <a data-field="${field}" data-entity="${bundle}" data-type="${type}" class="page-link" href="#" aria-label="Next">Next &raquo;</a>
+      <a data-field="${field}" data-bundle="${bundle}" data-type="${type}" class="page-link" href="#" aria-label="Next">Next &raquo;</a>
     </li>` : '';
 
     let html = `
@@ -104,7 +104,7 @@ $(document).ready(function () {
       let parent = $(this).parents('ul').first();
       let current = parent.data('page-current');
       let previous = parent.data('page-previous');
-      let bundle = $(this).data('entity');
+      let bundle = $(this).data('bundle');
       let field = $(this).data('field');
       let type = $(this).data('type');
       let entities = await getEntities(bundle, type, previous * 2);
@@ -134,7 +134,7 @@ $(document).ready(function () {
       let current = parent.data('page-current');
       let next = parent.data('page-next');
       let previous = parent.data('page-previous');
-      let bundle = $(this).data('entity');
+      let bundle = $(this).data('bundle');
       let field = $(this).data('field');
       let type = $(this).data('type');
       let entities = await getEntities(bundle, type, next * 2);
@@ -189,7 +189,7 @@ $(document).ready(function () {
   function refreshEntities() {
     $('.refresh > a').click(async function (e) {
       e.preventDefault();
-      let bundle = $(this).data('entity');
+      let bundle = $(this).data('bundle');
       let field = $(this).data('field');
       let type = $(this).data('type');
       let entities = await getEntities(bundle, type);
