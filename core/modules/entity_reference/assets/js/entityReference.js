@@ -238,7 +238,7 @@ $(document).ready(function () {
       return;
     }
     paginator.html('');
-    itemsList.html('');
+    itemsList.html(`<div class="p-2 text-center text-muted">No "${filter.title}" found</div>`);
     return;
   }
 
