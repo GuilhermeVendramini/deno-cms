@@ -86,12 +86,15 @@
         <ul class="pagination justify-content-center">
           <% if (pager.previous !== false ) { %>
             <li class="page-item">
-              <a class="page-link" href="?title=<%= filters.title %>&type=<%= filters.type %>&published=<%= filters.published %>&pageNumber=<%= pager.previous %>" aria-label="Previous">&laquo; Previous</a>
+              <a class="page-link" href="?title=<%= filters.title %>&type=<%= filters.type %>&published=<%= filters.published %>&pageNumber=<%= pager.previous %>" aria-label="Previous">&laquo;</a>
             </li>
+          <% } %>
+          <% if (pager.next || pager.previous !== false)  { %>
+            <li class="page-item"><span class="page-link"><%- pager.current %></span></li>
           <% } %>
           <% if (pager.next) { %>
             <li class="page-item">
-              <a class="page-link" href="?title=<%= filters.title %>&type=<%= filters.type %>&published=<%= filters.published %>&pageNumber=<%= pager.next %>" aria-label="Next">Next &raquo;</a>
+              <a class="page-link" href="?title=<%= filters.title %>&type=<%= filters.type %>&published=<%= filters.published %>&pageNumber=<%= pager.next %>" aria-label="Next">&raquo;</a>
             </li>
           <% } %>
         </ul>

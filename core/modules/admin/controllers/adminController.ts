@@ -55,6 +55,7 @@ export default {
         pager: {
           next: content.length >= limit ? Number(pageNumber) + 1 : false,
           previous: pageNumber == 0 ? false : Number(pageNumber) - 1,
+          current: pageNumber == 0 ? 1 : Number(pageNumber) + 1,
         },
         filters: {
           title: title ? title : "",

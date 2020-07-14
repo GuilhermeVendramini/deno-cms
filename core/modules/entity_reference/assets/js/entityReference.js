@@ -78,17 +78,18 @@ $(document).ready(function () {
 
   function buildPaginator(paginator, field, bundle, type, current, previous, next) {
     let previousItem = current > 0 ? `<li class="page-item previous">
-      <a data-field="${field}" data-bundle="${bundle}" data-type="${type}" class="page-link" href="#" aria-label="Previous">&laquo; Previous</a>
+      <a data-field="${field}" data-bundle="${bundle}" data-type="${type}" class="page-link" href="#" aria-label="Previous">&laquo;</a>
     </li>` : '';
 
     let nextItem = current != next ? `<li class="page-item next">
-      <a data-field="${field}" data-bundle="${bundle}" data-type="${type}" class="page-link" href="#" aria-label="Next">Next &raquo;</a>
+      <a data-field="${field}" data-bundle="${bundle}" data-type="${type}" class="page-link" href="#" aria-label="Next">&raquo;</a>
     </li>` : '';
 
     let html = `
     <nav aria-label="page navigation">
       <ul data-page-current="${current}" data-page-previous="${previous}" data-page-next="${next}" class="mt-3 pagination justify-content-center">
           ${previousItem}
+          <li class="page-item"><span class="page-link">${current + 1}</span></li>
           ${nextItem}
       </ul>
     </nav>`;
