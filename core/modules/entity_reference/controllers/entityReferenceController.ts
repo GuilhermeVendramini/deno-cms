@@ -7,6 +7,7 @@ export default {
       let type: string | undefined;
       let skip = 0;
       let limit = 10;
+      let title = "";
 
       bundle = context.params.bundle;
       type = context.params.type;
@@ -33,8 +34,12 @@ export default {
         limit = Number(context.request.url.searchParams.get("limit"));
       }
 
+      if (context.request.url.searchParams.has("title")) {
+        title = context.request.url.searchParams.get("title");
+      }
+
       let entities: any | undefined;
-      entities = await repository.search(undefined, type, true, skip, limit);
+      entities = await repository.search(title, type, true, skip, limit);
 
       let result = {};
       if (entities && Object.keys(entities).length != 0) {

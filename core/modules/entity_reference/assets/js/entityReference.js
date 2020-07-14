@@ -5,6 +5,7 @@ $(document).ready(function () {
   buildReference();
   refreshEntities();
   getCurrentEntities();
+  search();
   submitForm();
 
   function buildReference() {
@@ -38,11 +39,14 @@ $(document).ready(function () {
                   <h6 class="text-capitalize font-weight-bold text-secondary">
                     ${type}
                   </h6>
-                  <div class="actions">
-                    <span class="add-new">
+                  <div class="actions row">
+                    <span class="find pr-1">
+                      <input data-field="${field}" data-bundle="${bundle}" data-type="${type}" class="search-entity form-control form-control-sm" name="title" value="" type="text" placeholder="Title">
+                    </span>
+                    <span class="add-new pr-1">
                       <a target="_blank" class="btn btn-outline-secondary btn-sm" href="/admin/${bundle}/${type}/add">+</a>
                     </span>
-                    <span class="refresh">
+                    <span class="refresh pr-1">
                       <a data-field="${field}" data-bundle="${bundle}" data-type="${type}" class="btn btn-outline-secondary btn-sm" href="#">↻</a>
                     </span>
                   </div>
@@ -64,7 +68,7 @@ $(document).ready(function () {
                 );
                 clickAction(field, data);
               });
-        
+
               if (entities.data.length >= 2) {
                 let paginator = entityContainer.find('.type.' + type + ' > .paginator').first();
                 buildPaginator(paginator, field, bundle, type, 0, 0, 1);
@@ -108,7 +112,8 @@ $(document).ready(function () {
       let bundle = $(this).data('bundle');
       let field = $(this).data('field');
       let type = $(this).data('type');
-      let entities = await getEntities(bundle, type, previous * 2);
+      let search = $(`.search-entity[data-field="${field}"][data-bundle="${bundle}"][data-type="${type}"]`).val();
+      let entities = await getEntities(bundle, type, previous * 2, search);
 
       if (entities && entities.data) {
         let itemsList = $('.field-' + field + '.entity.' + bundle + ' .type.' + type + ' > .items');
@@ -138,7 +143,9 @@ $(document).ready(function () {
       let bundle = $(this).data('bundle');
       let field = $(this).data('field');
       let type = $(this).data('type');
-      let entities = await getEntities(bundle, type, next * 2);
+      let search = $(`.search-entity[data-field="${field}"][data-bundle="${bundle}"][data-type="${type}"]`).val();
+      let entities = await getEntities(bundle, type, next * 2, search);
+
       if (entities && entities.data) {
         let itemsList = $('.field-' + field + '.entity.' + bundle + ' .type.' + type + ' > .items');
         itemsList.html('');
@@ -164,10 +171,10 @@ $(document).ready(function () {
 
   }
 
-  async function getEntities(bundle, type, skip = 0) {
+  async function getEntities(bundle, type, skip = 0, title = "") {
     let result = null;
     await $.ajax({
-      url: '/entity-reference/' + bundle + '/' + type + '?skip=' + skip + '&limit=' + 2,
+      url: '/entity-reference/' + bundle + '/' + type + '?skip=' + skip + '&limit=' + 2 + '&title=' + title,
       type: 'get',
       dataType: 'json',
       async: true,
@@ -187,6 +194,54 @@ $(document).ready(function () {
     return false;
   }
 
+  function search() {
+    let typingTimer;
+    let doneTypingInterval = 1200;
+
+    $('.search-entity').keyup(function () {
+      clearTimeout(typingTimer);
+      let title = $(this).val();
+      let bundle = $(this).data('bundle');
+      let field = $(this).data('field');
+      let type = $(this).data('type');
+
+      typingTimer = setTimeout(searchEntity, doneTypingInterval, {
+        title: title,
+        bundle: bundle,
+        field: field,
+        type: type,
+      });
+
+    });
+  }
+
+  async function searchEntity(filter) {
+    let entities = await getEntities(filter.bundle, filter.type, 0, filter.title);
+    let itemsList = $('.field-' + filter.field + '.entity.' + filter.bundle + ' .type.' + filter.type + ' > .items');
+    let paginator = itemsList.next('.paginator');
+
+    if (entities && entities.data) {
+      itemsList.html('');
+      $.each(entities.data, function (_, data) {
+        let picked = getPickedItem(filter.field, data._id.$oid) ? true : false;
+        itemsList.append(
+          getTemplate(filter.field, filter.bundle, filter.type, data, picked)
+        );
+        clickAction(filter.field, data);
+      });
+
+      if (entities.data.length >= 2) {
+        buildPaginator(paginator, filter.field, filter.bundle, filter.type, 0, 0, 1);
+        return;
+      }
+      paginator.html('');
+      return;
+    }
+    paginator.html('');
+    itemsList.html('');
+    return;
+  }
+
   function refreshEntities() {
     $('.refresh > a').click(async function (e) {
       e.preventDefault();
@@ -194,6 +249,7 @@ $(document).ready(function () {
       let field = $(this).data('field');
       let type = $(this).data('type');
       let entities = await getEntities(bundle, type);
+      $(`.search-entity[data-field="${field}"][data-bundle="${bundle}"][data-type="${type}"]`).val('');
 
       if (entities && entities.data) {
         let itemsList = $('.field-' + field + '.entity.' + bundle + ' .type.' + type + ' > .items');
