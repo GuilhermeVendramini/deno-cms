@@ -1,6 +1,7 @@
 $(document).ready(function () {
   var pickedEntities = [];
   var loadEntities = [];
+  var limit = 10;
 
   buildReference();
   refreshEntities();
@@ -51,7 +52,7 @@ $(document).ready(function () {
                     </span>
                   </div>
                 </div>
-                <div class="items clearfix"></div>
+                <div class="items clearfix text-center mt-3"></div>
                 <div class="paginator"></div>
               </div>`
             );
@@ -69,7 +70,7 @@ $(document).ready(function () {
                 clickAction(field, data);
               });
 
-              if (entities.data.length >= 2) {
+              if (entities.data.length >= limit) {
                 let paginator = entityContainer.find('.type.' + type + ' > .paginator').first();
                 buildPaginator(paginator, field, bundle, type, 0, 0, 1);
               }
@@ -113,7 +114,7 @@ $(document).ready(function () {
       let field = $(this).data('field');
       let type = $(this).data('type');
       let search = $(`.search-entity[data-field="${field}"][data-bundle="${bundle}"][data-type="${type}"]`).val();
-      let entities = await getEntities(bundle, type, previous * 2, search);
+      let entities = await getEntities(bundle, type, previous * limit, search);
 
       if (entities && entities.data) {
         let itemsList = $('.field-' + field + '.entity.' + bundle + ' .type.' + type + ' > .items');
@@ -126,7 +127,7 @@ $(document).ready(function () {
           clickAction(field, data);
         });
 
-        if (entities.data.length >= 2) {
+        if (entities.data.length >= limit) {
           previous = current == 1 ? 0 : previous - 1;
           buildPaginator(paginator, field, bundle, type, current - 1, previous, current);
           return;
@@ -144,7 +145,7 @@ $(document).ready(function () {
       let field = $(this).data('field');
       let type = $(this).data('type');
       let search = $(`.search-entity[data-field="${field}"][data-bundle="${bundle}"][data-type="${type}"]`).val();
-      let entities = await getEntities(bundle, type, next * 2, search);
+      let entities = await getEntities(bundle, type, next * limit, search);
 
       if (entities && entities.data) {
         let itemsList = $('.field-' + field + '.entity.' + bundle + ' .type.' + type + ' > .items');
@@ -157,7 +158,7 @@ $(document).ready(function () {
           clickAction(field, data);
         });
 
-        if (entities.data.length >= 2) {
+        if (entities.data.length >= limit) {
           buildPaginator(paginator, field, bundle, type, current + 1, current, next + 1);
           return;
         }
@@ -174,7 +175,7 @@ $(document).ready(function () {
   async function getEntities(bundle, type, skip = 0, title = "") {
     let result = null;
     await $.ajax({
-      url: '/entity-reference/' + bundle + '/' + type + '?skip=' + skip + '&limit=' + 2 + '&title=' + title,
+      url: '/entity-reference/' + bundle + '/' + type + '?skip=' + skip + '&limit=' + limit + '&title=' + title,
       type: 'get',
       dataType: 'json',
       async: true,
@@ -230,7 +231,7 @@ $(document).ready(function () {
         clickAction(filter.field, data);
       });
 
-      if (entities.data.length >= 2) {
+      if (entities.data.length >= limit) {
         buildPaginator(paginator, filter.field, filter.bundle, filter.type, 0, 0, 1);
         return;
       }
@@ -262,7 +263,7 @@ $(document).ready(function () {
           clickAction(field, data);
         });
 
-        if (entities.data.length >= 2) {
+        if (entities.data.length >= limit) {
           let paginator = itemsList.next('.paginator');
           buildPaginator(paginator, field, bundle, type, 0, 0, 1);
         }
