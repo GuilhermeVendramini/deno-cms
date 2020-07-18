@@ -7,6 +7,7 @@ import {
 import vs from "value_schema";
 import pathauto from "../../../../shared/utils/pathauto/defaultPathauto.ts";
 import entityReferenceHelper from "../../../modules/entity_reference/helpers/entityReferenceHelper.ts";
+import menuItemHelper from "../../helpers/menu_item/menuItemHelper.ts";
 
 export default abstract class MenuItemEntityMiddleware {
   protected entity: any;
@@ -66,7 +67,9 @@ export default abstract class MenuItemEntityMiddleware {
         error: false,
         message: false,
         pager: {
-          next: menu_item && menu_item.length >= limit ? Number(pageNumber) + 1 : false,
+          next: menu_item && menu_item.length >= limit
+            ? Number(pageNumber) + 1
+            : false,
           previous: pageNumber == 0 ? false : Number(pageNumber) - 1,
           current: pageNumber == 0 ? 1 : Number(pageNumber) + 1,
         },
@@ -100,6 +103,12 @@ export default abstract class MenuItemEntityMiddleware {
     try {
       id = context.params?.id;
       let menu_item: {} | undefined;
+      let menuTree = await menuItemHelper.getMenuTree(
+        this.repository,
+        this.entity.type,
+      );
+
+      console.log(menuTree);
 
       if (id) {
         menu_item = await this.repository.findOneByID(id);
@@ -134,6 +143,7 @@ export default abstract class MenuItemEntityMiddleware {
   ) {
     let title: string;
     let url: string;
+    let relatives: any[];
     let published: boolean = false;
     let page: any;
     let menu_item: MenuItemEntity | undefined;
@@ -148,6 +158,7 @@ export default abstract class MenuItemEntityMiddleware {
       id = body.value.get("id");
       title = body.value.get("title");
       url = body.value.get("url");
+      relatives = body.value.get("relatives");
       published = body.value.get("published") ? true : false;
 
       if (this.entity.fields.length > 0) {
@@ -175,7 +186,13 @@ export default abstract class MenuItemEntityMiddleware {
 
       validated = vs.applySchemaObject(
         this.entitySchema,
-        { title: title, url: url, data: data, published: published },
+        {
+          title: title,
+          url: url,
+          relatives: relatives,
+          data: data,
+          published: published,
+        },
       );
 
       let path: string | undefined;
@@ -190,6 +207,7 @@ export default abstract class MenuItemEntityMiddleware {
         menu_item = new MenuItemEntity(
           validated.data,
           validated.url,
+          validated.relatives,
           validated.title,
           this.entity.type,
           currentUser,

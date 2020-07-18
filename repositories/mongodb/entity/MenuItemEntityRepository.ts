@@ -5,7 +5,7 @@ class MenuItemEntityRepository extends EntityRepository {
   protected db: any;
 
   constructor() {
-    super('menu_item');
+    super("menu_item");
   }
 
   async updateOne(id: string, entity: any): Promise<any> {
@@ -15,6 +15,7 @@ class MenuItemEntityRepository extends EntityRepository {
         $set: {
           data: entity.data,
           url: entity.url,
+          relatives: entity.relatives,
           title: entity.title,
           updated: entity.updated,
           published: entity.published,

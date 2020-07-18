@@ -40,6 +40,7 @@
         <tr>
           <th scope="col">ID</th>
           <th scope="col">Title</th>
+          <th scope="col">Weight</th>
           <th scope="col">Author</th>
           <th scope="col">Created</th>
           <th scope="col">Updated</th>
@@ -52,6 +53,7 @@
         <tr>
           <th scope="row"><%= page.menu_item[i]._id.$oid %></th>
           <td><a href='<%= page.menu_item[i].path %>'><%= page.menu_item[i].title %></a></td>
+          <td><%= page.menu_item[i].data?.weight %></td>
           <td><%= page.menu_item[i].author.name %></td>
           <td><%= page.menu_item[i].created %></td>
           <td><%= page.menu_item[i].updated %></td>

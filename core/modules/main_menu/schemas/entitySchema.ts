@@ -9,13 +9,22 @@ let entitySchema = {
     },
   }),
   url: vs.string(),
+  relatives: vs.array({
+    separatedBy: ",",
+    each: {
+      schema: vs.string(),
+      ignoresErrors: false,
+    },
+    ifUndefined: [],
+    ifNull: [],
+  }),
   data: vs.object({
     schemaObject: {
       target: vs.string({ ifUndefined: "_blank", ifEmptyString: "_blank" }),
       weight: vs.number({ ifUndefined: 0, ifEmptyString: 0 }),
     },
   }),
-  published: vs.boolean({ ifUndefined: false }),
+  published: vs.boolean({ ifUndefined: false, ifEmptyString: false }),
 };
 
 export default entitySchema;
