@@ -14,6 +14,11 @@ router
     adminController.taxonomy,
   )
   .get(
+    "/admin/menu",
+    loggedMiddleware.needToBeLogged,
+    adminController.menu,
+  )
+  .get(
     "/admin/media",
     loggedMiddleware.needToBeLogged,
     adminController.media,

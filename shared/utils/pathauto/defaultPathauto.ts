@@ -2,11 +2,11 @@ import EntityRepository from "../../../repositories/mongodb/entity/EntityReposit
 
 function replaceElements(string: string) {
   let i: any =
-    "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝŔÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿŕ _".split(
+    "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝŔÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿŕ ".split(
       "",
     );
   let o: any =
-    "AAAAAAACEEEEIIIIDNOOOOOOUUUUYRsBaaaaaaaceeeeiiiionoooooouuuuybyr--".split(
+    "AAAAAAACEEEEIIIIDNOOOOOOUUUUYRsBaaaaaaaceeeeiiiionoooooouuuuybyr-".split(
       "",
     );
   let map: any = {};
@@ -52,7 +52,7 @@ async function generatePath(
     path = path + "-" + index;
   }
 
-  let result : any = await repository.findOneByFilters({ path: path });
+  let result: any = await repository.findOneByFilters({ path: path });
 
   if (Object.keys(result).length != 0 && id != result._id.$oid) {
     path = await generatePath(bundle, fragments, id, index + 1);

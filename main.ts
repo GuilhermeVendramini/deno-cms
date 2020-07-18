@@ -31,6 +31,8 @@ import basicBlockAPIRouter from "./core/modules/basic_block/api/routes/entityRou
 import basicBlockRouter from "./core/modules/basic_block/cms/routes/entityRoute.ts";
 import landingPageAPIRouter from "./core/modules/landing_page/api/routes/entityRoute.ts";
 import landingPageRouter from "./core/modules/landing_page/cms/routes/entityRoute.ts";
+import mainMenuAPIRouter from "./core/modules/main_menu/api/routes/entityRoute.ts";
+import mainMenuRouter from "./core/modules/main_menu/cms/routes/entityRoute.ts";
 
 const session = new Session({ framework: "oak" });
 await session.init();
@@ -61,6 +63,7 @@ app.use(videoAPIRouter.routes());
 app.use(mediaAPIRouter.routes());
 app.use(basicBlockAPIRouter.routes());
 app.use(landingPageAPIRouter.routes());
+app.use(mainMenuAPIRouter.routes());
 
 /**
  * Themes routes
@@ -90,6 +93,12 @@ app.use(landingPageRouter.routes());
 
 app.use(tagsRouter.routes());
 app.use(categoriesRouter.routes());
+
+/**
+ * Menu Types
+ */
+
+app.use(mainMenuRouter.routes());
 
 /**
  * Libraries

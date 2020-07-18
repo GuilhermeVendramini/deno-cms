@@ -1,0 +1,16 @@
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: 'Confirm delete', currentUser: currentUser }) %>
+<div class="container">
+  <h1 class="text-center mb-3">Confirm delete <%= page.menu_item.title %></h1>
+  <form action='/admin/menu_item/<%= page.menu_item.type %>/delete' method=post>
+    <input type="hidden" id="id" name="id" value="<%= page.menu_item._id.$oid %>">
+    <div class="d-flex justify-content-center">
+      <div class="mr-2">
+        <a href="#" onclick="window.history.back();" class="btn btn-outline-secondary">Cancel</a>
+      </div>
+      <div class="mr-2">
+        <button type="submit" class="btn btn-danger">Confirm</button>
+      </div>
+    </div>
+  </form>
+</div>
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>

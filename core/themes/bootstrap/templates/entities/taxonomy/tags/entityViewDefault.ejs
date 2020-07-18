@@ -3,7 +3,7 @@
   <% if ((currentUser && currentUser._id.$oid == page?.term?.author?._id?.$oid) || (currentUser && currentUser?.roles.includes(0))) { %>
     <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: page.term}) %>
   <% } %>
-  <% if (page?.term?.data) { %>
+  <% if (page?.term?.title) { %>
   <h1 class="text-center mb-3"><%= page.term.title %></h1>
   <% } %>
 </div>

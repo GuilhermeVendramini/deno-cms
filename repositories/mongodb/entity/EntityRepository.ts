@@ -2,7 +2,7 @@ import DB from "../db.ts";
 import { ObjectId } from "mongo";
 
 class EntityRepository {
-  private db: any;
+  protected db: any;
 
   constructor(collection: string) {
     this.db = DB.collection(collection);

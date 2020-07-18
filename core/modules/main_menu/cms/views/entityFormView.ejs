@@ -1,0 +1,45 @@
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: page.entity.name, currentUser: currentUser }) %>
+<div class="container">
+  <h1 class="text-center mb-3"><%= page.entity.name %></h1>
+  <% if (page.message) { %>
+    <div class="alert alert-danger">
+      <%= page.message %>
+    </div>
+  <% } %>
+  <form id="entity-form" action='/admin/menu_item/<%= page.entity.type %>/add' method=post>
+    <input id="id" name="id" type="hidden" value='<%= page?.menu_item?._id?.$oid %>'>
+    <div class="form-group">
+      <label>Title</label>
+      <input type="text" required value="<%= page?.menu_item?.title %>" name="title" class="form-control">
+    </div>
+    <div class="form-group">
+      <label>Url</label>
+      <input type="text" required value="<%= page?.menu_item?.url %>" name="url" class="form-control">
+    </div>
+    <div class="form-group">
+      <label>Target</label>
+      <input type="text" required value="<%= page?.menu_item?.data?.target %>" name="target" class="form-control">
+    </div>
+    <div class="form-group">
+      <label>Weight</label>
+      <% let weight = page?.menu_item?.data?.weight ? page.menu_item.data.weight : 0 %>
+      <input type="number" min="0" required value="<%= weight %>" name="weight" class="form-control">
+    </div>
+    <div class="form-check mb-3">
+      <% let checked = page?.menu_item?.published ? "checked" : "" %>
+      <input <%= checked %> type="checkbox" name="published" value="true" class="form-check-input" id="published">
+      <label class="form-check-label" for="published">Published</label>
+    </div>
+    <div class="d-flex justify-menu_item-between">
+      <div class="mr-2">
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+      <% if (page?.menu_item?._id) { %>
+        <div class="mr-2">
+          <a href='/admin/<%= page.menu_item.bundle %>/<%= page.menu_item.type %>/delete/<%= page.menu_item._id.$oid %>' class="btn btn-danger">Delete</a>
+        </div>
+      <% } %>
+    </div>
+  </form>
+</div>
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>

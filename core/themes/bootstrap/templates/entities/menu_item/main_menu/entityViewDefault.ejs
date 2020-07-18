@@ -1,0 +1,21 @@
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: page?.menu_item?.title, currentUser: currentUser }) %>
+<div class="container">
+  <% if ((currentUser && currentUser._id.$oid == page?.menu_item?.author?._id?.$oid) || (currentUser && currentUser?.roles.includes(0))) { %>
+    <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: page.menu_item}) %>
+  <% } %>
+  <% if (page?.menu_item?.title) { %>
+  <h1 class="text-center mb-3"><%= page.menu_item.title %></h1>
+  <% } %>
+  <% if (page?.menu_item?.url) { %>
+    <p><%- page.menu_item.url %></p>
+  <% } %>
+  <% if (page?.menu_item?.data) { %>
+    <% if (page.menu_item.data?.target) { %>
+      <p><%- page.menu_item.data.target %></p>
+    <% } %>
+    <% if (page.menu_item.data?.weight) { %>
+      <p><%- page.menu_item.data.weight %></p>
+    <% } %>
+  <% } %>
+</div>
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>

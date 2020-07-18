@@ -75,6 +75,15 @@ export default {
     );
   },
 
+  async menu(context: Record<string, any>) {
+    context.response.body = await renderFileToString(
+      `${Deno.cwd()}/core/modules/admin/views/menuView.ejs`,
+      {
+        currentUser: context.getCurrentUser,
+      },
+    );
+  },
+
   async media(context: Record<string, any>) {
     context.response.body = await renderFileToString(
       `${Deno.cwd()}/core/modules/admin/views/mediaView.ejs`,

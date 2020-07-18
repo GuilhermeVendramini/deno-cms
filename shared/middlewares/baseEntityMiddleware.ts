@@ -6,6 +6,7 @@ import EntityRepository from "../../repositories/mongodb/entity/EntityRepository
 import { renderFileToString } from "dejs";
 import currentUserSession from "../utils/sessions/currentUserSession.ts";
 
+const menuItemRepository = new EntityRepository("menu_item");
 const taxonomyRepository = new EntityRepository("taxonomy");
 const contentRepository = new EntityRepository("content");
 const mediaRepository = new EntityRepository("media");
@@ -90,6 +91,12 @@ export default {
   ) {
     await needTobeAuthor(context, next, taxonomyRepository);
   },
+  async needToBeMenuItemAuthor(
+    context: Record<string, any>,
+    next: Function,
+  ) {
+    await needTobeAuthor(context, next, menuItemRepository);
+  },
   async needToBeContentAuthor(
     context: Record<string, any>,
     next: Function,
@@ -113,6 +120,12 @@ export default {
     next: Function,
   ) {
     await needToBePublished(context, next, taxonomyRepository);
+  },
+  async menuItemNeedToBePublished(
+    context: Record<string, any>,
+    next: Function,
+  ) {
+    await needToBePublished(context, next, menuItemRepository);
   },
   async mediaNeedToBePublished(
     context: Record<string, any>,
