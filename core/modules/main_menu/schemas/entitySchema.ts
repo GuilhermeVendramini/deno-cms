@@ -9,15 +9,7 @@ let entitySchema = {
     },
   }),
   url: vs.string(),
-  relatives: vs.array({
-    separatedBy: ",",
-    each: {
-      schema: vs.string(),
-      ignoresErrors: false,
-    },
-    ifUndefined: [],
-    ifNull: [],
-  }),
+  parent: vs.string({ ifUndefined: "", ifEmptyString: "", ifNull: "" }),
   data: vs.object({
     schemaObject: {
       target: vs.string({ ifUndefined: "_blank", ifEmptyString: "_blank" }),

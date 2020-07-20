@@ -1,3 +1,16 @@
+<% function createMenuTree(children, prefix = '- '){ %>
+  <% for (let i = 0; i < children.length; i++ ) { 
+    let selected = (children[i]._id.$oid == page?.menuItem?.parent) ? "selected" : "";
+  %>
+    <% if (children[i]._id.$oid != page.menuItem._id.$oid) { %>
+      <option value="<%= children[i]._id.$oid %>" <%= selected %>><%= prefix + ' ' + children[i].title %></option>
+      <% if (children[i]?.children) { %>
+        <% createMenuTree(children[i].children, prefix + '-'); %>
+      <% } %>
+    <% } %>
+  <% } %>
+<% } %>
+
 <%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: page.entity.name, currentUser: currentUser }) %>
 <div class="container">
   <h1 class="text-center mb-3"><%= page.entity.name %></h1>
@@ -7,26 +20,43 @@
     </div>
   <% } %>
   <form id="entity-form" action='/admin/menu_item/<%= page.entity.type %>/add' method=post>
-    <input id="id" name="id" type="hidden" value='<%= page?.menu_item?._id?.$oid %>'>
+    <input id="id" name="id" type="hidden" value='<%= page?.menuItem?._id?.$oid %>'>
     <div class="form-group">
       <label>Title</label>
-      <input type="text" required value="<%= page?.menu_item?.title %>" name="title" class="form-control">
+      <input type="text" required value="<%= page?.menuItem?.title %>" name="title" class="form-control">
     </div>
     <div class="form-group">
       <label>Url</label>
-      <input type="text" required value="<%= page?.menu_item?.url %>" name="url" class="form-control">
+      <input type="text" required value="<%= page?.menuItem?.url %>" name="url" class="form-control">
     </div>
     <div class="form-group">
       <label>Target</label>
-      <input type="text" required value="<%= page?.menu_item?.data?.target %>" name="target" class="form-control">
+      <input type="text" required value="<%= page?.menuItem?.data?.target %>" name="target" class="form-control">
     </div>
     <div class="form-group">
       <label>Weight</label>
-      <% let weight = page?.menu_item?.data?.weight ? page.menu_item.data.weight : 0 %>
+      <% let weight = page?.menuItem?.data?.weight ? page.menuItem.data.weight : 0 %>
       <input type="number" min="0" required value="<%= weight %>" name="weight" class="form-control">
     </div>
+    <div class="form-group">
+      <label for="parent">Parent</label>
+      <select class="form-control" name="parent" id="parent">
+        <option value="">No parent</option>
+        <%
+          for (let i = 0; i < page.menuTree?.length; i++ ) {
+            let selected = (page.menuTree[i]._id.$oid == page?.menuItem?.parent) ? "selected" : "";
+        %>
+          <% if (page.menuTree[i]._id.$oid != page.menuItem._id.$oid) { %>
+            <option value="<%= page.menuTree[i]._id.$oid %>" <%= selected %>><%= page.menuTree[i].title %></option>
+            <% if (page.menuTree[i]?.children) { %>
+              <% createMenuTree(page.menuTree[i].children); %>
+            <% } %>
+          <% } %>
+        <% } %>
+      </select>
+    </div>
     <div class="form-check mb-3">
-      <% let checked = page?.menu_item?.published ? "checked" : "" %>
+      <% let checked = page?.menuItem?.published ? "checked" : "" %>
       <input <%= checked %> type="checkbox" name="published" value="true" class="form-check-input" id="published">
       <label class="form-check-label" for="published">Published</label>
     </div>
@@ -34,9 +64,9 @@
       <div class="mr-2">
         <button type="submit" class="btn btn-primary">Save</button>
       </div>
-      <% if (page?.menu_item?._id) { %>
+      <% if (page?.menuItem?._id) { %>
         <div class="mr-2">
-          <a href='/admin/<%= page.menu_item.bundle %>/<%= page.menu_item.type %>/delete/<%= page.menu_item._id.$oid %>' class="btn btn-danger">Delete</a>
+          <a href='/admin/<%= page.menuItem.bundle %>/<%= page.menuItem.type %>/delete/<%= page.menuItem._id.$oid %>' class="btn btn-danger">Delete</a>
         </div>
       <% } %>
     </div>

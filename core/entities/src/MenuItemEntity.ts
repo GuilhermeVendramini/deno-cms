@@ -4,12 +4,12 @@ import { UserBaseEntity } from "../../modules/users/entities/UserBaseEntity.ts";
 export class MenuItemEntity extends BaseEntity {
   protected data: any;
   protected url: string;
-  protected relatives: any[];
+  protected parent: string;
 
   constructor(
     data: any,
     url: string,
-    relatives: any[],
+    parent: string,
     title: string,
     type: string,
     author: UserBaseEntity | undefined,
@@ -28,6 +28,6 @@ export class MenuItemEntity extends BaseEntity {
     );
     this.data = data;
     this.url = url;
-    this.relatives = relatives;
+    this.parent = parent;
   }
 }

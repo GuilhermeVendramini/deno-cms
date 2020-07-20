@@ -25,7 +25,7 @@ export default abstract class MenuItemEntityMiddleware {
     next: Function,
   ) {
     try {
-      let menu_item: [] | undefined;
+      let menuItem: [] | undefined;
       let pageNumber: number = 0;
       let skip = 0;
       let limit = 10;
@@ -53,7 +53,7 @@ export default abstract class MenuItemEntityMiddleware {
       if (!Number(pageNumber)) pageNumber = 0;
 
       skip = pageNumber * limit;
-      menu_item = await this.repository.search(
+      menuItem = await this.repository.search(
         title,
         this.entity.type,
         published,
@@ -62,12 +62,12 @@ export default abstract class MenuItemEntityMiddleware {
       );
 
       let page = {
-        menu_item: menu_item,
+        menuItem: menuItem,
         entity: this.entity,
         error: false,
         message: false,
         pager: {
-          next: menu_item && menu_item.length >= limit
+          next: menuItem && menuItem.length >= limit
             ? Number(pageNumber) + 1
             : false,
           previous: pageNumber == 0 ? false : Number(pageNumber) - 1,
@@ -102,21 +102,20 @@ export default abstract class MenuItemEntityMiddleware {
 
     try {
       id = context.params?.id;
-      let menu_item: {} | undefined;
-      let menuTree = await menuItemHelper.getMenuTree(
+      let menuItem: any | undefined;
+      let menuTree: any[] = await menuItemHelper.getMenuTree(
         this.repository,
         this.entity.type,
       );
 
-      console.log(menuTree);
-
       if (id) {
-        menu_item = await this.repository.findOneByID(id);
+        menuItem = await this.repository.findOneByID(id);
       }
 
       let page = {
         id: id,
-        menu_item: menu_item,
+        menuItem: menuItem,
+        menuTree: menuTree,
         entity: this.entity,
         error: false,
         message: false,
@@ -127,7 +126,7 @@ export default abstract class MenuItemEntityMiddleware {
     } catch (error) {
       let page = {
         id: id,
-        menu_item: false,
+        menuItem: false,
         entity: this.entity,
         error: true,
         message: error.message,
@@ -143,10 +142,10 @@ export default abstract class MenuItemEntityMiddleware {
   ) {
     let title: string;
     let url: string;
-    let relatives: any[];
+    let parent: string;
     let published: boolean = false;
     let page: any;
-    let menu_item: MenuItemEntity | undefined;
+    let menuItem: MenuItemEntity | undefined;
     let id: string = "";
 
     try {
@@ -158,7 +157,7 @@ export default abstract class MenuItemEntityMiddleware {
       id = body.value.get("id");
       title = body.value.get("title");
       url = body.value.get("url");
-      relatives = body.value.get("relatives");
+      parent = body.value.get("parent");
       published = body.value.get("published") ? true : false;
 
       if (this.entity.fields.length > 0) {
@@ -189,7 +188,7 @@ export default abstract class MenuItemEntityMiddleware {
         {
           title: title,
           url: url,
-          relatives: relatives,
+          parent: parent,
           data: data,
           published: published,
         },
@@ -204,10 +203,10 @@ export default abstract class MenuItemEntityMiddleware {
           id,
         );
 
-        menu_item = new MenuItemEntity(
+        menuItem = new MenuItemEntity(
           validated.data,
           validated.url,
-          validated.relatives,
+          validated.parent,
           validated.title,
           this.entity.type,
           currentUser,
@@ -217,9 +216,9 @@ export default abstract class MenuItemEntityMiddleware {
         );
 
         if (id) {
-          await this.repository.updateOne(id, menu_item);
+          await this.repository.updateOne(id, menuItem);
         } else {
-          let result = await this.repository.insertOne(menu_item);
+          let result = await this.repository.insertOne(menuItem);
           id = result.$oid;
         }
 
@@ -233,7 +232,7 @@ export default abstract class MenuItemEntityMiddleware {
 
         page = {
           id: id,
-          menu_item: menu_item,
+          menuItem: menuItem,
           entity: this.entity,
           error: false,
           message: false,
@@ -247,12 +246,12 @@ export default abstract class MenuItemEntityMiddleware {
       context.throw(Status.NotAcceptable, "Not Acceptable");
     } catch (error) {
       if (id) {
-        menu_item = await this.repository.findOneByID(id) as MenuItemEntity;
+        menuItem = await this.repository.findOneByID(id) as MenuItemEntity;
       }
 
       page = {
         id: id,
-        menu_item: menu_item,
+        menuItem: menuItem,
         entity: this.entity,
         error: true,
         message: error.message,
@@ -269,12 +268,12 @@ export default abstract class MenuItemEntityMiddleware {
   ) {
     try {
       let path: string = context.request.url.pathname;
-      let menu_item: any | undefined;
-      menu_item = await this.repository.findOneByFilters({ path: path });
+      let menuItem: any | undefined;
+      menuItem = await this.repository.findOneByFilters({ path: path });
 
-      if (menu_item && Object.keys(menu_item).length != 0) {
+      if (menuItem && Object.keys(menuItem).length != 0) {
         let page = {
-          menu_item: menu_item,
+          menuItem: menuItem,
           entity: this.entity,
           error: false,
           message: false,
@@ -287,7 +286,7 @@ export default abstract class MenuItemEntityMiddleware {
       context.throw(Status.NotFound, "NotFound");
     } catch (error) {
       let page = {
-        menu_item: false,
+        menuItem: false,
         entity: this.entity,
         error: true,
         message: error.message,
@@ -305,13 +304,13 @@ export default abstract class MenuItemEntityMiddleware {
 
     try {
       id = context.params.id;
-      let menu_item: any | undefined;
-      menu_item = await this.repository.findOneByID(id);
+      let menuItem: any | undefined;
+      menuItem = await this.repository.findOneByID(id);
 
-      if (menu_item && Object.keys(menu_item).length != 0) {
+      if (menuItem && Object.keys(menuItem).length != 0) {
         let page = {
           id: id,
-          menu_item: menu_item,
+          menuItem: menuItem,
           entity: this.entity,
           error: false,
           message: false,
@@ -325,7 +324,7 @@ export default abstract class MenuItemEntityMiddleware {
     } catch (error) {
       let page = {
         id: id,
-        menu_item: false,
+        menuItem: false,
         entity: this.entity,
         error: true,
         message: error.message,
@@ -341,13 +340,13 @@ export default abstract class MenuItemEntityMiddleware {
     next: Function,
   ) {
     let path = `/admin/${this.entity.bundle}/${this.entity.type}`;
-    let menu_item: any | undefined;
+    let menuItem: any | undefined;
     let id: string = "";
 
     try {
       let body = context.getBody;
       id = body.value.get("id");
-      menu_item = await this.repository.findOneByID(id);
+      menuItem = await this.repository.findOneByID(id);
 
       if (this.entity.references.length > 0) {
         context["getRelation"] = {
@@ -355,7 +354,7 @@ export default abstract class MenuItemEntityMiddleware {
         };
       }
 
-      if (menu_item && Object.keys(menu_item).length != 0) {
+      if (menuItem && Object.keys(menuItem).length != 0) {
         await this.repository.deleteOne(id);
 
         if (this.entity.references.length > 0) {
@@ -369,7 +368,7 @@ export default abstract class MenuItemEntityMiddleware {
 
       let page = {
         id: id,
-        menu_item: menu_item,
+        menuItem: menuItem,
         entity: this.entity,
         error: false,
         message: false,
@@ -383,7 +382,7 @@ export default abstract class MenuItemEntityMiddleware {
 
       let page = {
         id: id,
-        menu_item: menu_item,
+        menuItem: menuItem,
         entity: this.entity,
         error: true,
         message: true,

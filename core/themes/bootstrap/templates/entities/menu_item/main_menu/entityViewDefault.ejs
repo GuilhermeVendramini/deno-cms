@@ -1,20 +1,20 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: page?.menu_item?.title, currentUser: currentUser }) %>
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: page?.menuItem?.title, currentUser: currentUser }) %>
 <div class="container">
-  <% if ((currentUser && currentUser._id.$oid == page?.menu_item?.author?._id?.$oid) || (currentUser && currentUser?.roles.includes(0))) { %>
-    <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: page.menu_item}) %>
+  <% if ((currentUser && currentUser._id.$oid == page?.menuItem?.author?._id?.$oid) || (currentUser && currentUser?.roles.includes(0))) { %>
+    <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: page.menuItem}) %>
   <% } %>
-  <% if (page?.menu_item?.title) { %>
-  <h1 class="text-center mb-3"><%= page.menu_item.title %></h1>
+  <% if (page?.menuItem?.title) { %>
+  <h1 class="text-center mb-3"><%= page.menuItem.title %></h1>
   <% } %>
-  <% if (page?.menu_item?.url) { %>
-    <p><%- page.menu_item.url %></p>
+  <% if (page?.menuItem?.url) { %>
+    <p><%- page.menuItem.url %></p>
   <% } %>
-  <% if (page?.menu_item?.data) { %>
-    <% if (page.menu_item.data?.target) { %>
-      <p><%- page.menu_item.data.target %></p>
+  <% if (page?.menuItem?.data) { %>
+    <% if (page.menuItem.data?.target) { %>
+      <p><%- page.menuItem.data.target %></p>
     <% } %>
-    <% if (page.menu_item.data?.weight) { %>
-      <p><%- page.menu_item.data.weight %></p>
+    <% if (page.menuItem.data?.weight) { %>
+      <p><%- page.menuItem.data.weight %></p>
     <% } %>
   <% } %>
 </div>

@@ -34,7 +34,7 @@
     </div>
   </fieldset>
   <div class="mt-3">
-    <% if (page?.menu_item) { %>
+    <% if (page?.menuItem) { %>
     <table class="table">
       <thead>
         <tr>
@@ -49,18 +49,18 @@
         </tr>
       </thead>
       <tbody>
-        <% for(var i=0; i < page?.menu_item.length; i++) { %>
+        <% for(var i=0; i < page?.menuItem.length; i++) { %>
         <tr>
-          <th scope="row"><%= page.menu_item[i]._id.$oid %></th>
-          <td><a href='<%= page.menu_item[i].path %>'><%= page.menu_item[i].title %></a></td>
-          <td><%= page.menu_item[i].data?.weight %></td>
-          <td><%= page.menu_item[i].author.name %></td>
-          <td><%= page.menu_item[i].created %></td>
-          <td><%= page.menu_item[i].updated %></td>
-          <td><%= page.menu_item[i].published %></td>
+          <th scope="row"><%= page.menuItem[i]._id.$oid %></th>
+          <td><a href='<%= page.menuItem[i].path %>'><%= page.menuItem[i].title %></a></td>
+          <td><%= page.menuItem[i].data?.weight %></td>
+          <td><%= page.menuItem[i].author.name %></td>
+          <td><%= page.menuItem[i].created %></td>
+          <td><%= page.menuItem[i].updated %></td>
+          <td><%= page.menuItem[i].published %></td>
           <td>
-            <% if (currentUser._id.$oid == page.menu_item[i].author._id.$oid || currentUser.roles.includes(0)) { %>
-              <a href='/admin/<%= page.entity.bundle %>/<%= page.menu_item[i].type %>/edit/<%= page.menu_item[i]._id.$oid %>'>edit</a> | <a href='/admin/<%= page.entity.bundle %>/<%= page.menu_item[i].type %>/delete/<%= page.menu_item[i]._id.$oid %>'>delete</a>
+            <% if (currentUser._id.$oid == page.menuItem[i].author._id.$oid || currentUser.roles.includes(0)) { %>
+              <a href='/admin/<%= page.entity.bundle %>/<%= page.menuItem[i].type %>/edit/<%= page.menuItem[i]._id.$oid %>'>edit</a> | <a href='/admin/<%= page.entity.bundle %>/<%= page.menuItem[i].type %>/delete/<%= page.menuItem[i]._id.$oid %>'>delete</a>
             <% } %>
           </td>
         </tr>
