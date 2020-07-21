@@ -31,7 +31,7 @@ function getMediaTemplate(type, field, data, picked) {
 }
 
 function getMediaImageTemplate(field, data, picked) {
-  let classStatus = picked ? 'btn-secondary' : 'btn-outline-primary';
+  let classStatus = picked ? 'btn-secondary' : 'btn-outline-dark';
   let template = `
     <a id="op-${field}-${data._id.$oid}" data-id="${data._id.$oid}" class=" ${data._id.$oid} btn ${classStatus} btn-sm m-2" href="#" role="button">
       <img src="/${data.data.file}" height="50">
@@ -41,7 +41,7 @@ function getMediaImageTemplate(field, data, picked) {
 }
 
 function getTaxonomyTemplate(field, data, picked) {
-  let classStatus = picked ? 'btn-secondary' : 'btn-outline-primary';
+  let classStatus = picked ? 'btn-secondary' : 'btn-outline-dark';
   let template = `
     <a id="op-${field}-${data._id.$oid}" data-id="${data._id.$oid}" class=" ${data._id.$oid} btn ${classStatus} btn-sm m-2" href="#" role="button">
       ${data.title}
@@ -50,7 +50,7 @@ function getTaxonomyTemplate(field, data, picked) {
 }
 
 function getContentTemplate(field, data, picked) {
-  let classStatus = picked ? 'btn-secondary' : 'btn-outline-primary';
+  let classStatus = picked ? 'btn-secondary' : 'btn-outline-dark';
   let template = `
     <a id="op-${field}-${data._id.$oid}" class="${data._id.$oid} btn ${classStatus} btn-sm m-2" href="#" role="button">
       ${data.title}
@@ -59,7 +59,7 @@ function getContentTemplate(field, data, picked) {
 }
 
 function getDefaultTemplate(field, data, picked) {
-  let classStatus = picked ? 'btn-secondary' : 'btn-outline-primary';
+  let classStatus = picked ? 'btn-secondary' : 'btn-outline-dark';
   let text = data?.title ? data.title : data._id.$oid;
   let template = `
     <a id="op-${field}-${data._id.$oid}" class="${data._id.$oid} btn ${classStatus} btn-sm m-2" href="#" role="button">

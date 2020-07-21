@@ -77,15 +77,15 @@
       <ul class="pagination justify-content-center">
         <% if (page.pager.previous !== false ) { %>
           <li class="page-item">
-            <a class="page-link" href="?title=<%= page.filters.title %>&published=<%= page.filters.published %>&pageNumber=<%= page.pager.previous %>" aria-label="Previous">&laquo;</a>
+            <a class="page-link text-dark" href="?title=<%= page.filters.title %>&published=<%= page.filters.published %>&pageNumber=<%= page.pager.previous %>" aria-label="Previous">&laquo;</a>
           </li>
         <% } %>
         <% if (page.pager.next || page.pager.previous !== false)  { %>
-          <li class="page-item"><span class="page-link"><%- page.pager.current %></span></li>
+          <li class="page-item"><span class="page-link text-dark"><%- page.pager.current %></span></li>
         <% } %>
         <% if (page.pager.next) { %>
           <li class="page-item">
-            <a class="page-link" href="?title=<%= page.filters.title %>&published=<%= page.filters.published %>&pageNumber=<%= page.pager.next %>" aria-label="Next">&raquo;</a>
+            <a class="page-link text-dark" href="?title=<%= page.filters.title %>&published=<%= page.filters.published %>&pageNumber=<%= page.pager.next %>" aria-label="Next">&raquo;</a>
           </li>
         <% } %>
       </ul>

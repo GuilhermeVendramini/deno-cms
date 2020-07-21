@@ -83,18 +83,18 @@ $(document).ready(function () {
 
   function buildPaginator(paginator, field, bundle, type, current, previous, next) {
     let previousItem = current > 0 ? `<li class="page-item previous">
-      <a data-field="${field}" data-bundle="${bundle}" data-type="${type}" class="page-link" href="#" aria-label="Previous">&laquo;</a>
+      <a data-field="${field}" data-bundle="${bundle}" data-type="${type}" class="page-link text-dark" href="#" aria-label="Previous">&laquo;</a>
     </li>` : '';
 
     let nextItem = current != next ? `<li class="page-item next">
-      <a data-field="${field}" data-bundle="${bundle}" data-type="${type}" class="page-link" href="#" aria-label="Next">&raquo;</a>
+      <a data-field="${field}" data-bundle="${bundle}" data-type="${type}" class="page-link text-dark" href="#" aria-label="Next">&raquo;</a>
     </li>` : '';
 
     let html = `
     <nav aria-label="page navigation">
       <ul data-page-current="${current}" data-page-previous="${previous}" data-page-next="${next}" class="mt-3 pagination justify-content-center">
           ${previousItem}
-          <li class="page-item"><span class="page-link">${current + 1}</span></li>
+          <li class="page-item"><span class="page-link text-dark">${current + 1}</span></li>
           ${nextItem}
       </ul>
     </nav>`;
@@ -271,6 +271,21 @@ $(document).ready(function () {
     });
   }
 
+  function removeAction(field, id) {
+    $(`#remove-${field}-${id}`).click(function (e) {
+      e.preventDefault();
+      let pickedItem = getPickedItem(field, id);
+
+      if (pickedItem) {
+        let op = $(`#op-${field}-${id}`);
+        $(`#${field}-${id}`).remove();
+        op.addClass('btn-outline-dark');
+        op.removeClass('btn-secondary');
+        pickedEntities.splice(pickedEntities.indexOf(pickedItem), 1);
+      }
+    });
+  }
+
   function clickAction(field, data) {
     let id = data._id.$oid;
     $(`#op-${field}-${id}`).click(function (e) {
@@ -279,16 +294,23 @@ $(document).ready(function () {
 
       if (pickedItem) {
         $(`#${field}-${id}`).remove();
-        $(this).addClass('btn-outline-primary');
+        $(this).addClass('btn-outline-dark');
         $(this).removeClass('btn-secondary');
         pickedEntities.splice(pickedEntities.indexOf(pickedItem), 1);
       } else {
         $(`.${field}-container #sortable-${field}`).append(
-          `<li class="list-group-item" id="${field}-${id}">${data.title}</li>`
+          `<li class="list-group-item d-flex justify-content-between" id="${field}-${id}">
+            <div class="font-weight-bold">
+              ${data.title}
+              <div class="small" >${data.type}</div>
+            </div>
+            <a id="remove-${field}-${id}" href="#">remove</a>
+          </li>`
         );
         $(this).addClass('btn-secondary');
-        $(this).removeClass('btn-outline-primary');
+        $(this).removeClass('btn-outline-dark');
         pickedEntities.push({ field: field, entity: data });
+        removeAction(field, id);
       }
     });
   }
@@ -310,12 +332,19 @@ $(document).ready(function () {
         $.each(value, function (_, item) {
           let option = $(`#op-${item.field}-${item.entity._id.$oid}`);
           $(`.${item.field}-container #sortable-${item.field}`).append(
-            `<li class="list-group-item" id="${item.field}-${item.entity._id.$oid}">${item.entity.title}</li>`
+            `<li class="list-group-item d-flex justify-content-between" id="${item.field}-${item.entity._id.$oid}">
+              <div class="font-weight-bold">
+                ${item.entity.title}
+                <div class="small" >${item.entity.type}</div>
+              </div>
+              <a id="remove-${item.field}-${item.entity._id.$oid}" href="#">remove</a>
+            </li>`
           );
 
           option.addClass('btn-secondary');
-          option.removeClass('btn-outline-primary');
+          option.removeClass('btn-outline-dark');
           pickedEntities.push({ field: item.field, entity: item.entity });
+          removeAction(item.field, item.entity._id.$oid);
         });
       }
     });
