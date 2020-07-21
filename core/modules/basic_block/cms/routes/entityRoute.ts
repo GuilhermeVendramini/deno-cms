@@ -47,9 +47,7 @@ router
     entityBaseController.add,
   )
   .get(
-    `/${entity.bundle.replace("_", "-")}/${
-      entity.type.replace("_", "-")
-    }/:title`,
+    `/${entity.bundle}/${entity.type}/:title`,
     baseEntityMiddleware.blockNeedToBePublished,
     async (
       context: Record<string, any>,

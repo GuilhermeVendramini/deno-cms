@@ -6,6 +6,7 @@ import baseEntityMiddleware from "../../../../../shared/middlewares/baseEntityMi
 import cmsMiddleware from "../../../../../shared/middlewares/cmsMiddleware.ts";
 import entityBaseController from "../../../../entities/controllers/entityBaseController.ts";
 import entityReferenceMiddleware from "../../../entity_reference/middlewares/entityReferenceMiddleware.ts";
+import mainMenuMiddleware from "../../../main_menu/cms/middlewares/entityMiddleware.ts";
 
 let skipMiddleware = async (_: any, next: Function) => {
   await next();
@@ -36,9 +37,7 @@ router
     entityBaseController.add,
   )
   .get(
-    `/${entity.bundle.replace("_", "-")}/${
-      entity.type.replace("_", "-")
-    }/:title`,
+    `/${entity.bundle}/${entity.type}/:title`,
     baseEntityMiddleware.contentNeedToBePublished,
     async (
       context: Record<string, any>,
@@ -46,6 +45,7 @@ router
     ) => {
       await entityMiddleware.view(context, next);
     },
+    mainMenuMiddleware.buildMenu,
     entityBaseController.view,
   )
   .post(

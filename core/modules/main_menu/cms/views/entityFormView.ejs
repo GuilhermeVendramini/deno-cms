@@ -2,7 +2,7 @@
   <% for (let i = 0; i < children.length; i++ ) { 
     let selected = (children[i]._id.$oid == page?.menuItem?.parent) ? "selected" : "";
   %>
-    <% if (children[i]._id.$oid != page.menuItem._id.$oid) { %>
+    <% if (children[i]._id.$oid != page.menuItem?._id.$oid) { %>
       <option value="<%= children[i]._id.$oid %>" <%= selected %>><%= prefix + ' ' + children[i].title %></option>
       <% if (children[i]?.children) { %>
         <% createMenuTree(children[i].children, prefix + '-'); %>
@@ -11,7 +11,15 @@
   <% } %>
 <% } %>
 
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: page.entity.name, currentUser: currentUser }) %>
+<%- await include(
+  `${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`,
+  { 
+    title: page.entity.name,
+    currentUser: currentUser,
+    mainMenu: false,
+    currentUrl: false
+  });
+%>
 <div class="container">
   <h1 class="text-center mb-3"><%= page.entity.name %></h1>
   <% if (page.message) { %>
@@ -31,7 +39,8 @@
     </div>
     <div class="form-group">
       <label>Target</label>
-      <input type="text" required value="<%= page?.menuItem?.data?.target %>" name="target" class="form-control">
+      <% let target = page?.menuItem?.data?.target ? page.menuItem.data.target : '_self' %>
+      <input type="text" required value="<%= target %>" name="target" class="form-control">
     </div>
     <div class="form-group">
       <label>Weight</label>
@@ -46,7 +55,7 @@
           for (let i = 0; i < page.menuTree?.length; i++ ) {
             let selected = (page.menuTree[i]._id.$oid == page?.menuItem?.parent) ? "selected" : "";
         %>
-          <% if (page.menuTree[i]._id.$oid != page.menuItem._id.$oid) { %>
+          <% if (page.menuTree[i]._id.$oid != page.menuItem?._id.$oid) { %>
             <option value="<%= page.menuTree[i]._id.$oid %>" <%= selected %>><%= page.menuTree[i].title %></option>
             <% if (page.menuTree[i]?.children) { %>
               <% createMenuTree(page.menuTree[i].children); %>
@@ -62,7 +71,7 @@
     </div>
     <div class="d-flex justify-menu_item-between">
       <div class="mr-2">
-        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="submit" class="btn btn-dark">Save</button>
       </div>
       <% if (page?.menuItem?._id) { %>
         <div class="mr-2">

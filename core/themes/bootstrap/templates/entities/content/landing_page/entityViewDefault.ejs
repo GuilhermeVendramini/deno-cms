@@ -1,4 +1,12 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: page?.content?.title, currentUser: currentUser }) %>
+<%- await include(
+  `${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`,
+  { 
+    title: page?.content?.title,
+    currentUser: currentUser,
+    mainMenu: page.mainMenu, 
+    currentUrl: page.currentUrl
+  });
+%>
 <div class="container">
   <% if ((currentUser && currentUser._id.$oid == page?.content?.author?._id?.$oid) || (currentUser && currentUser?.roles.includes(0))) { %>
     <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: page.content}) %>
@@ -12,9 +20,9 @@
           <% for(var i=0; i < references.length; i++) { %>
             <div class="mb-4">
               <% if (references[i].entity.type == 'image') { %>
-                <img src="/<%= references[i].entity.data.file %>" height="300">
+                <img class="img-fluid" src="/<%= references[i].entity.data.file %>">
               <% } else if (references[i].entity.type == 'video') { %>
-                <video height="300" controls="controls">
+                <video class="img-fluid" height="300" controls="controls">
                   <source src="/<%= references[i].entity.data.file %>">
                 </video>
               <% } else if (references[i].entity.type == 'basic_block') { %>

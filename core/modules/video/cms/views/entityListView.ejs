@@ -1,11 +1,19 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: page.entity.name, currentUser: currentUser }) %>
+<%- await include(
+  `${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`,
+  {
+    title: page.entity.name,
+    currentUser: currentUser,
+    mainMenu: false,
+    currentUrl: false
+  });
+%>
 <div class="container">
   <h1 class="text-center mb-3"><%= page.entity.name %></h1>
   <fieldset class="border p-2">
     <legend  class="w-auto">Manager</legend>
     <div class="d-flex mb-3">
       <div class="mr-2">
-        <a href='/admin/<%= page.entity.bundle %>/<%= page.entity.type %>/add' class="btn btn-outline-secondary">Add new</a>
+        <a href='/admin/<%= page.entity.bundle %>/<%= page.entity.type %>/add' class="btn btn-light">Add new</a>
       </div>
     </div>
   </fieldset>
@@ -26,7 +34,7 @@
             </select>
           </div>
           <div class="col form-group d-flex align-items-end">
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-dark">Submit</button>
           </div>
         </div>
         <input type="hidden" id="pageNumber" name="pageNumber" value="0">

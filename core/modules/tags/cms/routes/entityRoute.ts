@@ -47,7 +47,7 @@ router
     entityBaseController.add,
   )
   .get(
-    `/${entity.bundle}/${entity.type}/:id`,
+    `/${entity.bundle}/${entity.type}/:title`,
     baseEntityMiddleware.taxonomyNeedToBePublished,
     async (
       context: Record<string, any>,

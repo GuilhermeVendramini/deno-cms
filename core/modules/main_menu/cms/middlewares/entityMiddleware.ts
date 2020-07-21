@@ -2,6 +2,7 @@ import entity from "../../entity.ts";
 import entitySchema from "../../schemas/entitySchema.ts";
 import MenuItemEntityMiddleware from "../../../../entities/middlewares/menu_item/MenuItemEntityMiddleware.ts";
 import MenuItemEntityRepository from "../../../../../repositories/mongodb/entity/MenuItemEntityRepository.ts";
+import menuItemHelper from "../../../../entities/helpers/menu_item/menuItemHelper.ts";
 
 let repository = new MenuItemEntityRepository();
 
@@ -20,6 +21,28 @@ class EntityMiddleware extends MenuItemEntityMiddleware {
   /**
    * Add or change custom methods here!
    */
+
+  async buildMenu(
+    context: Record<string, any>,
+    next: Function,
+  ) {
+    if (!context["getPage"]) {
+      context["getPage"] = [];
+    }
+
+    try {
+      let menuTree: any[] = await menuItemHelper.getMenuTree(
+        entity.type,
+      );
+      context["getPage"]["mainMenu"] = menuTree;
+      context["getPage"]["currentUrl"] = context.request.url.pathname;
+      await next();
+    } catch (error) {
+      console.log(error.message);
+      context["getPage"]["mainMenu"] = false;
+      await next();
+    }
+  }
 }
 
 let entityMiddleware = new EntityMiddleware(entity, repository, entitySchema);

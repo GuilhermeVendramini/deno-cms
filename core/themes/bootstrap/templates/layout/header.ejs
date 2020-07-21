@@ -7,6 +7,9 @@
   <link rel="shortcut icon" href="/favicon.png" type="image/png" />
   <title><%- title %></title>
   <style>
+    a, a:hover {
+      color: brown;
+    }
     main > .container {
       padding: 80px 15px 15px;
     }
@@ -19,13 +22,9 @@
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarCollapse">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="/">Home</a>
-          </li>
-        </ul>
-      </div>
+      <% if (mainMenu && currentUrl) { %>
+        <%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/menus/main_menu/menu.ejs`, { menu: mainMenu, currentUrl: currentUrl }) %>
+      <% } %>
     </nav>
     <% if (currentUser) { %>
       <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">

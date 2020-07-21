@@ -60,6 +60,10 @@ export default abstract class MenuItemEntityMiddleware {
         skip,
         limit,
       );
+      
+      menuItem?.sort((i1: any, i2: any) => {
+        return i1.data.weight > i2.data.weight ? 1 : -1;
+      });
 
       let page = {
         menuItem: menuItem,
@@ -104,7 +108,6 @@ export default abstract class MenuItemEntityMiddleware {
       id = context.params?.id;
       let menuItem: any | undefined;
       let menuTree: any[] = await menuItemHelper.getMenuTree(
-        this.repository,
         this.entity.type,
       );
 

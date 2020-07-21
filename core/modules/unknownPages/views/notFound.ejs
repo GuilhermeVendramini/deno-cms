@@ -1,4 +1,12 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: 'Deno CMS', currentUser: false }) %>
+<%- await include(
+  `${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`,
+  {
+    title: 'Deno CMS',
+    currentUser: false,
+    mainMenu: false,
+    currentUrl: false
+  });
+%>
 <div class="container">
   <div class="text-center display-4 mb-3">
     🦕

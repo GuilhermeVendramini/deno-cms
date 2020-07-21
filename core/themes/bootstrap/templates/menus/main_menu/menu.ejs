@@ -1,0 +1,22 @@
+<% function createMenuTree(menu, isChild = false) { %>
+  <ul class="navbar-nav mr-auto">
+    <% for (let i = 0; i < menu.length; i++ ) { %>
+      <% let active = menu[i].url == currentUrl ? 'active' : '' %>
+      <% let hasChildren = menu[i]?.children && menu[i]?.children.length > 0 ? true : false %>
+      <li class="nav-item bg-dark<% if (isChild) { %> dropdown-item<% } %> <% if (hasChildren && !isChild) { %>dropdown<% } %>">
+        <a target="<%=  menu[i].data.target %>" <% if (hasChildren && !isChild) { %>data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"<% } %> class="nav-link <%= active %> <% if (hasChildren && !isChild) { %>dropdown-toggle<% } %>" href="<%= menu[i].url %>"><%= menu[i].title %></a>
+        <% if (hasChildren) { %>
+          <div class="<% if (!isChild) { %>dropdown-menu<% } %> bg-dark">
+            <% createMenuTree(menu[i].children, true); %>
+          </div>
+        <% } %>
+      </li>
+    <% } %>
+  </ul>
+<% } %>
+
+<% if (menu) { %>
+  <div class="collapse navbar-collapse" id="navbarCollapse">
+    <% createMenuTree(menu); %>
+  </div>
+<% } %>

@@ -1,16 +1,24 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: 'Home', currentUser: currentUser }) %>
+<%- await include(
+  `${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, 
+  {
+    title: 'Home',
+    currentUser: currentUser, 
+    mainMenu: page.mainMenu, 
+    currentUrl: page.currentUrl 
+  });
+%>
 <div class="container">
   <div class="text-center display-4 mb-3">
-    🦕
+    <img src="/core/themes/boostrap/assets/images/t-rex.png">
   </div>
   <h1 class="text-center mb-4"><strong>Deno CMS</strong></h1>
   <h2 class="mt-4 mb-4 text-center">
-    A <strong>secure</strong> CMS <strong>TypeScript</strong> build with <strong>Deno</strong>.
+    A <strong>TypeScript</strong> CMS build with <strong>Deno</strong>.
   </h2>
   <% if (!currentUser) { %>
     <div class="d-flex justify-content-center">
       <div class="mr-2">
-        <a href="/login" class="btn btn-primary">Login</a>
+        <a href="/login" class="btn btn-dark">Login</a>
       </div>
       <div class="mr-2">
         <a href="/register" class="btn btn-outline-secondary">Register</a>

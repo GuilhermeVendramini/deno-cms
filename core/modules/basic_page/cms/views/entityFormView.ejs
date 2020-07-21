@@ -1,4 +1,12 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: page.entity.name, currentUser: currentUser }) %>
+<%- await include(
+  `${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`,
+  {
+    title: page.entity.name,
+    currentUser: currentUser,
+    mainMenu: false,
+    currentUrl: false
+  });
+%>
 <div class="container">
   <h1 class="text-center mb-3"><%= page.entity.name %></h1>
   <% if (page?.message) { %>
@@ -25,7 +33,7 @@
     </div>
     <div class="d-flex justify-content-between">
       <div class="mr-2">
-        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="submit" class="btn btn-dark">Save</button>
       </div>
       <% if (page?.content?._id) { %>
         <div class="mr-2">

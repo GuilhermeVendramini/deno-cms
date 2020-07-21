@@ -9,6 +9,7 @@ export default {
       }templates/home/homeView.ejs`,
       {
         currentUser: await currentUserSession.get(context),
+        page: context.getPage,
       },
     );
   },

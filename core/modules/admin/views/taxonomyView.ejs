@@ -1,14 +1,22 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: 'Taxonomy', currentUser: currentUser }) %>
+<%- await include(
+  `${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`,
+  {
+    title: 'Taxonomy',
+    currentUser: currentUser,
+    mainMenu: false,
+    currentUrl: false
+  });
+%>
 <div class="container">
   <h1 class="text-center mb-3">Taxonomy</h1>
   <fieldset class="border p-2">
     <legend  class="w-auto">Types</legend>
     <div class="d-flex mb-3">
       <div class="mr-2">
-        <a href="/admin/taxonomy/tags" class="btn btn-outline-secondary">Tags</a>
+        <a href="/admin/taxonomy/tags" class="btn btn-light">Tags</a>
       </div>
       <div class="mr-2">
-        <a href="/admin/taxonomy/categories" class="btn btn-outline-secondary">Categories</a>
+        <a href="/admin/taxonomy/categories" class="btn btn-light">Categories</a>
       </div>
     </div>
   </fieldset>

@@ -1,17 +1,25 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: 'Content', currentUser: currentUser }) %>
+<%- await include(
+  `${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`,
+  {
+    title: 'Content',
+    currentUser: currentUser,
+    mainMenu: false,
+    currentUrl: false
+  });
+%>
 <div class="container">
   <h1 class="text-center mb-3">Content</h1>
   <fieldset class="border p-2">
     <legend  class="w-auto">Add</legend>
     <div class="d-flex mb-3">
       <div class="mr-2">
-        <a href="/admin/content/basic_page/add" class="btn btn-outline-secondary">Basic page</a>
+        <a href="/admin/content/basic_page/add" class="btn btn-light">Basic page</a>
       </div>
       <div class="mr-2">
-        <a href="/admin/content/article/add" class="btn btn-outline-secondary">Article</a>
+        <a href="/admin/content/article/add" class="btn btn-light">Article</a>
       </div>
       <div class="mr-2">
-        <a href="/admin/content/landing_page/add" class="btn btn-outline-secondary">Landing page</a>
+        <a href="/admin/content/landing_page/add" class="btn btn-light">Landing page</a>
       </div>
     </div>
   </fieldset>
@@ -41,7 +49,7 @@
             </select>
           </div>
           <div class="col form-group d-flex align-items-end">
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-dark">Submit</button>
           </div>
         </div>
         <input type="hidden" id="pageNumber" name="pageNumber" value="0">

@@ -75,7 +75,7 @@ curl -H "Authorization: Bearer <LOGGED-USER-TOKEN>" http://localhost:8000/api/co
 
 ## TODO
 
-- [ ] Blocks (basic block)
-- [ ] Entity type Landing page
+- [ ] Footer menu
+- [ ] User CRUD
 - [ ] Crop Image
 - [ ] Tests

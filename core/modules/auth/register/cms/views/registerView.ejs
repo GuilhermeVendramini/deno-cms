@@ -1,4 +1,12 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: 'Register', currentUser: false }) %>
+<%- await include(
+  `${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`,
+  {
+    title: 'Register',
+    currentUser: false,
+    mainMenu: false,
+    currentUrl: false,
+  });
+%>
 <div class="container">
   <h1 class="text-center mb-3">Register</h1>
   <% if (message) { %>
@@ -21,7 +29,7 @@
     </div>
     <div class="d-flex justify-content-between">
       <div class="mr-2">
-        <button type="submit" class="btn btn-primary">Register</button>
+        <button type="submit" class="btn btn-dark">Register</button>
       </div>
       <div class="mr-2">
         <a href="/login">Click here to login</a>

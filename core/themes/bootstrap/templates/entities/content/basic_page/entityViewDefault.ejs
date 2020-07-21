@@ -1,4 +1,12 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: page?.content?.title, currentUser: currentUser }) %>
+<%- await include(
+  `${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, 
+  {
+    title: page?.content?.title,
+    currentUser: currentUser,
+    mainMenu: page.mainMenu, 
+    currentUrl: page.currentUrl
+  });
+%>
 <div class="container">
   <% if ((currentUser && currentUser._id.$oid == page?.content?.author?._id?.$oid) || (currentUser && currentUser?.roles.includes(0))) { %>
     <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: page.content}) %>

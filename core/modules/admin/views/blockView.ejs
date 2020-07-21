@@ -1,11 +1,19 @@
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, { title: 'Block', currentUser: currentUser }) %>
+<%- await include(
+  `${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, 
+  { 
+    title: 'Block', 
+    currentUser: currentUser,
+    mainMenu: false,
+    currentUrl: false
+  });
+%>
 <div class="container">
   <h1 class="text-center mb-3">Block</h1>
   <fieldset class="border p-2">
     <legend  class="w-auto">Types</legend>
     <div class="d-flex mb-3">
       <div class="mr-2">
-        <a href="/admin/block/basic_block" class="btn btn-outline-secondary">Basic block</a>
+        <a href="/admin/block/basic_block" class="btn btn-light">Basic block</a>
       </div>
     </div>
   </fieldset>
