@@ -16,7 +16,20 @@ export default {
     return {};
   },
 
-  async findOneById(id: string): Promise<{}> {
+  async updateOne(id: string, user: any): Promise<any> {
+    return await data.updateOne(
+      { _id: ObjectId(id) },
+      {
+        $set: { user },
+      },
+    );
+  },
+
+  async deleteOne(id: string): Promise<any> {
+    return await data.deleteOne({ _id: ObjectId(id) });
+  },
+
+  async findOneByID(id: string): Promise<{}> {
     let result = await data.findOne({ _id: ObjectId(id) });
 
     if (result) return result;
@@ -50,5 +63,41 @@ export default {
     if (result) return result;
 
     return {};
+  },
+
+  async search(
+    name: string | undefined,
+    status: boolean | undefined,
+    skip: number = 0,
+    limit = 10,
+  ): Promise<[]> {
+    let result: any;
+    let aggregate: any[] = [
+      { $sort: { updated: -1 } },
+      { $skip: skip },
+      { $limit: limit },
+    ];
+
+    if (name) {
+      aggregate.unshift({
+        $addFields: {
+          searchIndex: { $indexOfCP: ["$name", name] },
+        },
+      }, {
+        $match: {
+          searchIndex: { $ne: -1 },
+        },
+      });
+    }
+
+    if (typeof status !== "undefined") {
+      aggregate.unshift({ $match: { status: status } });
+    }
+
+    result = await data.aggregate(aggregate);
+
+    if (result) return result;
+
+    return [];
   },
 };

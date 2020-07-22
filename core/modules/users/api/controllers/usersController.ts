@@ -7,7 +7,7 @@ export default {
     let user: any | undefined;
 
     if (id) {
-      user = await userService.findOneById(id);
+      user = await userService.findOneByID(id);
       delete user.password;
     } else {
       user = await userService.find();

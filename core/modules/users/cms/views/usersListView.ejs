@@ -1,0 +1,99 @@
+<%- await include(
+  `${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`,
+  {
+    title: 'Users',
+    currentUser: currentUser,
+    mainMenu: false,
+    currentUrl: false
+  });
+%>
+<div class="container">
+  <h1 class="text-center mb-3">Users</h1>
+  <fieldset class="border p-2">
+    <legend  class="w-auto">Manager</legend>
+    <div class="d-flex mb-3">
+      <div class="mr-2">
+        <a href='/admin/user/add' class="btn btn-light">Add new user</a>
+      </div>
+    </div>
+  </fieldset>
+  <fieldset class="border p-2">
+    <legend  class="w-auto">Filter</legend>
+    <div class="d-flex mb-3">
+      <form action="/admin/users" method="get">
+        <div class="form-group">
+          <input class="form-control form-control-sm" name="name" value="<%= page.filters.name %>" type="text" placeholder="Name">
+        </div>
+        <div class="row">
+          <div class="col form-group">
+            <label for="status">Status</label>
+            <select class="form-control form-control-sm" id="status" name="status">
+              <option value="any">Any</option>
+              <option value="true" <%- page.filters.status === true ? "selected" : '' %>>Enabled</option>
+              <option value="false" <%- page.filters.status === false ? "selected" : '' %>>Disabled</option>
+            </select>
+          </div>
+          <div class="col form-group d-flex align-items-end">
+            <button type="submit" class="btn btn-dark">Submit</button>
+          </div>
+        </div>
+        <input type="hidden" id="pageNumber" name="pageNumber" value="0">
+      </form>
+    </div>
+  </fieldset>
+  <div class="mt-3">
+    <% if (page?.users) { %>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Roles <br> 
+              <span class="small">(0 = admin, 1 = writer)</span>
+            </th>
+            <th scope="col">Email</th>
+            <th scope="col">Status</th>
+            <th scope="col">Operations</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% for(var i=0; i < page.users.length; i++) { %>
+          <tr>
+            <td><%= page.users[i]._id.$oid %></td>
+            <td><a href='/admin/user/<%= page.users[i]._id.$oid %>'><%= page.users[i]?.name %></a></td>
+            <td><%= page.users[i]?.roles %></td>
+            <td><%= page.users[i]?.email %></td>
+            <td><%= page.users[i]?.status %></td>
+            <td>
+              <% if (currentUser._id.$oid == page.users[i]._id.$oid || currentUser.roles.includes(0)) { %>
+                <a href='/admin/user/edit/<%= page.users[i]._id.$oid %>'>edit</a> 
+                <% if (currentUser.roles.includes(0)) { %>
+                  | <a href='/admin/user/delete/<%= page.users[i]._id.$oid %>'>delete</a>
+                <% } %>
+              <% } %>
+            </td>
+          </tr>
+        <% } %>
+        </tbody>
+      </table>
+      <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+          <% if (page.pager.previous !== false ) { %>
+            <li class="page-item">
+              <a class="page-link text-dark" href="?name=<%= page.filters.name %>&status=<%= page.filters.status %>&pageNumber=<%= page.pager.previous %>" aria-label="Previous">&laquo;</a>
+            </li>
+          <% } %>
+          <% if (page.pager.next || page.pager.previous !== false)  { %>
+            <li class="page-item"><span class="page-link text-dark"><%- page.pager.current %></span></li>
+          <% } %>
+          <% if (page.pager.next) { %>
+            <li class="page-item">
+              <a class="page-link text-dark" href="?name=<%= page.filters.name %>&status=<%= page.filters.status %>&pageNumber=<%= page.pager.next %>" aria-label="Next">&raquo;</a>
+            </li>
+          <% } %>
+        </ul>
+      </nav>
+    <% } %>
+  </div>
+</div>
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>

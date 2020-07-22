@@ -7,6 +7,7 @@ export class UserBaseEntity {
   protected roles: Array<UserRoles>;
   protected created: number;
   protected updated: number;
+  protected status: boolean;
 
   constructor(
     name: string,
@@ -14,6 +15,7 @@ export class UserBaseEntity {
     password: string,
     roles: Array<UserRoles>,
     created: number,
+    status: boolean = true,
   ) {
     this.name = name;
     this.email = email;
@@ -21,5 +23,6 @@ export class UserBaseEntity {
     this.roles = roles;
     this.created = created;
     this.updated = Date.now();
+    this.status = status;
   }
 }

@@ -1,0 +1,26 @@
+<%- await include(
+  `${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, 
+  {
+    title: page?.user?.name,
+    currentUser: currentUser,
+    mainMenu: false, 
+    currentUrl: false
+  });
+%>
+<div class="container">
+  <% if ((currentUser && currentUser._id.$oid == page?.user?._id?.$oid) || (currentUser && currentUser?.roles.includes(0))) { %>
+    <div class="text-center mt-3 p-2 bg-light">
+      <a class="text-secondary" href='/admin/user/edit/<%= page?.user?._id.$oid %>'>Edit</a>
+      <% if (currentUser.roles.includes(0)) { %>
+        | <a class="text-secondary" href='/admin/user/delete/<%= page?.user?._id.$oid %>'>Delete</a>
+      <% } %>
+    </div>
+  <% } %>
+
+  <h1 class="text-center mb-3"><%= page.user.name %></h1>
+  <div class="content">
+    <%= page.user.email %>
+  </div>
+
+</div>
+<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>
