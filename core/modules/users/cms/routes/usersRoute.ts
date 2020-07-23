@@ -30,7 +30,7 @@ router
       context: Record<string, any>,
       next: Function,
     ) => {
-      await userRolesMiddleware.needToHaveRoles(context, next, [UserRoles.admin]);
+      await userRolesMiddleware.needToHaveRoles(context, next, [UserRoles.admin, UserRoles.writer]);
     },
     cmsMiddleware.submittedByForm,
     usersController.addPost,

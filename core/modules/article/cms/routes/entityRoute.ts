@@ -8,18 +8,18 @@ import entityBaseController from "../../../../entities/controllers/entityBaseCon
 import entityReferenceMiddleware from "../../../entity_reference/middlewares/entityReferenceMiddleware.ts";
 import mainMenuMiddleware from "../../../main_menu/cms/middlewares/entityMiddleware.ts";
 
-let skipMiddleware = async (_: any, next: Function) => {
+const skipMiddleware = async (_: any, next: Function) => {
   await next();
 };
 
-let needToBeAuthor =  async (
+const needToBeAuthor =  async (
   context: Record<string, any>,
   next: Function,
 ) => {
   await baseEntityMiddleware.needToBeAuthor(context, next, entity.bundle);
 };
 
-let needToBePublished = async (
+const needToBePublished = async (
   context: Record<string, any>,
   next: Function,
 ) => {

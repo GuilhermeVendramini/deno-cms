@@ -32,15 +32,15 @@ export default {
 
       let email = body.value.get("email");
 
-      let userAlreadyExists = await userRepository.findOneByEmail(
+      let emailAlreadyExists = await userRepository.findOneByEmail(
         email,
       );
 
-      if (Object.keys(userAlreadyExists).length !== 0) {
+      if (Object.keys(emailAlreadyExists).length !== 0) {
         context.response.body = await renderFileToString(
           `${Deno.cwd()}/core/modules/auth/register/cms/views/registerView.ejs`,
           {
-            message: "We already have a user with this email.",
+            message: "We already have a user with this email",
           },
         );
         return;

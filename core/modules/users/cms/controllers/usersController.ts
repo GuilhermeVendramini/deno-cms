@@ -7,6 +7,8 @@ import { UserBaseEntity } from "../../entities/UserBaseEntity.ts";
 import vs from "value_schema";
 import userSchema from "../../schemas/userSchema.ts";
 import cmsErrors from "../../../../../shared/utils/errors/cms/cmsErrors.ts";
+import hash from "../../../../../shared/utils/hashes/bcryptHash.ts";
+import { UserRoles } from "../../roles/UserRoles.ts";
 
 export default {
   async list(context: Record<string, any>) {
@@ -93,10 +95,19 @@ export default {
     context: Record<string, any>,
   ) {
     let id: string = "";
+    let currentUser = context.getCurrentUser;
 
     try {
       id = context.params?.id;
       let user: {} | undefined;
+
+      if (
+        id && 
+        id !== currentUser._id.$oid &&
+        !currentUser.roles.includes(UserRoles.admin)) {
+        await cmsErrors.NotFoundError(context, Status.NotFound, 'NotFound');
+        return;
+      }
 
       if (id) {
         user = await userRepository.findOneByID(id);
@@ -112,7 +123,7 @@ export default {
       context.response.body = await renderFileToString(
         `${Deno.cwd()}/core/modules/users/cms/views/userFormView.ejs`,
         {
-          currentUser: context.getCurrentUser,
+          currentUser: currentUser,
           page: page,
         },
       );
@@ -129,7 +140,7 @@ export default {
       context.response.body = await renderFileToString(
         `${Deno.cwd()}/core/modules/users/cms/views/userFormView.ejs`,
         {
-          currentUser: context.getCurrentUser,
+          currentUser: currentUser,
           page: page,
         },
       );
@@ -139,19 +150,20 @@ export default {
   async addPost(
     context: Record<string, any>,
   ) {
-    let name: string;
-    let email: string;
-    let password: string;
-    let roles: any[];
+    let name: string = '';
+    let email: string = '';
+    let password: string = '';
+    let roles: any[] = [];
     let status: boolean = true;
     let page: any;
     let user: UserBaseEntity | undefined;
     let id: string = "";
+    let currentUser = context.getCurrentUser;
 
     try {
       let body = context.getBody;
       let validated: any;
-      console.log(body.value);
+
       id = body.value.get("id");
       name = body.value.get("name");
       email = body.value.get("email");
@@ -159,9 +171,46 @@ export default {
       roles = body.value.getAll("roles");
       status = body.value.get("status") ? true : false;
 
+      if (
+        id && 
+        id !== currentUser._id.$oid &&
+        !currentUser.roles.includes(UserRoles.admin)) {
+        await cmsErrors.NotFoundError(context, Status.NotFound, 'NotFound');
+        return;
+      }
+
+      let duplicatedEmail = false;
+      let userByEmail: any = await userRepository.findOneByEmail(
+        email,
+      );
+
+      if (Object.keys(userByEmail).length !== 0) {
+        duplicatedEmail = true;
+      }
+
+      let oldUserData: any | undefined;
+      if (id) {
+        oldUserData = await userRepository.findOneByID(id);
+      }
+
+      if (oldUserData && oldUserData.email == userByEmail.email) duplicatedEmail = false;
+
+      if (duplicatedEmail) {
+        context.throw(Status.NotAcceptable, "We already have a user with this email");
+      }
+
+      let oldPasswordSetted = false;
+      if (oldUserData && !password) {
+        password = oldUserData.password;
+        oldPasswordSetted = true;
+      }
+
+      if (oldUserData && roles.length <= 0) {
+        roles = oldUserData.roles;
+      }
+
       validated = vs.applySchemaObject(
-        userSchema,
-        {
+        userSchema, {
           name: name,
           email: email,
           password: password,
@@ -170,11 +219,15 @@ export default {
         },
       );
 
+      if (!oldPasswordSetted) {
+        password = await hash.bcrypt(validated.password);
+      }
+
       if (validated) {
         user = new UserBaseEntity(
           validated.name,
           validated.email,
-          validated.password,
+          password,
           validated.roles,
           Date.now(),
           validated.status,
@@ -201,6 +254,15 @@ export default {
     } catch (error) {
       if (id) {
         user = await userRepository.findOneByID(id) as UserBaseEntity;
+      } else {
+        user = new UserBaseEntity(
+          name,
+          email,
+          password,
+          roles,
+          Date.now(),
+          status,
+        );
       }
 
       page = {
@@ -215,7 +277,7 @@ export default {
       context.response.body = await renderFileToString(
         `${Deno.cwd()}/core/modules/users/cms/views/userFormView.ejs`,
         {
-          currentUser: context.getCurrentUser,
+          currentUser: currentUser,
           page: page,
         },
       );
@@ -300,6 +362,11 @@ export default {
 
       if (user && Object.keys(user).length != 0) {
         await userRepository.deleteOne(id);
+      }
+
+      if(id == context.getCurrentUser._id.$oid) {
+        context.response.redirect("/logout");
+        return;
       }
 
       context.response.redirect("/admin/users");

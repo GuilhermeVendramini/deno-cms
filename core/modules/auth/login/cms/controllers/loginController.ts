@@ -46,7 +46,7 @@ export default {
       if (validated) {
         user = await userService.findOneByEmail(validated.email);
 
-        if (user) {
+        if (user && user.status) {
           logged = await hash.verify(
             user.password,
             validated.password,

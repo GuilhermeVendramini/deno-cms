@@ -32,14 +32,16 @@
       <% } %>
       <small class="form-text text-muted">At least 8 characters</small>
     </div>
-    <div class="col form-group">
-      <label for="type">Roles</label>
-      <select class="form-control form-control-sm" required multiple id="roles" name="roles">
-        <option value="0" <%- page?.user?.roles.includes(0) ? "selected" : '' %>>Admin</option>
-        <option value="1" <%- page?.user?.roles.includes(1) ? "selected" : '' %> >Writer</option>
-      </select>
-    </div>
-    <div class="form-check mb-3">
+    <% if (currentUser.roles.includes(0)) { %>
+      <div class="col form-group">
+        <label for="type">Roles</label>
+        <select class="form-control form-control-sm" required multiple id="roles" name="roles">
+          <option value="0" <%- page?.user?.roles.includes(0) ? "selected" : '' %>>Admin</option>
+          <option value="1" <%- page?.user?.roles.includes(1) ? "selected" : '' %> >Writer</option>
+        </select>
+      </div>
+    <% } %>
+    <div class="form-check mb-3 <%= currentUser.roles.includes(0) ? '' : 'd-none' %>">
       <% let checked = page?.user?.status ? "checked" : "" %>
       <input <%= checked %> type="checkbox" name="status" value="true" class="form-check-input" id="status">
       <label class="form-check-label" for="status">Enabled</label>

@@ -34,7 +34,7 @@ export default {
       if (value?.email && value?.password) {
         user = await userService.findOneByEmail(value.email);
 
-        if (user) {
+        if (user && user.status) {
           logged = await hash.verify(
             user.password,
             value.password,
