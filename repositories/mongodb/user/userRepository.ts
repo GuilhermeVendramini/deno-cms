@@ -20,7 +20,14 @@ export default {
     return await data.updateOne(
       { _id: ObjectId(id) },
       {
-        $set: { user },
+        $set: {
+          name: user.name,
+          email: user.email,
+          password: user.password,
+          roles: user.roles,
+          updated: user.updated,
+          status: user.status
+        },
       },
     );
   },

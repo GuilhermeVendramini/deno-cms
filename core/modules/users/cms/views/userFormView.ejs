@@ -1,37 +1,56 @@
 <%- await include(
   `${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`,
   {
-    title: page.entity.name,
+    title: 'User',
     currentUser: currentUser,
     mainMenu: false,
     currentUrl: false
   });
 %>
 <div class="container">
-  <h1 class="text-center mb-3"><%= page.entity.name %></h1>
+  <h1 class="text-center mb-3">User</h1>
   <% if (page.message) { %>
     <div class="alert alert-danger">
       <%= page.message %>
     </div>
   <% } %>
-  <form id="entity-form" action='/admin/taxonomy/<%= page.entity.type %>/add' method=post>
-    <input id="id" name="id" type="hidden" value='<%= page?.term?._id?.$oid %>'>
+  <form id="entity-form" action='/admin/user/add' method=post>
+    <input id="id" name="id" type="hidden" value='<%= page?.user?._id?.$oid %>'>
     <div class="form-group">
-      <label>Title</label>
-      <input type="text" required value="<%= page?.term?.title %>" name="title" class="form-control">
+      <label>Name</label>
+      <input type="text" required value="<%= page?.user?.name %>" name="name" class="form-control">
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="text" required value="<%= page?.user?.email %>" name="email" class="form-control">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" <%- page?.user?._id ? '' : 'required' %> value="" name="password" class="form-control">
+      <% if (page?.user?._id) { %>
+        <small class="form-text text-muted">Leave empty to not change.</small>
+      <% } %>
+      <small class="form-text text-muted">At least 8 characters</small>
+    </div>
+    <div class="col form-group">
+      <label for="type">Roles</label>
+      <select class="form-control form-control-sm" required multiple id="roles" name="roles">
+        <option value="0" <%- page?.user?.roles.includes(0) ? "selected" : '' %>>Admin</option>
+        <option value="1" <%- page?.user?.roles.includes(1) ? "selected" : '' %> >Writer</option>
+      </select>
     </div>
     <div class="form-check mb-3">
-      <% let checked = page?.term?.published ? "checked" : "" %>
-      <input <%= checked %> type="checkbox" name="published" value="true" class="form-check-input" id="published">
-      <label class="form-check-label" for="published">Published</label>
+      <% let checked = page?.user?.status ? "checked" : "" %>
+      <input <%= checked %> type="checkbox" name="status" value="true" class="form-check-input" id="status">
+      <label class="form-check-label" for="status">Enabled</label>
     </div>
     <div class="d-flex justify-content-between">
       <div class="mr-2">
         <button type="submit" class="btn btn-dark">Save</button>
       </div>
-      <% if (page?.term?._id) { %>
+      <% if (page?.user?._id) { %>
         <div class="mr-2">
-          <a href='/admin/<%= page.term.bundle %>/<%= page.term.type %>/delete/<%= page.term._id.$oid %>' class="btn btn-danger">Delete</a>
+          <a href='/admin/user/delete/<%= page.user._id.$oid %>' class="btn btn-danger">Delete</a>
         </div>
       <% } %>
     </div>

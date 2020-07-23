@@ -2,7 +2,7 @@ import router from "../../../../router.ts";
 import entityMiddleware from "../middlewares/entityMiddleware.ts";
 import loggedMiddleware from "../../../../../shared/middlewares/loggedMiddleware.ts";
 import entity from "../../entity.ts";
-import baseEntityMiddleware from "../../../../../shared/middlewares/baseEntityMiddleware.ts";
+import baseEntityMiddleware from "../../../../entities/middlewares/base_entity/baseEntityMiddleware.ts";
 import cmsMiddleware from "../../../../../shared/middlewares/cmsMiddleware.ts";
 import { upload } from "upload";
 import entityBaseController from "../../../../entities/controllers/entityBaseController.ts";
@@ -10,6 +10,20 @@ import entityReferenceMiddleware from "../../../entity_reference/middlewares/ent
 
 let skipMiddleware = async (_: any, next: Function) => {
   await next();
+};
+
+let needToBeAuthor =  async (
+  context: Record<string, any>,
+  next: Function,
+) => {
+  await baseEntityMiddleware.needToBeAuthor(context, next, entity.bundle);
+};
+
+let needToBePublished = async (
+  context: Record<string, any>,
+  next: Function,
+) => {
+  await baseEntityMiddleware.needToBePublished(context, next, entity.bundle);
 };
 
 router
@@ -38,7 +52,7 @@ router
   .get(
     `/admin/${entity.bundle}/${entity.type}/edit/:id`,
     loggedMiddleware.needToBeLogged,
-    baseEntityMiddleware.needToBeMediaAuthor,
+    needToBeAuthor,
     async (
       context: Record<string, any>,
       next: Function,
@@ -49,7 +63,7 @@ router
   )
   .get(
     `/${entity.bundle}/${entity.type}/:title`,
-    baseEntityMiddleware.mediaNeedToBePublished,
+    needToBePublished,
     async (
       context: Record<string, any>,
       next: Function,
@@ -78,7 +92,7 @@ router
   .get(
     `/admin/${entity.bundle}/${entity.type}/delete/:id`,
     loggedMiddleware.needToBeLogged,
-    baseEntityMiddleware.needToBeMediaAuthor,
+    needToBeAuthor,
     async (
       context: Record<string, any>,
       next: Function,
@@ -90,7 +104,7 @@ router
   .post(
     `/admin/${entity.bundle}/${entity.type}/delete`,
     loggedMiddleware.needToBeLogged,
-    baseEntityMiddleware.needToBeMediaAuthor,
+    needToBeAuthor,
     cmsMiddleware.submittedByForm,
     async (
       context: Record<string, any>,

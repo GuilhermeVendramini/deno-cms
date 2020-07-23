@@ -1,4 +1,5 @@
 import vs from "value_schema";
+import { UserRoles } from "../roles/UserRoles.ts";
 
 let entitySchema = {
   name: vs.string({
@@ -16,7 +17,7 @@ let entitySchema = {
     ifUndefined: [1],
     separatedBy: ",",
     each: {
-      schema: vs.number({ only: [0, 1] }),
+      schema: vs.number({ only: [UserRoles.admin, UserRoles.writer] }),
       ignoresErrors: false,
     },
   }),

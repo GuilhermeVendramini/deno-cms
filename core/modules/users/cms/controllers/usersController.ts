@@ -151,12 +151,12 @@ export default {
     try {
       let body = context.getBody;
       let validated: any;
-
+      console.log(body.value);
       id = body.value.get("id");
       name = body.value.get("name");
       email = body.value.get("email");
       password = body.value.get("password");
-      roles = body.value.get("roles");
+      roles = body.value.getAll("roles");
       status = body.value.get("status") ? true : false;
 
       validated = vs.applySchemaObject(
@@ -177,7 +177,7 @@ export default {
           validated.password,
           validated.roles,
           Date.now(),
-          validated.published,
+          validated.status,
         );
 
         if (id) {

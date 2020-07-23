@@ -61,7 +61,7 @@
           <tr>
             <td><%= page.users[i]._id.$oid %></td>
             <td><a href='/admin/user/<%= page.users[i]._id.$oid %>'><%= page.users[i]?.name %></a></td>
-            <td><%= page.users[i]?.roles %></td>
+            <td><%= page.users[i]?.roles.join(', ') %></td>
             <td><%= page.users[i]?.email %></td>
             <td><%= page.users[i]?.status %></td>
             <td>

@@ -2,14 +2,20 @@ import router from "../../../../router.ts";
 import usersController from "../controllers/usersController.ts";
 import loggedMiddleware from "../../../../../shared/middlewares/loggedMiddleware.ts";
 import cmsMiddleware from "../../../../../shared/middlewares/cmsMiddleware.ts";
-import rolesMiddleware from "../../../../../shared/middlewares/rolesMiddleware.ts";
+import userRolesMiddleware from "../../middlewares/userRolesMiddleware.ts";
+import { UserRoles } from "../../roles/UserRoles.ts"; 
 
 router
   .get("/admin/users", loggedMiddleware.needToBeLogged, usersController.list)
   .get(
     "/admin/user/add",
     loggedMiddleware.needToBeLogged,
-    rolesMiddleware.needToBeAdmin,
+    async (
+      context: Record<string, any>,
+      next: Function,
+    ) => {
+      await userRolesMiddleware.needToHaveRoles(context, next, [UserRoles.admin]);
+    },
     usersController.add,
   )
   .get(
@@ -20,7 +26,12 @@ router
   .post(
     "/admin/user/add",
     loggedMiddleware.needToBeLogged,
-    rolesMiddleware.needToBeAdmin,
+    async (
+      context: Record<string, any>,
+      next: Function,
+    ) => {
+      await userRolesMiddleware.needToHaveRoles(context, next, [UserRoles.admin]);
+    },
     cmsMiddleware.submittedByForm,
     usersController.addPost,
   )
@@ -28,13 +39,23 @@ router
   .get(
     "/admin/user/delete/:id",
     loggedMiddleware.needToBeLogged,
-    rolesMiddleware.needToBeAdmin,
+    async (
+      context: Record<string, any>,
+      next: Function,
+    ) => {
+      await userRolesMiddleware.needToHaveRoles(context, next, [UserRoles.admin]);
+    },
     usersController.delete,
   )
   .post(
     "/admin/user/delete",
     loggedMiddleware.needToBeLogged,
-    rolesMiddleware.needToBeAdmin,
+    async (
+      context: Record<string, any>,
+      next: Function,
+    ) => {
+      await userRolesMiddleware.needToHaveRoles(context, next, [UserRoles.admin]);
+    },
     cmsMiddleware.submittedByForm,
     usersController.deletePost,
   );
