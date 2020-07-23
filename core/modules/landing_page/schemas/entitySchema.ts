@@ -24,6 +24,7 @@ let entitySchema = {
           ignoresErrors: false,
         },
       }),
+      front: vs.boolean({ ifUndefined: false, ifNull: false }),
     },
   }),
   published: vs.boolean({ ifUndefined: false }),

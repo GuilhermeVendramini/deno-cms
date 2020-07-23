@@ -1,7 +1,9 @@
 let type: string = "landing_page";
 let bundle: string = "content";
 let name: string = "Landing Page";
-let fields: string[] = [];
+let fields: string[] = [
+  'front'
+];
 let references: string[] = [
   "references",
 ];

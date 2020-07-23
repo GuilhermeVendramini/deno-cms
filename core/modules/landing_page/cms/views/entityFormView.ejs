@@ -36,8 +36,13 @@
       ) %>
     </div>
     <div class="form-check mb-3">
-      <% let checked = page?.content?.published ? "checked" : "" %>
-      <input <%= checked %> type="checkbox" name="published" value="true" class="form-check-input" id="published">
+      <% let front = page?.content?.data?.front ? "checked" : "" %>
+      <input <%= front %> type="checkbox" name="front" value="true" class="form-check-input" id="front">
+      <label class="form-check-label" for="front">Front page</label>
+    </div>
+    <div class="form-check mb-3">
+      <% let published = page?.content?.published ? "checked" : "" %>
+      <input <%= published %> type="checkbox" name="published" value="true" class="form-check-input" id="published">
       <label class="form-check-label" for="published">Published</label>
     </div>
     <div class="d-flex justify-content-between">
