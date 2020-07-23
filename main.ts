@@ -33,6 +33,9 @@ import landingPageAPIRouter from "./core/modules/landing_page/api/routes/entityR
 import landingPageRouter from "./core/modules/landing_page/cms/routes/entityRoute.ts";
 import mainMenuAPIRouter from "./core/modules/main_menu/api/routes/entityRoute.ts";
 import mainMenuRouter from "./core/modules/main_menu/cms/routes/entityRoute.ts";
+import footerAPIRouter from "./core/modules/footer/api/routes/entityRoute.ts";
+import footerRouter from "./core/modules/footer/cms/routes/entityRoute.ts";
+
 
 const session = new Session({ framework: "oak" });
 await session.init();
@@ -64,6 +67,7 @@ app.use(mediaAPIRouter.routes());
 app.use(basicBlockAPIRouter.routes());
 app.use(landingPageAPIRouter.routes());
 app.use(mainMenuAPIRouter.routes());
+app.use(footerAPIRouter.routes());
 
 /**
  * Themes routes
@@ -99,6 +103,7 @@ app.use(categoriesRouter.routes());
  */
 
 app.use(mainMenuRouter.routes());
+app.use(footerRouter.routes());
 
 /**
  * Libraries

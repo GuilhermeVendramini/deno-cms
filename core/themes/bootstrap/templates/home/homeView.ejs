@@ -3,7 +3,7 @@
   {
     title: 'Home',
     currentUser: currentUser, 
-    mainMenu: page.mainMenu, 
+    main_menu: page.main_menu, 
     currentUrl: page.currentUrl 
   });
 %>
@@ -26,4 +26,10 @@
     </div>
   <% } %>
   </div>
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>
+<%- await include(
+  `${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`, 
+  {
+    footer_menu: page.footer, 
+    currentUrl: page.currentUrl 
+  }); 
+%>

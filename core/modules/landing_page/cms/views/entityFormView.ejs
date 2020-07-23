@@ -3,7 +3,7 @@
   {
     title: page.entity.name,
     currentUser: currentUser,
-    mainMenu: false,
+    main_menu: false,
     currentUrl: false
   });
 %>
@@ -57,7 +57,13 @@
     </div>
   </form>
 </div>
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>
+<%- await include(
+  `${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`, 
+  {
+    footer_menu: false, 
+    currentUrl: false 
+  }); 
+%>
 <script src="/core/themes/boostrap/assets/js/jquery-ui.min.js" type="text/javascript"></script>
 <script src="/entity-reference/assets/js/templates.js" type="text/javascript"></script>
 <script src="/entity-reference/assets/js/entityReference.js" type="text/javascript"></script>

@@ -3,7 +3,7 @@
   {
     title: 'Login', 
     currentUser: false,
-    mainMenu: false,
+    main_menu: false,
     currentUrl: false
   });
 %>
@@ -37,4 +37,10 @@
 
   </form>
 </div>
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>
+<%- await include(
+  `${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`, 
+  {
+    footer_menu: false, 
+    currentUrl: false 
+  }); 
+%>

@@ -5,7 +5,7 @@ let repository = new MenuItemEntityRepository();
 export default {
   async getMenuTree(type: string): Promise<any[]> {
     let items: any[] | undefined;
-    items = await repository.find(type);
+    items = await repository.findByFilters({ type: type, published: true });
 
     if (!items || items.length < 0) return [];
 

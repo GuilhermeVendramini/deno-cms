@@ -1,7 +1,9 @@
 </main>
-<footer class="footer mt-auto py-3 bg-dark">
-  <div class="container">
-    <span class="text-white">Place sticky footer content here.</span>
+<footer class="bd-footer mt-auto bg-dark">
+  <div class="container-fluid p-3 p-md-5">
+    <% if (footer_menu && currentUrl) { %>
+      <%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/menus/footer/menu.ejs`, { menu: footer_menu, currentUrl: currentUrl }) %>
+    <% } %>
   </div>
 </footer>
 <script src="/core/themes/boostrap/assets/js/bootstrap.min.js" type="text/javascript"></script>

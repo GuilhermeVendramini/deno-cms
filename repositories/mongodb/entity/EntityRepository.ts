@@ -65,6 +65,26 @@ class EntityRepository {
     return [];
   }
 
+  async findByFilters(filters: {}): Promise<[]> {
+    let result: any;
+
+    result = await this.db.find(filters);
+
+    if (result) {
+      return result.sort((d1: any, d2: any) => {
+        if (d1.updated > d2.updated) {
+          return -1;
+        }
+        if (d1.updated < d2.updated) {
+          return 1;
+        }
+        return 0;
+      });
+    }
+
+    return [];
+  }
+
   async deleteOne(id: string): Promise<any> {
     return await this.db.deleteOne({ _id: ObjectId(id) });
   }

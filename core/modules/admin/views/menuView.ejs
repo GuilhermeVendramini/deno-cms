@@ -3,7 +3,7 @@
   {
     title: 'Menu',
     currentUser: currentUser,
-    mainMenu: false,
+    main_menu: false,
     currentUrl: false
   });
 %>
@@ -16,9 +16,15 @@
         <a href="/admin/menu_item/main_menu" class="btn btn-light">Main Menu</a>
       </div>
       <div class="mr-2">
-        <a href="#" class="btn btn-light">Footer</a>
+        <a href="/admin/menu_item/footer" class="btn btn-light">Footer</a>
       </div>
     </div>
   </fieldset>
 </div>
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>
+<%- await include(
+  `${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`, 
+  {
+    footer_menu: false, 
+    currentUrl: false 
+  }); 
+%>

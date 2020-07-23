@@ -3,7 +3,7 @@
   { 
     title: page?.term?.title,
     currentUser: currentUser,
-    mainMenu: false,
+    main_menu: false,
     currentUrl: false
   });
 %>
@@ -15,4 +15,10 @@
   <h1 class="text-center mb-3"><%= page.term.title %></h1>
   <% } %>
 </div>
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>
+<%- await include(
+  `${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`, 
+  {
+    footer_menu: false, 
+    currentUrl: false 
+  }); 
+%>

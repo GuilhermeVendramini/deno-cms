@@ -7,6 +7,7 @@ import cmsMiddleware from "../../../../../shared/middlewares/cmsMiddleware.ts";
 import entityBaseController from "../../../../entities/controllers/entityBaseController.ts";
 import entityReferenceMiddleware from "../../../entity_reference/middlewares/entityReferenceMiddleware.ts";
 import mainMenuMiddleware from "../../../main_menu/cms/middlewares/entityMiddleware.ts";
+import footerMenuMiddleware from "../../../footer/cms/middlewares/entityMiddleware.ts";
 
 const skipMiddleware = async (_: any, next: Function) => {
   await next();
@@ -60,6 +61,7 @@ router
       await entityMiddleware.view(context, next);
     },
     mainMenuMiddleware.buildMenu,
+    footerMenuMiddleware.buildMenu,
     entityBaseController.view,
   )
   .post(

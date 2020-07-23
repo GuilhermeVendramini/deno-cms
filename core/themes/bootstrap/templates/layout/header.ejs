@@ -22,8 +22,8 @@
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <% if (mainMenu && currentUrl) { %>
-        <%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/menus/main_menu/menu.ejs`, { menu: mainMenu, currentUrl: currentUrl }) %>
+      <% if (main_menu && currentUrl) { %>
+        <%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/menus/main_menu/menu.ejs`, { menu: main_menu, currentUrl: currentUrl }) %>
       <% } %>
     </nav>
     <% if (currentUser) { %>

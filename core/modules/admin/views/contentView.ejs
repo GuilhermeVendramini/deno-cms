@@ -3,7 +3,7 @@
   {
     title: 'Content',
     currentUser: currentUser,
-    mainMenu: false,
+    main_menu: false,
     currentUrl: false
   });
 %>
@@ -110,4 +110,10 @@
     <% } %>
   </div>
 </div>
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>
+<%- await include(
+  `${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`, 
+  {
+    footer_menu: false, 
+    currentUrl: false 
+  }); 
+%>

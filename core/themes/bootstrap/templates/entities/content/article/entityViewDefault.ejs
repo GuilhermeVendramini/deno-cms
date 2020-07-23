@@ -3,7 +3,7 @@
   { 
     title: page?.content?.title,
     currentUser: currentUser,
-    mainMenu: page.mainMenu, 
+    main_menu: page.main_menu, 
     currentUrl: page.currentUrl
   });
 %>
@@ -34,11 +34,17 @@
         <div class="field-tags">
           <% let tags = page.content.data.tags.sort(function(a, b){return a.weight - b.weight}) %>
           <% for(var i=0; i < tags.length; i++) { %>
-            <a href='<%= tags[i].entity.path %>' class="badge badge-primary"><%= tags[i].entity.title %></a>
+            <a href='<%= tags[i].entity.path %>' class="badge badge-dark"><%= tags[i].entity.title %></a>
           <% } %>
         </div>
       </div>
     <% } %>
   <% } %>
 </div>
-<%- await include(`${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`) %>
+<%- await include(
+  `${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`, 
+  {
+    footer_menu: page.footer, 
+    currentUrl: page.currentUrl
+  }); 
+%>

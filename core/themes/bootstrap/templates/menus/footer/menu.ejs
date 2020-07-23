@@ -1,0 +1,18 @@
+<% function createMenuTree(menu, isChild = false) { %>
+  <ul class="bd-footer-links">
+    <% for (let i = 0; i < menu.length; i++ ) { %>
+      <% let active = menu[i].url == currentUrl ? 'active' : '' %>
+      <% let hasChildren = menu[i]?.children && menu[i]?.children.length > 0 ? true : false %>
+      <li class="list-unstyled">
+        <a class="text-white-50 <% if (!isChild) { %>font-weight-bold<% } %>" target="<%=  menu[i].data.target %>" href="<%= menu[i].url %>"><%= menu[i].title %></a>
+        <% if (hasChildren) { %>
+          <% createMenuTree(menu[i].children, true); %>
+        <% } %>
+      </li>
+    <% } %>
+  </ul>
+<% } %>
+
+<% if (menu) { %>
+  <% createMenuTree(menu); %>
+<% } %>
