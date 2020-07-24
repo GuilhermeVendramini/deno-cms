@@ -12,7 +12,7 @@
     <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: page.block}) %>
   <% } %>
   <% if (page?.block?.data) { %>
-  <h1 class="text-center mb-3"><%= page.block.title %></h1>
+  <h1 class="text-center mb-4"><%= page.block.title %></h1>
     <% if (page.block.data?.body) { %>
       <div class="content">
         <%- page?.block.data.body %>

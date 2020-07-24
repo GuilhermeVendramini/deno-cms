@@ -8,7 +8,7 @@
   });
 %>
 <div class="container">
-  <h1 class="text-center mb-3">Register</h1>
+  <h1 class="text-center mb-4">Register</h1>
   <% if (message) { %>
     <div class="alert alert-danger">
       <%= message %>
@@ -26,6 +26,10 @@
     <div class="form-group">
       <label>Password</label>
       <input type="password" required minlength="8" name="password" class="form-control">
+    </div>
+    <div class="form-group">
+      <label>Confirm password</label>
+      <input type="password" required minlength="8" name="password_confirm" class="form-control">
     </div>
     <div class="d-flex justify-content-between">
       <div class="mr-2">

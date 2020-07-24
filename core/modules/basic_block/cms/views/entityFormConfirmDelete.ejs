@@ -8,7 +8,7 @@
   });
 %>
 <div class="container">
-  <h1 class="text-center mb-3">Confirm delete <%= page.block.title %></h1>
+  <h1 class="text-center mb-4">Confirm delete <%= page.block.title %></h1>
   <form action='/admin/block/<%= page.block.type %>/delete' method=post>
     <input type="hidden" id="id" name="id" value="<%= page.block._id.$oid %>">
     <div class="d-flex justify-content-center">

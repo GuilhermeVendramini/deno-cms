@@ -12,7 +12,7 @@
     <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: page.menuItem}) %>
   <% } %>
   <% if (page?.menuItem?.title) { %>
-  <h1 class="text-center mb-3"><%= page.menuItem.title %></h1>
+  <h1 class="text-center mb-4"><%= page.menuItem.title %></h1>
   <% } %>
   <% if (page?.menuItem?.url) { %>
     <p><%- page.menuItem.url %></p>

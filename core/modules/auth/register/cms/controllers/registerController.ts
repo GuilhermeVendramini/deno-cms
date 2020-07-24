@@ -50,6 +50,18 @@ export default {
       let validated: { name: string; email: string; password: string };
       let name = body.value.get("name");
       let password = body.value.get("password");
+      let password_confirm = body.value.get("password_confirm");
+
+      if (password != password_confirm) {
+        context.response.body = await renderFileToString(
+          `${Deno.cwd()}/core/modules/auth/register/cms/views/registerView.ejs`,
+          {
+            message: "Passwords do not match",
+          },
+        );
+        return;
+      }
+
       validated = vs.applySchemaObject(
         registerSchema,
         { name, email, password },

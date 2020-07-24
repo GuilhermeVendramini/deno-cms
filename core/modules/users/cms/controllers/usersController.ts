@@ -168,6 +168,7 @@ export default {
       name = body.value.get("name");
       email = body.value.get("email");
       password = body.value.get("password");
+      let password_confirm = body.value.get("password_confirm");
       roles = body.value.getAll("roles");
       status = body.value.get("status") ? true : false;
 
@@ -197,6 +198,10 @@ export default {
 
       if (duplicatedEmail) {
         context.throw(Status.NotAcceptable, "We already have a user with this email");
+      }
+
+      if (password && password !== password_confirm) {
+        context.throw(Status.NotAcceptable, "Passwords do not match");
       }
 
       let oldPasswordSetted = false;

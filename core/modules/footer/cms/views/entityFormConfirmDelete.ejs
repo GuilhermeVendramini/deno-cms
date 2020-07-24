@@ -8,7 +8,7 @@
   });
 %>
 <div class="container">
-  <h1 class="text-center mb-3">Confirm delete <%= page.menuItem.title %></h1>
+  <h1 class="text-center mb-4">Confirm delete <%= page.menuItem.title %></h1>
   <form action='/admin/menu_item/<%= page.menuItem.type %>/delete' method=post>
     <input type="hidden" id="id" name="id" value="<%= page.menuItem._id.$oid %>">
     <div class="d-flex justify-content-center">

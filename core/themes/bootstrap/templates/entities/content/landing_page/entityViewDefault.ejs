@@ -12,28 +12,34 @@
     <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: page.content}) %>
   <% } %>
   <% if (page?.content?.data) { %>
-  <h1 class="text-center mb-3"><%= page.content.title %></h1>
+  <h1 class="text-center mb-4"><%= page.content.title %></h1>
     <% if (page.content.data?.references && page.content.data.references.length > 0) { %>
       <div class="mb-3">
         <div class="field-references text-center">
           <% let references = page.content.data.references.sort(function(a, b){return a.weight - b.weight}) %>
           <% for(var i=0; i < references.length; i++) { %>
-            <div class="mb-4">
-              <% if (references[i].entity.type == 'image') { %>
-                <img class="img-fluid" src="/<%= references[i].entity.data.file %>">
-              <% } else if (references[i].entity.type == 'video') { %>
+            <% if (references[i].entity.type == 'image') { %>
+              <div class="mb-4">
+                <img class="img-fluid border border-dark" src="/<%= references[i].entity.data.file %>">
+              </div>
+            <% } else if (references[i].entity.type == 'video') { %>
+              <div class="mb-4">
                 <video class="img-fluid" height="300" controls="controls">
                   <source src="/<%= references[i].entity.data.file %>">
                 </video>
-              <% } else if (references[i].entity.type == 'basic_block') { %>
-                <h2><%= references[i].entity.title %></h2>
+              </div>
+            <% } else if (references[i].entity.type == 'basic_block') { %>
+              <div class="mb-4 bg-light p-5">
+                <h2 class="mb-3"><%= references[i].entity.title %></h2>
                 <%- references[i].entity.data?.body %>
-              <% } else if (references[i].entity.type == 'basic_page') { %>
-                <h2><%= references[i].entity.title %></h2>
+              </div>
+            <% } else if (references[i].entity.type == 'basic_page') { %>
+              <div class="mb-4 bg-secondary text-white p-5">
+                <h2 class="mb-3"><%= references[i].entity.title %></h2>
                 <%- references[i].entity.data?.body.substring(0,200) %>
-                <a href="<%= references[i].entity.path %>">see more</a>
-              <% } %>
-            </div>
+                <a class="text-white font-weight-bold" href="<%= references[i].entity.path %>">see more</a>
+              </div>
+            <% } %>
           <% } %>
         </div>
       </div>
