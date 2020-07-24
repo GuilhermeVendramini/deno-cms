@@ -1,18 +1,38 @@
-<% function createMenuTree(menu, isChild = false) { %>
-  <ul class="bd-footer-links">
-    <% for (let i = 0; i < menu.length; i++ ) { %>
-      <% let active = menu[i].url == currentUrl ? 'active' : '' %>
-      <% let hasChildren = menu[i]?.children && menu[i]?.children.length > 0 ? true : false %>
-      <li class="list-unstyled">
-        <a class="text-white-50 <% if (!isChild) { %>font-weight-bold<% } %>" target="<%=  menu[i].data.target %>" href="<%= menu[i].url %>"><%= menu[i].title %></a>
-        <% if (hasChildren) { %>
-          <% createMenuTree(menu[i].children, true); %>
-        <% } %>
-      </li>
+<% function getSubItems(menu, isChild = false) { %>
+  <% for (let i = 0; i < menu.length; i++ ) { %>
+    <% let active = menu[i].url == currentUrl ? 'active' : '' %>
+    <% let hasChildren = menu[i]?.children && menu[i]?.children.length > 0 ? true : false %>
+    <li class="<% if (isChild) { %>pl-2<% } %>">
+      <a class="text-white-50 <%= active %>" target="<%=  menu[i].data.target %>" href="<%= menu[i].url %>"><%= menu[i].title %></a>
+    </li>
+    <% if (hasChildren) { %>
+      <% getSubItems(menu[i].children, true); %>
     <% } %>
-  </ul>
+  <% } %>
+<% } %>
+
+<% function createMenuTree(menu) { %>
+  <% for (let i = 0; i < menu.length; i++ ) { %>
+    <% let active = menu[i].url == currentUrl ? 'active' : '' %>
+    <% let hasChildren = menu[i]?.children && menu[i]?.children.length > 0 ? true : false %>
+    <div class="col-md-3 mx-auto">
+      <h5 class="font-weight-bold text-uppercase mt-3 mb-4">
+        <a class="text-white-50 <%= active %>" target="<%=  menu[i].data.target %>" href="<%= menu[i].url %>"><%= menu[i].title %></a>
+      </h5>
+      <% if (hasChildren) { %>
+        <ul class="list-unstyled">
+          <% getSubItems(menu[i].children); %>
+        </ul>
+      <% } %>
+    </div>
+    <hr class="clearfix w-100 d-md-none">
+  <% } %>
 <% } %>
 
 <% if (menu) { %>
-  <% createMenuTree(menu); %>
+  <div class="container text-center text-md-left">
+    <div class="row">
+      <% createMenuTree(menu); %>
+    </div>
+  </div>
 <% } %>
