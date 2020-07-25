@@ -49,7 +49,7 @@ export default {
       if (!result || Object.keys(result).length <= 0) {
         return;
       }
-    
+
       let fieldValues: any[] = result.data[relation.field];
       let loadedEntity: any | undefined;
 
@@ -70,6 +70,22 @@ export default {
           }
         }
       });
+
+      let topLevelReferences = await referenceRepository.findByFilters(
+        {
+          reference: {
+            id: relation.entity.id,
+            bundle: relation.entity.bundle,
+            type: relation.entity.type,
+          },
+        },
+      );
+
+      if (topLevelReferences && topLevelReferences.length > 0) {
+        topLevelReferences.forEach((e: any) =>
+          this.updateEntityWithRelation(e)
+        );
+      }
 
       return;
     } catch (error) {

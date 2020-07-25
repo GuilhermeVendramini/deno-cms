@@ -58,9 +58,10 @@ export default {
           },
         );
       }
-      
+
       if (result && result.length > 0) {
-        result.forEach((e: any) => entityReferenceHelper.updateEntityWithRelation(e)
+        result.forEach((e: any) =>
+          entityReferenceHelper.updateEntityWithRelation(e)
         );
       }
       await next();
