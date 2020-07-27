@@ -32,6 +32,25 @@
       ) %>
       <small class="form-text text-muted">Accept: jpg, png. Max 2.5mb.</small>
     </div>
+    <div class="form-group">
+      <label for="file">Crops</label>
+      <ul class="nav nav-tabs" id="cropperTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <a class="nav-link active" id="crop1-tab" data-toggle="tab" href="#crop1" role="tab" aria-controls="crop1" aria-selected="true">Crop 1</a>
+        </li>
+        <li class="nav-item" role="presentation">
+          <a class="nav-link" id="crop2-tab" data-toggle="tab" href="#crop2" role="tab" aria-controls="crop2" aria-selected="false">Crop 2</a>
+        </li>
+        <li class="nav-item" role="presentation">
+          <a class="nav-link" id="crop3-tab" data-toggle="tab" href="#crop3" role="tab" aria-controls="crop3" aria-selected="false">Crop 3</a>
+        </li>
+      </ul>
+      <div class="tab-content" id="cropperTabContent">
+        <div class="crop-preview tab-pane fade show active" id="crop1" role="tabpanel" aria-labelledby="crop1-tab">tab 1</div>
+        <div class="crop-preview tab-pane fade" id="crop2" role="tabpanel" aria-labelledby="crop2-tab">tab 2</div>
+        <div class="crop-preview tab-pane fade" id="crop3" role="tabpanel" aria-labelledby="crop3-tab">tab 3</div>
+      </div>
+    </div>
     <div class="form-check mb-3">
       <% let checked = page?.media?.published ? "checked" : "" %>
       <input <%= checked %> type="checkbox" name="published" value="true" class="form-check-input" id="published">
@@ -56,3 +75,5 @@
     currentUrl: false 
   }); 
 %>
+<script src="/libraries/jquery-cropper/jquery-cropper.min.js" type="text/javascript"></script>
+<script src="/libraries/jquery-cropper/main.js" type="text/javascript"></script>
