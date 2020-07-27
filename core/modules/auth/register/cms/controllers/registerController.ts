@@ -12,7 +12,7 @@ import { UserRoles } from "../../../../users/roles/UserRoles.ts";
 export default {
   async register(context: Record<string, any>) {
     context.response.body = await renderFileToString(
-      `${Deno.cwd()}/core/modules/auth/register/cms/views/registerView.ejs`,
+      `${Deno.cwd()}${Deno.env.get('THEME')}templates/auth/registerView.ejs`,
       {
         message: "",
       },
@@ -38,7 +38,7 @@ export default {
 
       if (Object.keys(emailAlreadyExists).length !== 0) {
         context.response.body = await renderFileToString(
-          `${Deno.cwd()}/core/modules/auth/register/cms/views/registerView.ejs`,
+          `${Deno.cwd()}${Deno.env.get('THEME')}templates/auth/registerView.ejs`,
           {
             message: "We already have a user with this email",
           },
@@ -54,7 +54,7 @@ export default {
 
       if (password != password_confirm) {
         context.response.body = await renderFileToString(
-          `${Deno.cwd()}/core/modules/auth/register/cms/views/registerView.ejs`,
+          `${Deno.cwd()}${Deno.env.get('THEME')}templates/auth/registerView.ejs`,
           {
             message: "Passwords do not match",
           },
@@ -88,7 +88,7 @@ export default {
         return;
       }
       context.response.body = await renderFileToString(
-        `${Deno.cwd()}/core/modules/auth/register/cms/views/registerView.ejs`,
+        `${Deno.cwd()}${Deno.env.get('THEME')}templates/auth/registerView.ejs`,
         {
           message: "Error submitting the form. Please try again.",
         },
@@ -97,7 +97,7 @@ export default {
     } catch (error) {
       console.log(error.message);
       context.response.body = await renderFileToString(
-        `${Deno.cwd()}/core/modules/auth/register/cms/views/registerView.ejs`,
+        `${Deno.cwd()}${Deno.env.get('THEME')}templates/auth/registerView.ejs`,
         {
           message: error.message,
         },

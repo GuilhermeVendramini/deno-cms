@@ -12,7 +12,7 @@ import currentUserSession from "../../../../../../shared/utils/sessions/currentU
 export default {
   async login(context: Record<string, any>) {
     context.response.body = await renderFileToString(
-      `${Deno.cwd()}/core/modules/auth/login/cms/views/loginView.ejs`,
+      `${Deno.cwd()}${Deno.env.get('THEME')}templates/auth/loginView.ejs`,
       {
         message: "",
       },
@@ -64,7 +64,7 @@ export default {
       }
 
       context.response.body = await renderFileToString(
-        `${Deno.cwd()}/core/modules/auth/login/cms/views/loginView.ejs`,
+        `${Deno.cwd()}${Deno.env.get('THEME')}templates/auth/loginView.ejs`,
         {
           message: "Wrong login or email.",
         },
@@ -73,7 +73,7 @@ export default {
     } catch (error) {
       console.log(error.message);
       context.response.body = await renderFileToString(
-        `${Deno.cwd()}/core/modules/auth/login/cms/views/loginView.ejs`,
+        `${Deno.cwd()}${Deno.env.get('THEME')}templates/auth/loginView.ejs`,
         {
           message: error.message,
         },
