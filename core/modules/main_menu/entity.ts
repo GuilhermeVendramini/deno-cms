@@ -1,12 +1,26 @@
-let type: string = "main_menu";
-let bundle: string = "menu_item";
-let name: string = "Main menu";
-let fields: string[] = [
+const type: string = "main_menu";
+const bundle: string = "menu_item";
+const name: string = "Main menu";
+const fields: string[] = [
   "target",
   "weight",
 ];
-let references: string[] = [];
-let canBeReferenced: boolean = false;
+const references: string[] = [];
+
+/**
+ * Set true if this entity can be referenced.
+ */
+const canBeReferenced: boolean = false;
+
+/**
+ * PathAuto pattern. Allows String values in the first entity level. 
+ * Example: ':title'.
+ */
+const pathPattern = [
+  bundle,
+  type,
+  ":title",
+];
 
 export default {
   type,
@@ -15,4 +29,5 @@ export default {
   fields,
   references,
   canBeReferenced,
+  pathPattern,
 };

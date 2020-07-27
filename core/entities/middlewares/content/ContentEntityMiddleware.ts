@@ -103,15 +103,21 @@ export default abstract class ContentEntityMiddleware {
       );
 
       let path: string | undefined;
+      let pathPattern: any[] = new Array();
 
       if (validated) {
+        this.entity.pathPattern.forEach((p: any) => {
+          if (typeof p === "string" && p.charAt(0) == ":") {
+            pathPattern.push(validated[p.substr(1)]);
+            return;
+          }
+
+          pathPattern.push(p);
+        });
+
         path = await pathauto.generate(
           this.entity.bundle,
-          [
-            this.entity.bundle,
-            this.entity.type,
-            validated.title,
-          ],
+          pathPattern,
           id,
         );
 

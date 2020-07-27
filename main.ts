@@ -36,7 +36,6 @@ import mainMenuRouter from "./core/modules/main_menu/cms/routes/entityRoute.ts";
 import footerAPIRouter from "./core/modules/footer/api/routes/entityRoute.ts";
 import footerRouter from "./core/modules/footer/cms/routes/entityRoute.ts";
 
-
 const session = new Session({ framework: "oak" });
 await session.init();
 
