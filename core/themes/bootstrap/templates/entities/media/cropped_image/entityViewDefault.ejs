@@ -1,0 +1,28 @@
+<%- await include(
+  `${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`,
+  {
+    title: page?.media?.title,
+    currentUser: currentUser,
+    main_menu: false,
+    currentUrl: false
+  }) %>
+<div class="container">
+  <% if ((currentUser && currentUser._id.$oid == page?.media?.author?._id?.$oid) || (currentUser && currentUser?.roles.includes(0))) { %>
+    <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: page.media}) %>
+  <% } %>
+  <% if (page?.media?.data) { %>
+  <h1 class="text-center mb-4"><%= page.media.title %></h1>
+    <div class="media text-center">
+      <% if (page.media.data?.file) { %>
+        <img src="/<%= page.media.data.file %>" height="200">
+      <% } %>
+    </div>
+  <% } %>
+  </div>
+<%- await include(
+  `${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`, 
+  {
+    footer_menu: false, 
+    currentUrl: false 
+  }); 
+%>

@@ -25,6 +25,8 @@ import mediaRouter from "./core/modules/media/cms/routes/mediaRoute.ts";
 import mediaAPIRouter from "./core/modules/media/api/routes/mediaRoute.ts";
 import imageAPIRouter from "./core/modules/image/api/routes/entityRoute.ts";
 import imageRouter from "./core/modules/image/cms/routes/entityRoute.ts";
+import croppedImageAPIRouter from "./core/modules/cropped_image/api/routes/entityRoute.ts";
+import croppedImageRouter from "./core/modules/cropped_image/cms/routes/entityRoute.ts";
 import videoAPIRouter from "./core/modules/video/api/routes/entityRoute.ts";
 import videoRouter from "./core/modules/video/cms/routes/entityRoute.ts";
 import basicBlockAPIRouter from "./core/modules/basic_block/api/routes/entityRoute.ts";
@@ -61,6 +63,7 @@ app.use(articleAPIRouter.routes());
 app.use(tagsAPIRouter.routes());
 app.use(categoriesAPIRouter.routes());
 app.use(imageAPIRouter.routes());
+app.use(croppedImageAPIRouter.routes());
 app.use(videoAPIRouter.routes());
 app.use(mediaAPIRouter.routes());
 app.use(basicBlockAPIRouter.routes());
@@ -122,6 +125,7 @@ app.use(entityReferenceRouter.routes());
 
 app.use(imageRouter.routes());
 app.use(videoRouter.routes());
+app.use(croppedImageRouter.routes());
 
 /**
  * Block Types
