@@ -61,7 +61,7 @@ router
     entityBaseController.add,
   )
   .get(
-    `/${entity.bundle}/${entity.type}/:title`,
+    `/${entity.pathPattern.join('/')}`,
     needToBePublished,
     async (
       context: Record<string, any>,

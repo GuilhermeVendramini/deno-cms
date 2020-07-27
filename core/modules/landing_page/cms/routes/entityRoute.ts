@@ -52,7 +52,7 @@ router
     entityBaseController.add,
   )
   .get(
-    `/home/:title`,
+    `/${entity.pathPattern.join('/')}`,
     needToBePublished,
     async (
       context: Record<string, any>,

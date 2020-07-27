@@ -11,7 +11,7 @@ const skipMiddleware = async (_: any, next: Function) => {
   await next();
 };
 
-const needToBeAuthor =  async (
+const needToBeAuthor = async (
   context: Record<string, any>,
   next: Function,
 ) => {
@@ -61,7 +61,7 @@ router
     entityBaseController.add,
   )
   .get(
-    `/${entity.bundle}/${entity.type}/:title`,
+    `/${entity.pathPattern.join("/")}`,
     needToBePublished,
     async (
       context: Record<string, any>,
