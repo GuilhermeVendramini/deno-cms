@@ -1,7 +1,9 @@
 const type: string = "cropped_image";
 const bundle: string = "media";
 const name: string = "Cropped image";
-const fields: string[] = [];
+const fields: string[] = [
+  'cropper',
+];
 const references: string[] = [];
 
 /**

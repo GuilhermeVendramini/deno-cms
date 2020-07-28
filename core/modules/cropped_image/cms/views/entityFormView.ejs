@@ -35,18 +35,18 @@
     <div class="form-group">
       <label for="file">Crops</label>
       <ul id="cropperOptions" class="list-group list-group-horizontal-sm">
-        <li class="list-group-item">
-          <a href="#">Crop 1</a>
+        <li class="list-group-item active">
+          <a data-aspect-ratio="16/9" href="#">Crop 16/9</a>
         </li>
         <li class="list-group-item">
-          <a href="#">Crop 2</a>
+          <a data-aspect-ratio="4/3" href="#">Crop 4/3</a>
         </li>
         <li class="list-group-item">
-          <a href="#">Crop 3</a>
+          <a data-aspect-ratio="1/1" href="#">Crop 1/1</a>
         </li>
       </ul>
-      <div class="crop-preview mt-2" id="cropPreview">
-      </div>
+      <div class="crop-preview mt-2" id="cropPreview"></div>
+      <input id="cropper" name="cropper" value="" type="hidden"></input>
     </div>
     <div class="form-check mb-3">
       <% let checked = page?.media?.published ? "checked" : "" %>
