@@ -11,7 +11,11 @@ let entitySchema = {
   data: vs.object({
     schemaObject: {
       file: vs.string(),
-      cropper: vs.string(),
+      cropper: vs.string({
+        ifEmptyString: "",
+        ifUndefined: "",
+        ifNull: "",
+      }),
     },
   }),
   published: vs.boolean({ ifUndefined: false }),

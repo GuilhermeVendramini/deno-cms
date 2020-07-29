@@ -37,6 +37,7 @@ import mainMenuAPIRouter from "./core/modules/main_menu/api/routes/entityRoute.t
 import mainMenuRouter from "./core/modules/main_menu/cms/routes/entityRoute.ts";
 import footerAPIRouter from "./core/modules/footer/api/routes/entityRoute.ts";
 import footerRouter from "./core/modules/footer/cms/routes/entityRoute.ts";
+import cropper from "./core/modules/cropper/routes/cropperRoute.ts";
 
 const session = new Session({ framework: "oak" });
 await session.init();
@@ -132,6 +133,11 @@ app.use(croppedImageRouter.routes());
  */
 
 app.use(basicBlockRouter.routes());
+
+/**
+ * Cropper
+ */
+app.use(cropper.routes());
 
 /**
  * Unknown routes

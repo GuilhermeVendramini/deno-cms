@@ -56,7 +56,7 @@
         </tr>
       </thead>
       <tbody>
-        <% for(var i=0; i < page.media.length; i++) { %>
+        <% for(let i=0; i < page.media.length; i++) { %>
         <tr>
           <th scope="row"><%= page.media[i]._id.$oid %></th>
           <td><a href='<%= page.media[i].path %>'><%= page.media[i].title %></a></td>

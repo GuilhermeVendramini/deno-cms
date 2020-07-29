@@ -17,6 +17,20 @@
         <img src="/<%= page.media.data.file %>" height="200">
       <% } %>
     </div>
+    <% if (page.media.data?.cropper) { 
+      let cropper = JSON.parse(page.media.data.cropper);
+    %>
+      <fieldset class="border p-2 mt-2">
+        <legend class="w-auto">Crops</legend>
+        <div class="d-flex mb-3">
+          <% for(let i=0; i < cropper.length; i++) { %>
+            <div class="mr-2">
+              <div data-crop-type="<%= cropper[i][0] %>">Crop</div>
+            </div>
+          <% } %>
+        </div>
+      </fieldset>
+    <% } %>
   <% } %>
   </div>
 <%- await include(
