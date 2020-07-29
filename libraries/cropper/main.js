@@ -5,7 +5,16 @@ document.addEventListener('DOMContentLoaded', function () {
   let cropperField = document.querySelector("input#cropper");
   let cropperValues = new Map();
   let cropperType = cropperOptions.querySelector('li.active a')?.getAttribute('data-aspect-ratio');
+  let cropperTypeValue;
   let cropper;
+
+  if (cropperField.value) {
+    let prepareCropperValues = JSON.parse(cropperField.value);
+
+    prepareCropperValues?.forEach((v) => {
+      cropperValues.set(v[0], v[1]);
+    });
+  }
 
   const callback = function () {
     let image = mediaPreview.querySelector('img');
@@ -14,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
       aspectRatio: 16 / 9,
       zoomable: false,
       cropend: cropend,
+      ready: cropReady,
     };
 
     if (oldCropPreview) oldCropPreview.remove();
@@ -41,7 +51,14 @@ document.addEventListener('DOMContentLoaded', function () {
     active?.classList.remove("active");
     this.parentNode.className += ' active';
     cropperType = this.getAttribute('data-aspect-ratio');
-    //if (cropper) cropper.reset();
+    cropperTypeValue = cropperValues.get(cropperType);
+    cropper.reset();
+    if (cropperTypeValue) cropper.setCropBoxData(cropperTypeValue);
+  }
+
+  function cropReady() {
+    if (cropperValues) cropperTypeValue = cropperValues.get(cropperType);
+    if (cropperTypeValue) cropper.setCropBoxData(cropperTypeValue);
   }
 
   function cropend() {
@@ -49,7 +66,5 @@ document.addEventListener('DOMContentLoaded', function () {
     cropperValues.set(cropperType, cropBoxData);
     let cropperValuesStr = JSON.stringify(Array.from(cropperValues.entries()));
     cropperField.value = cropperValuesStr;
-    console.log(cropperField);
-    console.log(cropperValues);
   }
 });

@@ -247,7 +247,7 @@ export default abstract class MediaEntityMiddleware {
         media = await this.repository.findOneByID(id) as MediaEntity;
       }
 
-      if (file) {
+      if (!id && file) {
         await mediaHelper.deleteFile(file);
       }
 

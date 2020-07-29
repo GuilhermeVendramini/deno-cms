@@ -46,7 +46,7 @@
         </li>
       </ul>
       <div class="crop-preview mt-2" id="cropPreview"></div>
-      <input id="cropper" name="cropper" value="" type="hidden"></input>
+      <input id="cropper" name="cropper" value="<%= page?.media?.data?.cropper %>" type="hidden"></input>
     </div>
     <div class="form-check mb-3">
       <% let checked = page?.media?.published ? "checked" : "" %>
