@@ -142,16 +142,17 @@ export default abstract class MediaEntityMiddleware {
       let data: any = {};
       let body = context.getBody;
       let currentUser = context.getCurrentUser;
+      let bodyValue = await body.value;
       let validated: any;
 
-      id = body.value.get("id");
-      title = body.value.get("title");
-      file = body.value.get("file");
-      published = body.value.get("published") ? true : false;
+      id = bodyValue.get("id");
+      title = bodyValue.get("title");
+      file = bodyValue.get("file");
+      published = bodyValue.get("published") ? true : false;
       data["file"] = file;
 
       this.entity.fields.forEach(function (field: string) {
-        data[field] = body.value.get(field);
+        data[field] = bodyValue.get(field);
       });
 
       if (this.entity.references.length > 0) {
@@ -346,7 +347,9 @@ export default abstract class MediaEntityMiddleware {
 
     try {
       let body = context.getBody;
-      id = body.value.get("id");
+      let bodyValue = await body.value;
+
+      id = bodyValue.get("id");
       media = await this.repository.findOneByID(id);
 
       if (this.entity.references.length > 0) {

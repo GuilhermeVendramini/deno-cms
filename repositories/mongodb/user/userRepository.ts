@@ -45,7 +45,7 @@ export default {
   },
 
   async find(): Promise<[]> {
-    let result = await data.find();
+    let result: any = await data.find();
 
     if (result) {
       return result.sort((d1: any, d2: any) => {

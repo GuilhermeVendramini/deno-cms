@@ -43,7 +43,7 @@ export default {
       }
 
       if (logged) {
-        let token: string = userToken.generate(user._id.$oid);
+        let token: string = await userToken.generate(user._id.$oid);
         context.response.body = {
           message: "User successfully logged in.",
           user: user,

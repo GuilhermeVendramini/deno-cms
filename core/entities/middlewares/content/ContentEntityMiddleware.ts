@@ -68,15 +68,17 @@ export default abstract class ContentEntityMiddleware {
       let data: any = {};
       let body = context.getBody;
       let currentUser = context.getCurrentUser;
+
+      let bodyValue = await body.value;
       let validated: any;
 
-      id = body.value.get("id");
-      title = body.value.get("title");
-      published = body.value.get("published") ? true : false;
+      id = bodyValue.get("id");
+      title = bodyValue.get("title");
+      published = bodyValue.get("published") ? true : false;
 
       if (this.entity.fields.length > 0) {
         this.entity.fields.forEach(function (field: string) {
-          data[field] = body.value.get(field);
+          data[field] = bodyValue.get(field);
         });
       }
 
@@ -267,7 +269,9 @@ export default abstract class ContentEntityMiddleware {
 
     try {
       let body = context.getBody;
-      id = body.value.get("id");
+      let bodyValue = await body.value;
+
+      id = bodyValue.get("id");
       content = await this.repository.findOneByID(id);
 
       if (this.entity.references.length > 0) {

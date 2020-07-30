@@ -31,10 +31,11 @@ export default {
         context.throw(Status.BadRequest, "Bad Request");
       }
 
+      let bodyValue = await body.value;
       let validated: any;
       let logged: boolean | undefined;
-      let email = body.value.get("email");
-      let password = body.value.get("password");
+      let email = bodyValue.get("email");
+      let password = bodyValue.get("password");
 
       validated = vs.applySchemaObject(
         loginSchema,
@@ -55,7 +56,7 @@ export default {
       }
 
       if (user && logged) {
-        let token: string = userToken.generate(user._id.$oid);
+        let token: string = await userToken.generate(user._id.$oid);
         delete user.password;
         context.cookies.set("jwt", token);
         currentUserSession.set(context, user);

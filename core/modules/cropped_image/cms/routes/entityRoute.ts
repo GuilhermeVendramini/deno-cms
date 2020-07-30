@@ -85,8 +85,9 @@ router
     entity.references.length > 0
       ? entityReferenceMiddleware.addRelation
       : skipMiddleware,
-    entity.canBeReferenced ? entityReferenceMiddleware.updateRelatedEntities
-    : skipMiddleware,
+    entity.canBeReferenced
+      ? entityReferenceMiddleware.updateRelatedEntities
+      : skipMiddleware,
     entityBaseController.addPost,
   )
   .get(
@@ -114,8 +115,9 @@ router
     },
     entity.references.length > 0 ? entityReferenceMiddleware.deleteRelation
     : skipMiddleware,
-    entity.canBeReferenced ? entityReferenceMiddleware.updateRelatedEntities
-    : skipMiddleware,
+    entity.canBeReferenced
+      ? entityReferenceMiddleware.updateRelatedEntities
+      : skipMiddleware,
     entityBaseController.deletePost,
   )
   .post(
@@ -123,12 +125,14 @@ router
     loggedMiddleware.needToBeLogged,
     upload(
       `files/${entity.bundle}/images`,
-      ["jpg", "png"],
-      20000000,
-      10000000,
-      true,
-      false,
-      true,
+      {
+        extensions: ["jpg", "png"],
+        maxSizeBytes: 20000000,
+        maxFileSizeBytes: 10000000,
+        saveFile: true,
+        readFile: false,
+        useCurrentDir: true,
+      },
     ),
     async (context: Record<string, any>) => {
       context.response.body = context.uploadedFiles;
@@ -139,12 +143,14 @@ router
     loggedMiddleware.needToBeLogged,
     upload(
       "temp_uploads",
-      ["jpg", "png"],
-      20000000,
-      10000000,
-      false,
-      false,
-      true,
+      {
+        extensions: ["jpg", "png"],
+        maxSizeBytes: 20000000,
+        maxFileSizeBytes: 10000000,
+        saveFile: false,
+        readFile: false,
+        useCurrentDir: true,
+      },
     ),
     async (context: Record<string, any>) => {
       context.response.body = context.uploadedFiles;

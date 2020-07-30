@@ -17,28 +17,29 @@ export default {
       let method = context.request.method;
       let currentUser = context.getCurrentUser;
       let id: string;
-  
+
       if (method == "POST") {
         if (!context.request.hasBody) {
           context.throw(Status.BadRequest, "Bad Request");
         }
-  
-        const body = await context.request.body();
-        id = body.value.get("id");
+
+        let body = await context.request.body();
+        let bodyValue = await body.value;
+
+        id = bodyValue.get("id");
       } else {
         id = context.params.id;
       }
-  
-  
+
       let entity: any = await repository.findOneByID(id);
-  
+
       if (
         currentUser._id.$oid != entity.author._id.$oid &&
         !currentUser.roles.includes(UserRoles.admin)
       ) {
         context.throw(Status.Unauthorized, "Unauthorized");
       }
-  
+
       await next();
     } catch (error) {
       context.response.status = Status.NotFound;
@@ -49,7 +50,7 @@ export default {
       return;
     }
   },
-  
+
   async needToBePublished(
     context: Record<string, any>,
     next: Function,
@@ -59,8 +60,8 @@ export default {
       let repository = new EntityRepository(bundle);
       let currentUser = await currentUserSession.get(context);
       let path: string = context.request.url.pathname;
-      let entity: any = await repository.findOneByFilters({path: path});
-  
+      let entity: any = await repository.findOneByFilters({ path: path });
+
       if (!entity.published && !currentUser) {
         context.throw(Status.Unauthorized, "Unauthorized");
       }
@@ -73,5 +74,5 @@ export default {
       );
       return;
     }
-  }
+  },
 };

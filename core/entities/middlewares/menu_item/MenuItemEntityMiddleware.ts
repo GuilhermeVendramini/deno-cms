@@ -60,7 +60,7 @@ export default abstract class MenuItemEntityMiddleware {
         skip,
         limit,
       );
-      
+
       menuItem?.sort((i1: any, i2: any) => {
         return i1.data.weight > i2.data.weight ? 1 : -1;
       });
@@ -155,17 +155,19 @@ export default abstract class MenuItemEntityMiddleware {
       let data: any = {};
       let body = context.getBody;
       let currentUser = context.getCurrentUser;
+
+      let bodyValue = await body.value;
       let validated: any;
 
-      id = body.value.get("id");
-      title = body.value.get("title");
-      url = body.value.get("url");
-      parent = body.value.get("parent");
-      published = body.value.get("published") ? true : false;
+      id = bodyValue.get("id");
+      title = bodyValue.get("title");
+      url = bodyValue.get("url");
+      parent = bodyValue.get("parent");
+      published = bodyValue.get("published") ? true : false;
 
       if (this.entity.fields.length > 0) {
         this.entity.fields.forEach(function (field: string) {
-          data[field] = body.value.get(field);
+          data[field] = bodyValue.get(field);
         });
       }
 
@@ -358,7 +360,9 @@ export default abstract class MenuItemEntityMiddleware {
 
     try {
       let body = context.getBody;
-      id = body.value.get("id");
+      let bodyValue = await body.value;
+
+      id = bodyValue.get("id");
       menuItem = await this.repository.findOneByID(id);
 
       if (this.entity.references.length > 0) {

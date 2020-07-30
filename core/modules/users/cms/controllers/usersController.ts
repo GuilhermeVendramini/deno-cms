@@ -102,10 +102,11 @@ export default {
       let user: {} | undefined;
 
       if (
-        id && 
+        id &&
         id !== currentUser._id.$oid &&
-        !currentUser.roles.includes(UserRoles.admin)) {
-        await cmsErrors.NotFoundError(context, Status.NotFound, 'NotFound');
+        !currentUser.roles.includes(UserRoles.admin)
+      ) {
+        await cmsErrors.NotFoundError(context, Status.NotFound, "NotFound");
         return;
       }
 
@@ -150,9 +151,9 @@ export default {
   async addPost(
     context: Record<string, any>,
   ) {
-    let name: string = '';
-    let email: string = '';
-    let password: string = '';
+    let name: string = "";
+    let email: string = "";
+    let password: string = "";
     let roles: any[] = [];
     let status: boolean = true;
     let page: any;
@@ -162,21 +163,23 @@ export default {
 
     try {
       let body = context.getBody;
+      let bodyValue = await body.value;
       let validated: any;
 
-      id = body.value.get("id");
-      name = body.value.get("name");
-      email = body.value.get("email");
-      password = body.value.get("password");
-      let password_confirm = body.value.get("password_confirm");
-      roles = body.value.getAll("roles");
-      status = body.value.get("status") ? true : false;
+      id = bodyValue.get("id");
+      name = bodyValue.get("name");
+      email = bodyValue.get("email");
+      password = bodyValue.get("password");
+      let password_confirm = bodyValue.get("password_confirm");
+      roles = bodyValue.getAll("roles");
+      status = bodyValue.get("status") ? true : false;
 
       if (
-        id && 
+        id &&
         id !== currentUser._id.$oid &&
-        !currentUser.roles.includes(UserRoles.admin)) {
-        await cmsErrors.NotFoundError(context, Status.NotFound, 'NotFound');
+        !currentUser.roles.includes(UserRoles.admin)
+      ) {
+        await cmsErrors.NotFoundError(context, Status.NotFound, "NotFound");
         return;
       }
 
@@ -194,10 +197,17 @@ export default {
         oldUserData = await userRepository.findOneByID(id);
       }
 
-      if (oldUserData && oldUserData.email == userByEmail.email) duplicatedEmail = false;
+      if (
+        oldUserData && oldUserData.email == userByEmail.email
+      ) {
+        duplicatedEmail = false;
+      }
 
       if (duplicatedEmail) {
-        context.throw(Status.NotAcceptable, "We already have a user with this email");
+        context.throw(
+          Status.NotAcceptable,
+          "We already have a user with this email",
+        );
       }
 
       if (password && password !== password_confirm) {
@@ -215,7 +225,8 @@ export default {
       }
 
       validated = vs.applySchemaObject(
-        userSchema, {
+        userSchema,
+        {
           name: name,
           email: email,
           password: password,
@@ -362,14 +373,16 @@ export default {
 
     try {
       let body = context.getBody;
-      id = body.value.get("id");
+      let bodyValue = await body.value;
+
+      id = bodyValue.get("id");
       user = await userRepository.findOneByID(id);
 
       if (user && Object.keys(user).length != 0) {
         await userRepository.deleteOne(id);
       }
 
-      if(id == context.getCurrentUser._id.$oid) {
+      if (id == context.getCurrentUser._id.$oid) {
         context.response.redirect("/logout");
         return;
       }

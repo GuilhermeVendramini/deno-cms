@@ -10,15 +10,17 @@ const header: Jose = {
 };
 
 export default {
-  generate(userId: string): string {
+  async generate(userId: string): Promise<string> {
     const payload: Payload = {
       uid: userId,
       exp: setExpiration(new Date().getTime() + 60000 * 60),
     };
-    return makeJwt({ header, payload, key });
+    return await makeJwt({ header, payload, key });
   },
   async validate(token: string) {
-    return !!await validateJwt(token, key, { isThrowing: false });
+    return !!await validateJwt(
+      { jwt: token, key: key, algorithm: ["HS256"] },
+    );
   },
   fetchUserId(token: string) {
     return validateJwtObject(parseAndDecode(token)).payload;

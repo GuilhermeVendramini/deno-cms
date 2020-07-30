@@ -25,12 +25,13 @@ export default {
       }
 
       let body = await context.request.body();
+      let bodyValue = await body.value;
 
       if (body.type !== "form") {
         context.throw(Status.BadRequest, "Bad Request");
       }
 
-      let email = body.value.get("email");
+      let email = bodyValue.get("email");
 
       let emailAlreadyExists = await userRepository.findOneByEmail(
         email,
@@ -48,9 +49,9 @@ export default {
 
       let user: UserBaseEntity | undefined;
       let validated: { name: string; email: string; password: string };
-      let name = body.value.get("name");
-      let password = body.value.get("password");
-      let password_confirm = body.value.get("password_confirm");
+      let name = bodyValue.get("name");
+      let password = bodyValue.get("password");
+      let password_confirm = bodyValue.get("password_confirm");
 
       if (password != password_confirm) {
         context.response.body = await renderFileToString(

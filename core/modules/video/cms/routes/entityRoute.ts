@@ -85,8 +85,9 @@ router
     entity.references.length > 0
       ? entityReferenceMiddleware.addRelation
       : skipMiddleware,
-    entity.canBeReferenced ? entityReferenceMiddleware.updateRelatedEntities
-    : skipMiddleware,
+    entity.canBeReferenced
+      ? entityReferenceMiddleware.updateRelatedEntities
+      : skipMiddleware,
     entityBaseController.addPost,
   )
   .get(
@@ -114,8 +115,9 @@ router
     },
     entity.references.length > 0 ? entityReferenceMiddleware.deleteRelation
     : skipMiddleware,
-    entity.canBeReferenced ? entityReferenceMiddleware.updateRelatedEntities
-    : skipMiddleware,
+    entity.canBeReferenced
+      ? entityReferenceMiddleware.updateRelatedEntities
+      : skipMiddleware,
     entityBaseController.deletePost,
   )
   .post(
@@ -123,12 +125,14 @@ router
     loggedMiddleware.needToBeLogged,
     upload(
       `files/${entity.bundle}/videos`,
-      ["mp4", "webm"],
-      2 * 80000000,
-      2 * 40000000,
-      true,
-      false,
-      true,
+      {
+        extensions: ["mp4", "webm"],
+        maxSizeBytes: 2 * 80000000,
+        maxFileSizeBytes: 2 * 40000000,
+        saveFile: true,
+        readFile: false,
+        useCurrentDir: true,
+      },
     ),
     async (context: Record<string, any>) => {
       context.response.body = context.uploadedFiles;
@@ -139,12 +143,14 @@ router
     loggedMiddleware.needToBeLogged,
     upload(
       "temp_uploads",
-      ["mp4", "webm"],
-      2 * 80000000,
-      2 * 40000000,
-      false,
-      false,
-      true,
+      {
+        extensions: ["mp4", "webm"],
+        maxSizeBytes: 2 * 80000000,
+        maxFileSizeBytes: 2 * 40000000,
+        saveFile: false,
+        readFile: false,
+        useCurrentDir: true,
+      },
     ),
     async (context: Record<string, any>) => {
       context.response.body = context.uploadedFiles;

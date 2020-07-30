@@ -13,9 +13,10 @@ export default {
     let referenceValues = new Array();
     let result: any = {};
     let body = context.getBody;
+    let bodyValue = await body.value;
 
     for (let field of references) {
-      referenceValues = JSON.parse(body.value.get(field));
+      referenceValues = JSON.parse(bodyValue.get(field));
       let entities = new Array();
       if (referenceValues && referenceValues.length > 0) {
         for (let value of referenceValues) {
