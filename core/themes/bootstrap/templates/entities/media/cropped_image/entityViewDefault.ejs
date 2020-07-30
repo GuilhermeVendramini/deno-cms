@@ -14,7 +14,7 @@
   <h1 class="text-center mb-4"><%= page.media.title %></h1>
     <div class="media text-center">
       <% if (page.media.data?.file) { %>
-        <img src="/<%= page.media.data.file %>" height="200">
+        <img id="img-original" src="/<%= page.media.data.file %>">
       <% } %>
     </div>
     <% if (page.media.data?.cropper) { 
@@ -25,7 +25,14 @@
         <div class="d-flex mb-3">
           <% for(let i=0; i < cropper.length; i++) { %>
             <div class="mr-2">
-              <div data-crop-type="<%= cropper[i][0] %>">Crop</div>
+              <%- await include(
+                `${Deno.cwd()}/core/modules/cropper/views/croppedImageView.ejs`,
+                {
+                  imageID: "img-original",
+                  type: cropper[i][0],
+                  crop: cropper[i][1],
+                });
+              %>
             </div>
           <% } %>
         </div>
@@ -40,3 +47,4 @@
     currentUrl: false 
   }); 
 %>
+<script src="/cropper/assets/js/cropperView.js" type="text/javascript"></script>
