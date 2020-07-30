@@ -23,18 +23,38 @@
       <fieldset class="border p-2 mt-2">
         <legend class="w-auto">Crops</legend>
         <div class="d-flex mb-3">
-          <% for(let i=0; i < cropper.length; i++) { %>
+          <% for (let c in cropper) { %>
             <div class="mr-2">
               <%- await include(
                 `${Deno.cwd()}/core/modules/cropper/views/croppedImageView.ejs`,
                 {
                   imageID: "img-original",
-                  type: cropper[i][0],
-                  crop: cropper[i][1],
+                  type: c,
+                  crop: cropper[c],
+                  resize: false,
                 });
               %>
             </div>
           <% } %>
+        </div>
+      </fieldset>
+      <fieldset class="border p-2 mt-2">
+        <legend class="w-auto">Crop with Resize</legend>
+        <div class="d-flex mb-3">
+            <div class="mr-2">
+              <%- await include(
+                `${Deno.cwd()}/core/modules/cropper/views/croppedImageView.ejs`,
+                {
+                  imageID: "img-original",
+                  type: '16/9',
+                  crop: cropper['16/9'],
+                  resize: {
+                    width: 200,
+                    height: 112.50,
+                  }
+                });
+              %>
+            </div>
         </div>
       </fieldset>
     <% } %>

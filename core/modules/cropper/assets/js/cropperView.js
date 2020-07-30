@@ -6,12 +6,14 @@ window.onload = function () {
   cropperView.forEach((c) => {
     let imgID = c.getAttribute('data-img-id');
     let crop = JSON.parse(c.getAttribute('data-crop'));
+    let dWidth = c.offsetWidth;
+    let dHeight = c.offsetHeight;
     let img;
     if (!(img = imagesByID.get(imgID))) {
       img = document.getElementById(imgID);
       imagesByID.set(imgID, img);
     };
-    console.log(crop);
+
     let ctx = c.getContext("2d");
     ctx.drawImage(
       img,
@@ -21,8 +23,8 @@ window.onload = function () {
       crop.height,
       0,
       0,
-      crop.width,
-      crop.height
+      dWidth,
+      dHeight
     );
   });
 };
