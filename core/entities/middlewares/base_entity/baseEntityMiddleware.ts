@@ -44,7 +44,9 @@ export default {
     } catch (error) {
       context.response.status = Status.NotFound;
       context.response.body = await renderFileToString(
-        `${Deno.cwd()}/core/modules/unknownPages/views/notFound.ejs`,
+        `${Deno.cwd()}${
+          Deno.env.get("THEME")
+        }templates/unknown_pages/notFound.ejs`,
         {},
       );
       return;
@@ -69,7 +71,9 @@ export default {
     } catch (error) {
       context.response.status = Status.NotFound;
       context.response.body = await renderFileToString(
-        `${Deno.cwd()}/core/modules/unknownPages/views/notFound.ejs`,
+        `${Deno.cwd()}${
+          Deno.env.get("THEME")
+        }templates/unknown_pages/notFound.ejs`,
         {},
       );
       return;

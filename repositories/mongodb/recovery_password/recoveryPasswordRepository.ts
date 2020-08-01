@@ -18,4 +18,12 @@ export default {
 
     return {};
   },
+
+  async findOneByHash(hash: string): Promise<{}> {
+    let result = await data.findOne({ hash: hash });
+
+    if (result) return result;
+
+    return {};
+  },
 };

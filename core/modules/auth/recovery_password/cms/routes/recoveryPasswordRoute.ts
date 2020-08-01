@@ -3,6 +3,7 @@ import recoveryPasswordController from "../controllers/recoveryPasswordControlle
 
 router
   .get("/recovery-password", recoveryPasswordController.recoveryPassword)
-  .post("/recovery-password", recoveryPasswordController.recoveryPasswordPost);
+  .post("/recovery-password", recoveryPasswordController.recoveryPasswordPost)
+  .get("/recovery-password/login/:hash", recoveryPasswordController.recoveryPasswordLogin);
 
 export default router;

@@ -5,6 +5,9 @@ import {
 } from "oak";
 import userRepository from "../../../../../../repositories/mongodb/user/userRepository.ts";
 import recoveryPasswordHelper from "../../helpers/recoveryPasswordHelper.ts";
+import cmsErrors from "../../../../../../shared/utils/errors/cms/cmsErrors.ts";
+import userToken from "../../../../../../shared/utils/tokens/userToken.ts";
+import currentUserSession from "../../../../../../shared/utils/sessions/currentUserSession.ts";
 
 export default {
   async recoveryPassword(context: Record<string, any>) {
@@ -44,7 +47,7 @@ export default {
           user,
         );
 
-        let link: string = '/login/' + hash;
+        let link: string = "/recovery-password/login/" + hash;
         let message: string = `
         To create a new password, access the following address:
 
@@ -57,6 +60,8 @@ export default {
           subject: "Deno CMS recovery password",
           content: message,
         });
+
+        result.message = "Please follow the instructions we send in your email";
       } else {
         result = {
           message: "Email not registered in our database",
@@ -83,6 +88,26 @@ export default {
           error: true,
         },
       );
+    }
+  },
+  async recoveryPasswordLogin(context: Record<string, any>) {
+    try {
+      let hash: string = context.params?.hash;
+      let user: any = await recoveryPasswordHelper.findUserByHash(hash);
+
+      if (user && user.status) {
+        let token: string = await userToken.generate(user._id.$oid);
+        delete user.password;
+        context.cookies.set("jwt", token);
+        currentUserSession.set(context, user);
+        context.response.redirect(`/admin/user/edit/${user._id.$oid}`);
+        return;
+      }
+
+      context.throw(Status.NotFound, "NotFound");
+    } catch (error) {
+      await cmsErrors.NotFoundError(context, Status.NotFound, error.message);
+      return;
     }
   },
 };

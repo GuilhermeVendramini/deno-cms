@@ -8,7 +8,7 @@ export default async (context: Record<string, any>) => {
   context.response.body = await renderFileToString(
     `${Deno.cwd()}${
       Deno.env.get("THEME")
-    }templates/unknownPages/notFound.ejs`,
+    }templates/unknown_pages/notFound.ejs`,
     {},
   );
 };
