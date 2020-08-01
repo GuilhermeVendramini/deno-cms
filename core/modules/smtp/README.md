@@ -1,6 +1,6 @@
 # SMTP configuration
 
-Crate the file "config.ts" with the following configuration structure:
+Create the file "config.ts" with the following configuration structure:
 
 ```ts
 const config = {
