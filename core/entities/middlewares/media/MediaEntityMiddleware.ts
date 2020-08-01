@@ -7,7 +7,7 @@ import {
 import vs from "value_schema";
 import pathauto from "../../../../shared/utils/pathauto/defaultPathauto.ts";
 import entityReferenceHelper from "../../../modules/entity_reference/helpers/entityReferenceHelper.ts";
-import mediaHelper from "../../../modules/media/utils/mediaHelper.ts";
+import mediaHelper from "../../../modules/media/helpers/mediaHelper.ts";
 
 export default abstract class MediaEntityMiddleware {
   protected entity: any;

@@ -1,3 +1,4 @@
 /uploads
 /temp_uploads
 /files
+/core/modules/smtp/config.ts

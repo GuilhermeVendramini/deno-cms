@@ -10,7 +10,7 @@ import usersRouter from "./core/modules/users/cms/routes/usersRoute.ts";
 import usersAPIRouter from "./core/modules/users/api/routes/usersRoute.ts";
 import themeBoostrapRouter from "./core/themes/bootstrap/routes/boostrapRoute.ts";
 import { Session } from "session";
-import unknownPages from "./core/modules/unknownPages/routes/unknownPagesRoute.ts";
+import unknownPages from "./core/modules/unknown_pages/routes/unknownPagesRoute.ts";
 import basicPageRouter from "./core/modules/basic_page/cms/routes/entityRoute.ts";
 import basicPageAPIRouter from "./core/modules/basic_page/api/routes/entityRoute.ts";
 import articleRouter from "./core/modules/article/cms/routes/entityRoute.ts";
