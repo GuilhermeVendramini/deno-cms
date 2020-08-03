@@ -1,7 +1,9 @@
 const type: string = "image";
 const bundle: string = "media";
 const name: string = "Image";
-const fields: string[] = [];
+const fields: string[] = [
+  "alt",
+];
 const references: string[] = [];
 
 /**

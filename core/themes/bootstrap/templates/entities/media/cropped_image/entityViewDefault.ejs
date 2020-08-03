@@ -14,7 +14,7 @@
   <h1 class="text-center mb-4"><%= page.media.title %></h1>
     <div class="media text-center">
       <% if (page.media.data?.file) { %>
-        <img id="img-original" src="/<%= page.media.data.file %>">
+        <img alt="<%= page.media.data?.alt %>" id="img-original" src="/<%= page.media.data.file %>">
       <% } %>
     </div>
     <% if (page.media.data?.cropper) { 

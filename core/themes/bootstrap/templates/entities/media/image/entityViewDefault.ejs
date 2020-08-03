@@ -14,7 +14,7 @@
   <h1 class="text-center mb-4"><%= page.media.title %></h1>
     <div class="media text-center">
       <% if (page.media.data?.file) { %>
-        <img src="/<%= page.media.data.file %>" height="200">
+        <img alt="<%= page.media.data?.alt %>" src="/<%= page.media.data.file %>" height="200">
       <% } %>
     </div>
   <% } %>

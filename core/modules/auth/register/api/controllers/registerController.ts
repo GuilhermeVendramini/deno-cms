@@ -16,13 +16,14 @@ export default {
       }
 
       let body = await context.request.body();
+      let bodyValue = await body.value;
 
       if (body.type !== "json") {
         context.throw(Status.BadRequest, "Bad Request");
       }
 
       let userAlreadyExists = await userRepository.findOneByEmail(
-        body.value?.email,
+        bodyValue?.email,
       );
 
       if (Object.keys(userAlreadyExists).length !== 0) {
@@ -36,7 +37,7 @@ export default {
 
       let user: UserBaseEntity | undefined;
       let validated: { name: string; email: string; password: string };
-      validated = vs.applySchemaObject(registerSchema, body.value);
+      validated = vs.applySchemaObject(registerSchema, bodyValue);
 
       if (validated) {
         validated.password = await hash.bcrypt(validated.password as string);

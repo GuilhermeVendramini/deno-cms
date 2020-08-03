@@ -30,7 +30,7 @@ try {
       `Login: ${email} \nPassword: ${password}\n`,
     ),
     Colors.green(
-      "🦕 Installation completed. Press 'Ctrl + c' and run 'denon start' 🦕",
+      "Installation completed. Run 'denon start' 🦕",
     ),
   );
 } catch (error) {

@@ -3,6 +3,7 @@ const bundle: string = "media";
 const name: string = "Cropped image";
 const fields: string[] = [
   'cropper',
+  'alt',
 ];
 const references: string[] = [];
 

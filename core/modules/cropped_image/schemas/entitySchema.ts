@@ -11,6 +11,7 @@ let entitySchema = {
   data: vs.object({
     schemaObject: {
       file: vs.string(),
+      alt: vs.string(),
       cropper: vs.string({
         ifEmptyString: "",
         ifUndefined: "",

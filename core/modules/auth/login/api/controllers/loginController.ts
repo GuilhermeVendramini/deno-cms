@@ -15,6 +15,7 @@ export default {
       }
 
       let body = await context.request.body();
+      let bodyValue = await body.value;
 
       if (body.type !== "json") {
         context.throw(Status.BadRequest, "Bad Request");
@@ -26,7 +27,7 @@ export default {
 
       value = vs.applySchemaObject(
         loginSchema,
-        body.value,
+        bodyValue,
       ) as userLogin;
 
       let user: any | undefined;
