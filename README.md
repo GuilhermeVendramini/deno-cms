@@ -31,6 +31,7 @@ deno run --allow-env --allow-write --allow-read --allow-net --allow-plugin --all
 ### Default user login:
 
 **email**: admin@admin.com
+
 **password**: 12345678
 
 ## Features
@@ -116,4 +117,4 @@ curl -H "Authorization: Bearer <LOGGED-USER-TOKEN>" http://localhost:8000/api/<B
 
 ## TODO
 
- [ ] Tests
+ - [ ] Tests
