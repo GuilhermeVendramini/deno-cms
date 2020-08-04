@@ -9,11 +9,8 @@
     "djwt/validate": "https://deno.land/x/djwt@v1.1/validate.ts",
     "djwt/create": "https://deno.land/x/djwt@v1.1/create.ts",
     "dejs": "https://deno.land/x/dejs@0.8.0/mod.ts",
-    "session": "https://deno.land/x/session/mod.ts",
-    "upload": "https://deno.land/x/upload_middleware_for_oak_framework/mod.ts",
-    "smtp": "https://deno.land/x/smtp/mod.ts",
-    "smtpConfig": "https://deno.land/x/smtp/config.ts",
-    "https://deno.land/std@v0.52.0/path/win32.ts": "https://deno.land/std@v0.62.0/path/win32.ts",
-    "https://deno.land/std@v0.52.0/path/posix.ts": "https://deno.land/std@v0.62.0/path/posix.ts"
+    "session": "https://deno.land/x/session@1.1.0/mod.ts",
+    "smtp": "https://deno.land/x/smtp@v0.5.1/mod.ts",
+    "smtpConfig": "https://deno.land/x/smtp@v0.5.1/config.ts"
   }
 }

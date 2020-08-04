@@ -4,7 +4,7 @@ import loggedMiddleware from "../../../../../shared/middlewares/loggedMiddleware
 import entity from "../../entity.ts";
 import baseEntityMiddleware from "../../../../entities/middlewares/base_entity/baseEntityMiddleware.ts";
 import cmsMiddleware from "../../../../../shared/middlewares/cmsMiddleware.ts";
-import { upload } from "upload";
+import { upload } from "../../../../../modules/contrib/upload_middleware_for_oak_framework/mod.ts";
 import entityBaseController from "../../../../entities/controllers/entityBaseController.ts";
 import entityReferenceMiddleware from "../../../entity_reference/middlewares/entityReferenceMiddleware.ts";
 
