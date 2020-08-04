@@ -7,7 +7,7 @@
     currentUrl: page.currentUrl
   });
 %>
-<div class="container">
+<div class="landing-page">
   <% if ((currentUser && currentUser._id.$oid == page?.content?.author?._id?.$oid) || (currentUser && currentUser?.roles.includes(0))) { %>
     <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: page.content}) %>
   <% } %>
