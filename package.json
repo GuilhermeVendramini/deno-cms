@@ -5,7 +5,7 @@
     "dotenv/load": "https://deno.land/x/dotenv@v0.5.0/load.ts",
     "value_schema": "https://deno.land/x/value_schema/mod.ts",
     "mongo": "https://deno.land/x/mongo@v0.9.1/mod.ts",
-    "bcrypt": "https://deno.land/x/bcrypt@v0.2.3/mod.ts",
+    "bcrypt": "https://deno.land/x/bcrypt@v0.2.4/mod.ts",
     "djwt/validate": "https://deno.land/x/djwt@v1.1/validate.ts",
     "djwt/create": "https://deno.land/x/djwt@v1.1/create.ts",
     "dejs": "https://deno.land/x/dejs@0.8.0/mod.ts",
