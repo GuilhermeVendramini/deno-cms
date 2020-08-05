@@ -28,19 +28,19 @@ export default {
       }
 
       let body = await context.request.body();
-      let bodyValue = await body.value;
 
       if (body.type !== "form") {
         context.throw(Status.BadRequest, "Bad Request");
       }
 
+      let bodyValue = await body.value;
       let email = bodyValue.get("email");
 
       let user = await userRepository.findOneByEmail(
         email,
       );
 
-      let result;
+      let result : any;
 
       if (Object.keys(user).length !== 0) {
         let hash = await recoveryPasswordHelper.generateRecoveryPasswordLink(
