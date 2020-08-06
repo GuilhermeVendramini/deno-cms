@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
   let cropperTypeValue;
   let cropper;
   let cropAlert = document.getElementById("crop-alert");
+  let currentTempFile;
 
   if (cropperField.value) {
     let prepareCropperValues = JSON.parse(cropperField.value);
@@ -86,21 +87,21 @@ document.addEventListener('DOMContentLoaded', function () {
   async function uploadMedia(file) {
     let form = new FormData();
     form.append(`media`, file);
-    let result = await fetch('/media/image', {
+    let result = await fetch('/media/temporary/image', {
       method: 'POST',
       body: form,
     }).then(function (response) {
       if (response.ok) {
         return response.json();
       }
-
       return false;
     });
 
     if (result) {
       let file = Object.values(result)[0];
 
-      if ("url" in file) {
+      if ("tempfile" in file) {
+        await removeTempFile();
         let preview = cropper.getData();
         if (
           cropperValues[cropperType] &&
@@ -114,7 +115,6 @@ document.addEventListener('DOMContentLoaded', function () {
         cropperValues[cropperType]['cropped']['data'] = preview;
         cropperValues[cropperType]['preview'] = preview;
 
-
         let cropperValuesStr = JSON.stringify(cropperValues);
         cropperField.value = cropperValuesStr;
       }
@@ -122,7 +122,6 @@ document.addEventListener('DOMContentLoaded', function () {
       cropAlert.classList.remove('d-none');
       cropAlert.innerHTML = 'Error uploading cropped image.';
     }
-
     return result;
   }
 
@@ -172,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     switch (previewCrop) {
       case 1:
-        cropButtonText = "Save change";
+        cropButtonText = "Save crop change";
         cropButtonClass = "mt-2 btn btn-warning";
 
         let resetCropButton = document.createElement('a');
@@ -184,7 +183,7 @@ document.addEventListener('DOMContentLoaded', function () {
         cropPreview.append(resetCropButton);
         break;
       case 2:
-        cropButtonText = "Saved";
+        cropButtonText = "Crop saved";
         cropButtonClass = "mt-2 btn btn-success";
         break;
     }
@@ -212,5 +211,35 @@ document.addEventListener('DOMContentLoaded', function () {
     let cropperValuesStr = JSON.stringify(cropperValues);
     cropperField.value = cropperValuesStr;
     updateCropButton();
+  }
+
+  async function removeTempFile() {
+    let result = true;
+    cropAlert.className = 'd-none';
+    let oldCropped;
+
+    if (cropperValues[cropperType] &&
+      (oldCropped = cropperValues[cropperType]['cropped'])
+    ) {
+      let tempFile = oldCropped.media.tempfile;
+      currentTempFile = tempFile.substring(tempFile.lastIndexOf('/'));
+    }
+
+    if (!currentTempFile) return true;
+
+    result = await fetch("/temp_uploads/delete" + currentTempFile, {
+      method: 'POST',
+    }).then(function (response) {
+      if (response.ok) {
+        currentTempFile = '';
+        return response;
+      }
+
+      cropAlert.classList.remove('d-none');
+      cropAlert.innerHTML = 'Error deleting cropped image';
+      return false;
+    });
+
+    return result;
   }
 });
