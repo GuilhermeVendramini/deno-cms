@@ -24,7 +24,7 @@ let entitySchema = {
           ignoresErrors: false,
         },
       }),
-      carousel: vs.array({
+      carousels: vs.array({
         ifUndefined: [],
         separatedBy: ",",
         each: {

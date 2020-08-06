@@ -25,11 +25,11 @@
       <%- await include(
         `${Deno.cwd()}/core/modules/entity_reference/views/entityReferenceFormView.ejs`,
         {
-          field: 'carousel',
+          field: 'carousels',
           entities: {
             "block": ["carousel"],
           },
-          data: page?.content?.data?.carousel
+          data: page?.content?.data?.carousels
         }
       ) %>
     </div>

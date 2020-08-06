@@ -6,7 +6,7 @@ const fields: string[] = [
 ];
 const references: string[] = [
   "references",
-  "carousel"
+  "carousels"
 ];
 
 /**

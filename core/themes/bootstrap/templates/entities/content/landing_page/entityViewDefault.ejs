@@ -12,11 +12,11 @@
     <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: page.content}) %>
   <% } %>
   <% if (page?.content?.data) { %>
-    <% if (page.content.data?.carousel && page.content.data.carousel.length > 0) { %>
-      <% let carousel = page.content.data.carousel.sort(function(a, b){return a.weight - b.weight}) %>
-      <% for(var i=0; i < carousel.length; i++) { %>
-        <% if (carousel[i].entity.data?.items && carousel[i].entity.data.items.length > 0) { %>
-          <% let items = carousel[i].entity.data.items.sort(function(a, b){return a.weight - b.weight}) %>
+    <% if (page.content.data?.carousels && page.content.data.carousels.length > 0) { %>
+      <% let carousels = page.content.data.carousels.sort(function(a, b){return a.weight - b.weight}) %>
+      <% for(var i=0; i < carousels.length; i++) { %>
+        <% if (carousels[i].entity.data?.items && carousels[i].entity.data.items.length > 0) { %>
+          <% let items = carousels[i].entity.data.items.sort(function(a, b){return a.weight - b.weight}) %>
           <%- await include(
             `${Deno.cwd()}${Deno.env.get('THEME')}templates/components/carousel/carouselIndicatorsView.ejs`, 
             {
