@@ -1,7 +1,0 @@
-<% let 
-  dataCrop = JSON.stringify(crop); 
-  let width = resize && resize.width ? resize.width : crop.width;
-  let height = resize && resize.height ? resize.height : crop.height;
-%>
-<canvas width="<%= width %>" height="<%= height %>"  class="cropper-view" data-crop="<%= JSON.stringify(crop) %>" data-img-id="<%= imageID %>" data-crop-type="<%= type %>">
-</canvas>
