@@ -21,6 +21,19 @@
       <input type="text" required value="<%= page.content?.title %>" name="title" class="form-control">
     </div>
     <div class="form-group">
+      <label>Carousel</label>
+      <%- await include(
+        `${Deno.cwd()}/core/modules/entity_reference/views/entityReferenceFormView.ejs`,
+        {
+          field: 'carousel',
+          entities: {
+            "block": ["carousel"],
+          },
+          data: page?.content?.data?.carousel
+        }
+      ) %>
+    </div>
+    <div class="form-group">
       <label>References</label>
       <%- await include(
         `${Deno.cwd()}/core/modules/entity_reference/views/entityReferenceFormView.ejs`,

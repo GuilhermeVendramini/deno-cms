@@ -38,6 +38,8 @@ import mainMenuRouter from "./core/modules/main_menu/cms/routes/entityRoute.ts";
 import footerAPIRouter from "./core/modules/footer/api/routes/entityRoute.ts";
 import footerRouter from "./core/modules/footer/cms/routes/entityRoute.ts";
 import cropper from "./core/modules/cropper/routes/cropperRoute.ts";
+import carouselAPIRouter from "./core/modules/carousel/api/routes/entityRoute.ts";
+import carouselRouter from "./core/modules/carousel/cms/routes/entityRoute.ts";
 
 const session = new Session({ framework: "oak" });
 await session.init();
@@ -71,6 +73,7 @@ app.use(basicBlockAPIRouter.routes());
 app.use(landingPageAPIRouter.routes());
 app.use(mainMenuAPIRouter.routes());
 app.use(footerAPIRouter.routes());
+app.use(carouselAPIRouter.routes());
 
 /**
  * Themes routes
@@ -133,6 +136,7 @@ app.use(croppedImageRouter.routes());
  */
 
 app.use(basicBlockRouter.routes());
+app.use(carouselRouter.routes());
 
 /**
  * Cropper

@@ -1,0 +1,34 @@
+<%- await include(
+  `${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/header.ejs`, 
+  { 
+    title: page?.block?.title,
+    currentUser: currentUser,
+    main_menu: false,
+    currentUrl: false
+  });
+%>
+<div class="container">
+  <% if ((currentUser && currentUser._id.$oid == page?.block?.author?._id?.$oid) || (currentUser && currentUser?.roles.includes(0))) { %>
+    <%- await include(`${Deno.cwd()}/core/modules/admin/views/adminEntityActions.ejs`, { content: page.block}) %>
+  <% } %>
+  <% if (page?.block?.data) { %>
+  <h1 class="text-center mb-4"><%= page.block.title %></h1>
+    <% if (page.block.data?.items && page.block.data.items.length > 0) { %>
+      <% let items = page.block.data.items.sort(function(a, b){return a.weight - b.weight}) %>
+      <%- await include(
+        `${Deno.cwd()}${Deno.env.get('THEME')}templates/components/carousel/carouselIndicatorsView.ejs`, 
+        {
+          items: items, 
+          id: 'carouselIndicators1'
+        }); 
+      %>
+    <% } %>
+  <% } %>
+</div>
+<%- await include(
+  `${Deno.cwd()}${Deno.env.get('THEME')}templates/layout/footer.ejs`, 
+  {
+    footer_menu: false, 
+    currentUrl: false 
+  }); 
+%>

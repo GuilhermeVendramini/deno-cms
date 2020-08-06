@@ -1,25 +1,23 @@
-const type: string = "landing_page";
-const bundle: string = "content";
-const name: string = "Landing Page";
-const fields: string[] = [
-  "front",
-];
+const type: string = "carousel";
+const bundle: string = "block";
+const name: string = "Carousel";
+const fields: string[] = [];
 const references: string[] = [
-  "references",
-  "carousel"
+  'items'
 ];
 
 /**
  * Set true if this entity can be referenced.
  */
-const canBeReferenced: boolean = false;
+const canBeReferenced: boolean = true;
 
 /**
  * PathAuto pattern. Allows String values in the first entity level. 
  * Example: ':title'.
  */
 const pathPattern = [
-  "home",
+  bundle,
+  type,
   ":title",
 ];
 
