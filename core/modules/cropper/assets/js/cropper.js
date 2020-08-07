@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+  addSaveFormButton();
+
   const callback = function () {
     let image = mediaPreview.querySelector('img');
     let oldCropPreview = cropPreview.querySelector('img');
@@ -166,25 +168,24 @@ document.addEventListener('DOMContentLoaded', function () {
     let previewCrop = comparePreviewCrop();
     let cropButtonText = "Create crop";
     let cropButtonClass = "mt-2 btn btn-secondary";
+
     let oldResetCropButton = document.getElementById("reset-crop");
     oldResetCropButton?.remove();
+
+    let oldDeleteCropButton = document.getElementById("delete-crop");
+    oldDeleteCropButton?.remove();
 
     switch (previewCrop) {
       case 1:
         cropButtonText = "Save crop change";
         cropButtonClass = "mt-2 btn btn-warning";
-
-        let resetCropButton = document.createElement('a');
-        resetCropButton.setAttribute('href', '#');
-        resetCropButton.setAttribute('id', 'reset-crop');
-        resetCropButton.className = "ml-2 mt-2 btn btn-info";
-        resetCropButton.innerHTML = "Reset";
-        resetCropButton.onclick = cropResetAction;
-        cropPreview.append(resetCropButton);
+        createResetCropButton();
+        createDeleteCropButton();
         break;
       case 2:
         cropButtonText = "Crop saved";
         cropButtonClass = "mt-2 btn btn-success";
+        createDeleteCropButton();
         break;
     }
 
@@ -192,12 +193,43 @@ document.addEventListener('DOMContentLoaded', function () {
     cropButton.innerHTML = cropButtonText;
   }
 
-  function cropResetAction(e) {
+  function createDeleteCropButton() {
+    let deleteCropButton = document.createElement('a');
+    deleteCropButton.setAttribute('href', '#');
+    deleteCropButton.setAttribute('id', 'delete-crop');
+    deleteCropButton.className = "ml-2 mt-2 btn btn-danger";
+    deleteCropButton.innerHTML = "Remove crop";
+    deleteCropButton.onclick = deleteTempCropAction;
+    cropPreview.append(deleteCropButton);
+  }
+
+  function createResetCropButton() {
+    let resetCropButton = document.createElement('a');
+    resetCropButton.setAttribute('href', '#');
+    resetCropButton.setAttribute('id', 'reset-crop');
+    resetCropButton.className = "ml-2 mt-2 btn btn-info";
+    resetCropButton.innerHTML = "Reset crop";
+    resetCropButton.onclick = resetCropAction;
+    cropPreview.append(resetCropButton);
+  }
+
+  function resetCropAction(e) {
     e.preventDefault();
     let currentData = cropperValues[cropperType]['cropped']['data'];
 
     cropper.setData(currentData);
     cropperValues[cropperType]['preview'] = currentData;
+
+    let cropperValuesStr = JSON.stringify(cropperValues);
+
+    cropperField.value = cropperValuesStr;
+    updateCropButton();
+  }
+
+  async function deleteTempCropAction(e) {
+    e.preventDefault();
+    await removeTempFile();
+    delete cropperValues[cropperType]['cropped'];
 
     let cropperValuesStr = JSON.stringify(cropperValues);
 
@@ -249,5 +281,17 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     return result;
+  }
+
+  function addSaveFormButton() {
+    let saveFormButton = document.createElement('a');
+    saveFormButton.setAttribute('href', '#');
+    saveFormButton.setAttribute('id', 'save-form-crop');
+    saveFormButton.className = "btn btn-dark";
+    saveFormButton.innerHTML = "Save All";
+
+    let submitFormButton = document.querySelector('#entity-form button[type="submit"]');
+    submitFormButton.style.display = 'none';
+    submitFormButton.parentElement.append(saveFormButton);
   }
 });
