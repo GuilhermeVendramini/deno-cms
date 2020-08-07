@@ -20,6 +20,7 @@ $(document).ready(function () {
       mediaDisplay.removeClass("d-none");
 
       let mediaName = mediaVal.substring(mediaVal.lastIndexOf('/'));
+      mediaName = mediaName.replace(/[^\w\s]/gi, '');
       let preview = getMediaPreview(type, mediaName, mediaVal);
 
       mediapreview.html(preview);
@@ -37,8 +38,8 @@ $(document).ready(function () {
 
       let file = Object.values(result)[0];
       let url = file.tempfile;
-      let tempName = url.substring(url.lastIndexOf('/'));
-      let preview = getMediaPreview(type, file.filename, 'temp_uploads' + tempName);
+      let tempName = url.substring(url.lastIndexOf('/') + 1);
+      let preview = getMediaPreview(type, file.filename, 'temp_uploads/' + tempName);
       currentTempFile = tempName;
 
       mediapreview.html(preview);
@@ -50,7 +51,7 @@ $(document).ready(function () {
     mediaAlert.addClass('d-none');
 
     if (currentTempFile) {
-      result = await fetch("/temp_uploads/delete" + currentTempFile, {
+      result = await fetch("/temp_uploads/delete/" + currentTempFile, {
         method: 'POST',
       }).then(function (response) {
         if (response.ok) {

@@ -8,7 +8,9 @@ document.addEventListener('DOMContentLoaded', function () {
   let cropperTypeValue;
   let cropper;
   let cropAlert = document.getElementById("crop-alert");
-  let currentTempFile;
+  //let currentTempFile;
+  let fileName = 'default-name';
+  let cropFiles = {};
 
   if (cropperField.value) {
     let prepareCropperValues = JSON.parse(cropperField.value);
@@ -18,6 +20,11 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   addSaveFormButton();
+
+  function loadFileName() {
+    let linkFileName = document.querySelector('#media-preview > a').innerText;
+    fileName = linkFileName.substring(0, linkFileName.lastIndexOf('.'));
+  }
 
   const callback = function () {
     let image = mediaPreview.querySelector('img');
@@ -38,7 +45,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let oldCropActionButton = document.getElementById("crop-action");
     oldCropActionButton?.remove();
+
     let cropActionButton = document.createElement('a');
+
     cropActionButton.setAttribute('href', '#');
     cropActionButton.setAttribute('id', 'crop-action');
     cropActionButton.onclick = cropAction;
@@ -78,54 +87,79 @@ document.addEventListener('DOMContentLoaded', function () {
 
   async function cropAction(e) {
     e.preventDefault();
+    loadFileName();
+
     let cropperCanvas = cropper.getCroppedCanvas({ width: 160, height: 90 });
-    cropperCanvas.toBlob(async function (blob) {
-      let file = new File([blob], "filename.png");
-      await uploadMedia(file);
-      updateCropButton();
-    });
-  }
+    let preview = cropper.getData();
+    let cleanCropperType = cropperType.replace(/[^\w\s]/gi, '_');
 
-  async function uploadMedia(file) {
-    let form = new FormData();
-    form.append(`media`, file);
-    let result = await fetch('/media/temporary/image', {
-      method: 'POST',
-      body: form,
-    }).then(function (response) {
-      if (response.ok) {
-        return response.json();
-      }
-      return false;
+    cropperValues[cropperType] = { cropped: { data: preview } };
+    cropperValues[cropperType]['preview'] = preview;
+
+    cropperCanvas.toBlob(function (blob) {
+      cropFiles[cropperType] = new File([blob], fileName + '-' + cleanCropperType + ".png");
+      //await uploadTempFile(file);
     });
 
-    if (result) {
-      let file = Object.values(result)[0];
+    let cropperValuesStr = JSON.stringify(cropperValues);
+    cropperField.value = cropperValuesStr;
+    updateCropButton();
+    // cropperCanvas.toBlob(async function (blob) {
+    //   //let file = new File([blob], "filename.png");
+    //   //await uploadTempFile(file);
+    //   let preview = cropper.getData();
 
-      if ("tempfile" in file) {
-        await removeTempFile();
-        let preview = cropper.getData();
-        if (
-          cropperValues[cropperType] &&
-          cropperValues[cropperType]['cropped']
-        ) {
-          cropperValues[cropperType]['cropped'] = result;
-        } else {
-          cropperValues[cropperType] = { cropped: result };
-        }
-
-        cropperValues[cropperType]['cropped']['data'] = preview;
-        cropperValues[cropperType]['preview'] = preview;
-
-        let cropperValuesStr = JSON.stringify(cropperValues);
-        cropperField.value = cropperValuesStr;
-      }
-    } else {
-      cropAlert.classList.remove('d-none');
-      cropAlert.innerHTML = 'Error uploading cropped image.';
-    }
-    return result;
+    //   // if (
+    //   //   cropperValues[cropperType] &&
+    //   //   cropperValues[cropperType]['cropped']
+    //   // ) {
+    //   //   cropperValues[cropperType]['cropped'] = result;
+    //   // } else {
+    //   //   cropperValues[cropperType] = { cropped: result };
+    //   // }
+    // });
   }
+
+  // async function uploadTempFile(file) {
+  //   let form = new FormData();
+  //   form.append('media', file);
+  //   let result = await fetch('/media/temporary/image', {
+  //     method: 'POST',
+  //     body: form,
+  //   }).then(function (response) {
+  //     if (response.ok) {
+  //       return response.json();
+  //     }
+  //     return false;
+  //   });
+
+  //   if (result) {
+  //     let file = Object.values(result)[0];
+
+  //     if ("tempfile" in file) {
+  //       await removeTempFile();
+  //       let preview = cropper.getData();
+  //       if (
+  //         cropperValues[cropperType] &&
+  //         cropperValues[cropperType]['cropped']
+  //       ) {
+  //         cropperValues[cropperType]['cropped'] = result;
+  //       } else {
+  //         cropperValues[cropperType] = { cropped: result };
+  //       }
+
+  //       cropperValues[cropperType]['cropped']['data'] = preview;
+  //       cropperValues[cropperType]['preview'] = preview;
+
+  //       let cropperValuesStr = JSON.stringify(cropperValues);
+  //       cropperField.value = cropperValuesStr;
+  //     }
+  //   } else {
+  //     cropAlert.classList.remove('d-none');
+  //     cropAlert.innerHTML = 'Error uploading cropped image.';
+  //   }
+  //   return result;
+  // }
 
   let config = { childList: true };
   let observer = new MutationObserver(callback);
@@ -199,7 +233,7 @@ document.addEventListener('DOMContentLoaded', function () {
     deleteCropButton.setAttribute('id', 'delete-crop');
     deleteCropButton.className = "ml-2 mt-2 btn btn-danger";
     deleteCropButton.innerHTML = "Remove crop";
-    deleteCropButton.onclick = deleteTempCropAction;
+    deleteCropButton.onclick = deleteCropAction;
     cropPreview.append(deleteCropButton);
   }
 
@@ -226,10 +260,11 @@ document.addEventListener('DOMContentLoaded', function () {
     updateCropButton();
   }
 
-  async function deleteTempCropAction(e) {
+  async function deleteCropAction(e) {
     e.preventDefault();
-    await removeTempFile();
+    //await removeTempFile();
     delete cropperValues[cropperType]['cropped'];
+    delete cropFiles[cropperType];
 
     let cropperValuesStr = JSON.stringify(cropperValues);
 
@@ -253,35 +288,35 @@ document.addEventListener('DOMContentLoaded', function () {
     updateCropButton();
   }
 
-  async function removeTempFile() {
-    let result = true;
-    cropAlert.className = 'd-none';
-    let oldCropped;
+  // async function removeTempFile() {
+  //   let result = true;
+  //   cropAlert.className += ' d-none';
+  //   let oldCropped;
 
-    if (cropperValues[cropperType] &&
-      (oldCropped = cropperValues[cropperType]['cropped'])
-    ) {
-      let tempFile = oldCropped.media.tempfile;
-      currentTempFile = tempFile.substring(tempFile.lastIndexOf('/'));
-    }
+  //   if (cropperValues[cropperType] &&
+  //     (oldCropped = cropperValues[cropperType]['cropped'])
+  //   ) {
+  //     let tempFile = oldCropped.media.tempfile;
+  //     currentTempFile = tempFile.substring(tempFile.lastIndexOf('/'));
+  //   }
 
-    if (!currentTempFile) return true;
+  //   if (!currentTempFile) return true;
 
-    result = await fetch("/temp_uploads/delete" + currentTempFile, {
-      method: 'POST',
-    }).then(function (response) {
-      if (response.ok) {
-        currentTempFile = '';
-        return response;
-      }
+  //   result = await fetch("/temp_uploads/delete" + currentTempFile, {
+  //     method: 'POST',
+  //   }).then(function (response) {
+  //     if (response.ok) {
+  //       currentTempFile = '';
+  //       return response;
+  //     }
 
-      cropAlert.classList.remove('d-none');
-      cropAlert.innerHTML = 'Error deleting cropped image';
-      return false;
-    });
+  //     cropAlert.classList.remove('d-none');
+  //     cropAlert.innerHTML = 'Error deleting cropped image';
+  //     return false;
+  //   });
 
-    return result;
-  }
+  //   return result;
+  // }
 
   function addSaveFormButton() {
     let saveFormButton = document.createElement('a');
@@ -289,9 +324,88 @@ document.addEventListener('DOMContentLoaded', function () {
     saveFormButton.setAttribute('id', 'save-form-crop');
     saveFormButton.className = "btn btn-dark";
     saveFormButton.innerHTML = "Save All";
-
+    saveFormButton.onclick = saveForm;
     let submitFormButton = document.querySelector('#entity-form button[type="submit"]');
     submitFormButton.style.display = 'none';
     submitFormButton.parentElement.append(saveFormButton);
+  }
+
+  function saveForm(e) {
+    e.preventDefault();
+
+    // if (!cropperValues || Object.keys(cropperValues).length <= 0) return null;
+
+    // let cropFiles = {};
+    // let values = Object.values(cropperValues);
+
+    // values.forEach((_, i) => {
+    //   let cropperTypeKey = Object.keys(cropperValues)[i];
+
+    //   if (
+    //     cropperValues[cropperTypeKey]['cropped'] &&
+    //     (croppedData = cropperValues[cropperTypeKey]['cropped']['data'])
+    //   ) {
+    //     let cleanCropperType = cropperTypeKey.replace(/[^\w\s]/gi, '_');
+    //     cropper.setData(croppedData)
+    //     let cropperCanvas = cropper.getCroppedCanvas({ width: 160, height: 90 });
+    //     //await removeTempFile();
+
+    //     cropperCanvas.toBlob(function (blob) {
+    //       cropFiles[cropperTypeKey] = new File([blob], fileName + '-' + cleanCropperType + ".png");
+    //       //await uploadTempFile(file);
+    //     });
+    //   }
+
+    // });
+
+    console.log(cropFiles);
+
+    // let cropperCanvas = cropper.getCroppedCanvas({ width: 160, height: 90 });
+    // cropperCanvas.toBlob(async function (blob) {
+    //   let file = new File([blob], "filename.png");
+    //   await uploadTempFile(file);
+    //   updateCropButton();
+    // });
+  }
+
+  async function uploadFiles() {
+    let form = new FormData();
+    form.append('media', file);
+    let result = await fetch('/media/image', {
+      method: 'POST',
+      body: form,
+    }).then(function (response) {
+      if (response.ok) {
+        return response.json();
+      }
+      return false;
+    });
+
+    if (result) {
+      let file = Object.values(result)[0];
+
+      if ("tempfile" in file) {
+        //await removeTempFile();
+        let preview = cropper.getData();
+        if (
+          cropperValues[cropperType] &&
+          cropperValues[cropperType]['cropped']
+        ) {
+          cropperValues[cropperType]['cropped'] = result;
+        } else {
+          cropperValues[cropperType] = { cropped: result };
+        }
+
+        cropperValues[cropperType]['cropped']['data'] = preview;
+        cropperValues[cropperType]['preview'] = preview;
+
+        let cropperValuesStr = JSON.stringify(cropperValues);
+        cropperField.value = cropperValuesStr;
+      }
+    } else {
+      cropAlert.classList.remove('d-none');
+      cropAlert.innerHTML = 'Error uploading cropped image.';
+    }
+    return result;
   }
 });
