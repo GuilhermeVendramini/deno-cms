@@ -194,7 +194,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function cropResetAction(e) {
     e.preventDefault();
-    cropper.setData(cropperValues[cropperType]['cropped']['data']);
+    let currentData = cropperValues[cropperType]['cropped']['data'];
+
+    cropper.setData(currentData);
+    cropperValues[cropperType]['preview'] = currentData;
+
+    let cropperValuesStr = JSON.stringify(cropperValues);
+
+    cropperField.value = cropperValuesStr;
+    updateCropButton();
   }
 
   function cropend() {
