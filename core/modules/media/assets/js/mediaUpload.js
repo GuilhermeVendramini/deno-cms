@@ -47,23 +47,22 @@ $(document).ready(function () {
   });
 
   async function removeTempFile() {
-    let result = true;
     mediaAlert.addClass('d-none');
 
-    if (currentTempFile) {
-      result = await fetch("/temp_uploads/delete/" + currentTempFile, {
-        method: 'POST',
-      }).then(function (response) {
-        if (response.ok) {
-          currentTempFile = '';
-          return response;
-        }
+    if (currentTempFile == '') return true;
 
-        mediaAlert.removeClass('d-none');
-        mediaAlert.html('Error deleting file');
-        return false;
-      });
-    }
+    let result = await fetch("/temp_uploads/delete/" + currentTempFile, {
+      method: 'POST',
+    }).then(function (response) {
+      if (response.ok) {
+        currentTempFile = '';
+        return response;
+      }
+
+      mediaAlert.removeClass('d-none');
+      mediaAlert.html('Error deleting file');
+      return false;
+    });
 
     return result;
   }

@@ -235,8 +235,8 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function addSaveFormButton() {
-    let saveFormButton = document.createElement('button');
-    saveFormButton.setAttribute('type', 'submit');
+    let saveFormButton = document.createElement('a');
+    saveFormButton.setAttribute('href', '#');
     saveFormButton.setAttribute('id', 'save-form-crop');
     saveFormButton.className = "btn btn-dark";
     saveFormButton.innerHTML = "Save";
