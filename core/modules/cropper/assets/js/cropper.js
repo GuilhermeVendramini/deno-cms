@@ -245,9 +245,25 @@ document.addEventListener('DOMContentLoaded', function () {
     submitFormButton.parentElement.append(saveFormButton);
   }
 
+  function validatedFormSubmit() {
+    for (var i = 0; i < entityForm.elements.length; i++) {
+      if (
+        entityForm.elements[i].value === '' &&
+        entityForm.elements[i].hasAttribute('required')
+      ) {
+        cropAlert.classList.remove('d-none');
+        cropAlert.innerHTML = 'There are some required fields.';
+        return false;
+      }
+    }
+    return true;
+  }
+
   function saveForm(e) {
     e.preventDefault();
     cropAlert.className += ' d-none';
+
+    if (!validatedFormSubmit()) return false;
 
     for (var i = 0; i < entityForm.elements.length; i++) {
       if (
