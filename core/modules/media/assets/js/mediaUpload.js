@@ -20,7 +20,7 @@ $(document).ready(function () {
       mediaDisplay.removeClass("d-none");
 
       let mediaName = mediaVal.substring(mediaVal.lastIndexOf('/'));
-      mediaName = mediaName.replace(/[^\w\s]/gi, '');
+      mediaName = mediaName.replace('/', '');
       let preview = getMediaPreview(type, mediaName, mediaVal);
 
       mediapreview.html(preview);
@@ -141,6 +141,7 @@ $(document).ready(function () {
       await removeTempFile();
       $(this).unbind('submit').submit();
     }
+
   });
 
   window.onbeforeunload = async function () {

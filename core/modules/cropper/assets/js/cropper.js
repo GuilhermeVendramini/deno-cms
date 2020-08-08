@@ -8,9 +8,11 @@ document.addEventListener('DOMContentLoaded', function () {
   let cropperTypeValue;
   let cropper;
   let cropAlert = document.getElementById("crop-alert");
-  //let currentTempFile;
   let fileName = 'default-name';
   let cropFiles = {};
+  let croppedImageError = false;
+  let entityForm = document.getElementById("entity-form");
+  let submitFormButton = document.querySelector('#entity-form button[type="submit"]');
 
   if (cropperField.value) {
     let prepareCropperValues = JSON.parse(cropperField.value);
@@ -98,68 +100,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     cropperCanvas.toBlob(function (blob) {
       cropFiles[cropperType] = new File([blob], fileName + '-' + cleanCropperType + ".png");
-      //await uploadTempFile(file);
     });
 
     let cropperValuesStr = JSON.stringify(cropperValues);
     cropperField.value = cropperValuesStr;
     updateCropButton();
-    // cropperCanvas.toBlob(async function (blob) {
-    //   //let file = new File([blob], "filename.png");
-    //   //await uploadTempFile(file);
-    //   let preview = cropper.getData();
-
-    //   // if (
-    //   //   cropperValues[cropperType] &&
-    //   //   cropperValues[cropperType]['cropped']
-    //   // ) {
-    //   //   cropperValues[cropperType]['cropped'] = result;
-    //   // } else {
-    //   //   cropperValues[cropperType] = { cropped: result };
-    //   // }
-    // });
   }
-
-  // async function uploadTempFile(file) {
-  //   let form = new FormData();
-  //   form.append('media', file);
-  //   let result = await fetch('/media/temporary/image', {
-  //     method: 'POST',
-  //     body: form,
-  //   }).then(function (response) {
-  //     if (response.ok) {
-  //       return response.json();
-  //     }
-  //     return false;
-  //   });
-
-  //   if (result) {
-  //     let file = Object.values(result)[0];
-
-  //     if ("tempfile" in file) {
-  //       await removeTempFile();
-  //       let preview = cropper.getData();
-  //       if (
-  //         cropperValues[cropperType] &&
-  //         cropperValues[cropperType]['cropped']
-  //       ) {
-  //         cropperValues[cropperType]['cropped'] = result;
-  //       } else {
-  //         cropperValues[cropperType] = { cropped: result };
-  //       }
-
-  //       cropperValues[cropperType]['cropped']['data'] = preview;
-  //       cropperValues[cropperType]['preview'] = preview;
-
-  //       let cropperValuesStr = JSON.stringify(cropperValues);
-  //       cropperField.value = cropperValuesStr;
-  //     }
-  //   } else {
-  //     cropAlert.classList.remove('d-none');
-  //     cropAlert.innerHTML = 'Error uploading cropped image.';
-  //   }
-  //   return result;
-  // }
 
   let config = { childList: true };
   let observer = new MutationObserver(callback);
@@ -262,7 +208,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   async function deleteCropAction(e) {
     e.preventDefault();
-    //await removeTempFile();
+
     delete cropperValues[cropperType]['cropped'];
     delete cropFiles[cropperType];
 
@@ -288,89 +234,53 @@ document.addEventListener('DOMContentLoaded', function () {
     updateCropButton();
   }
 
-  // async function removeTempFile() {
-  //   let result = true;
-  //   cropAlert.className += ' d-none';
-  //   let oldCropped;
-
-  //   if (cropperValues[cropperType] &&
-  //     (oldCropped = cropperValues[cropperType]['cropped'])
-  //   ) {
-  //     let tempFile = oldCropped.media.tempfile;
-  //     currentTempFile = tempFile.substring(tempFile.lastIndexOf('/'));
-  //   }
-
-  //   if (!currentTempFile) return true;
-
-  //   result = await fetch("/temp_uploads/delete" + currentTempFile, {
-  //     method: 'POST',
-  //   }).then(function (response) {
-  //     if (response.ok) {
-  //       currentTempFile = '';
-  //       return response;
-  //     }
-
-  //     cropAlert.classList.remove('d-none');
-  //     cropAlert.innerHTML = 'Error deleting cropped image';
-  //     return false;
-  //   });
-
-  //   return result;
-  // }
-
   function addSaveFormButton() {
-    let saveFormButton = document.createElement('a');
-    saveFormButton.setAttribute('href', '#');
+    let saveFormButton = document.createElement('button');
+    saveFormButton.setAttribute('type', 'submit');
     saveFormButton.setAttribute('id', 'save-form-crop');
     saveFormButton.className = "btn btn-dark";
-    saveFormButton.innerHTML = "Save All";
+    saveFormButton.innerHTML = "Save";
     saveFormButton.onclick = saveForm;
-    let submitFormButton = document.querySelector('#entity-form button[type="submit"]');
     submitFormButton.style.display = 'none';
     submitFormButton.parentElement.append(saveFormButton);
   }
 
   function saveForm(e) {
     e.preventDefault();
+    cropAlert.className += ' d-none';
 
-    // if (!cropperValues || Object.keys(cropperValues).length <= 0) return null;
+    for (var i = 0; i < entityForm.elements.length; i++) {
+      if (
+        entityForm.elements[i].value === '' &&
+        entityForm.elements[i].hasAttribute('required')
+      ) {
+        cropAlert.classList.remove('d-none');
+        cropAlert.innerHTML = 'There are some required fields.';
+        return false;
+      }
+    }
 
-    // let cropFiles = {};
-    // let values = Object.values(cropperValues);
+    if (!cropFiles || Object.keys(cropFiles).length === 0) {
+      submitFormButton.click();
+      return;
+    }
 
-    // values.forEach((_, i) => {
-    //   let cropperTypeKey = Object.keys(cropperValues)[i];
+    let croppedFilesValues = Object.values(cropFiles);
+    let valuesLength = croppedFilesValues.length;
 
-    //   if (
-    //     cropperValues[cropperTypeKey]['cropped'] &&
-    //     (croppedData = cropperValues[cropperTypeKey]['cropped']['data'])
-    //   ) {
-    //     let cleanCropperType = cropperTypeKey.replace(/[^\w\s]/gi, '_');
-    //     cropper.setData(croppedData)
-    //     let cropperCanvas = cropper.getCroppedCanvas({ width: 160, height: 90 });
-    //     //await removeTempFile();
+    croppedFilesValues.forEach(async (crop, index) => {
+      let cropTypeKey = Object.keys(cropFiles)[index];
+      await generateCroppedImage(crop, cropTypeKey);
 
-    //     cropperCanvas.toBlob(function (blob) {
-    //       cropFiles[cropperTypeKey] = new File([blob], fileName + '-' + cleanCropperType + ".png");
-    //       //await uploadTempFile(file);
-    //     });
-    //   }
-
-    // });
-
-    console.log(cropFiles);
-
-    // let cropperCanvas = cropper.getCroppedCanvas({ width: 160, height: 90 });
-    // cropperCanvas.toBlob(async function (blob) {
-    //   let file = new File([blob], "filename.png");
-    //   await uploadTempFile(file);
-    //   updateCropButton();
-    // });
+      if (valuesLength === index + 1 && !croppedImageError) {
+        submitFormButton.click();
+      }
+    });
   }
 
-  async function uploadFiles() {
+  async function generateCroppedImage(crop, cropTypeKey) {
     let form = new FormData();
-    form.append('media', file);
+    form.append('crop', crop);
     let result = await fetch('/media/image', {
       method: 'POST',
       body: form,
@@ -381,28 +291,17 @@ document.addEventListener('DOMContentLoaded', function () {
       return false;
     });
 
-    if (result) {
+    if (result && result['crop']) {
       let file = Object.values(result)[0];
 
-      if ("tempfile" in file) {
-        //await removeTempFile();
-        let preview = cropper.getData();
-        if (
-          cropperValues[cropperType] &&
-          cropperValues[cropperType]['cropped']
-        ) {
-          cropperValues[cropperType]['cropped'] = result;
-        } else {
-          cropperValues[cropperType] = { cropped: result };
-        }
-
-        cropperValues[cropperType]['cropped']['data'] = preview;
-        cropperValues[cropperType]['preview'] = preview;
+      if ("url" in file) {
+        cropperValues[cropTypeKey]['cropped']['crop'] = result['crop'];
 
         let cropperValuesStr = JSON.stringify(cropperValues);
         cropperField.value = cropperValuesStr;
       }
     } else {
+      croppedImageError = true;
       cropAlert.classList.remove('d-none');
       cropAlert.innerHTML = 'Error uploading cropped image.';
     }
