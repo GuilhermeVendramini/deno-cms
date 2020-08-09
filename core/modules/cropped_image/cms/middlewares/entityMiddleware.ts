@@ -30,7 +30,8 @@ class EntityMiddleware extends MediaEntityMiddleware {
     let page: any;
     let media: MediaEntity | undefined;
     let id: string = "";
-    let file = "";
+    let file: string = "";
+    let cropper: string = "";
 
     try {
       let data: any = {};
@@ -42,6 +43,7 @@ class EntityMiddleware extends MediaEntityMiddleware {
       id = bodyValue.get("id");
       title = bodyValue.get("title");
       file = bodyValue.get("file");
+      cropper = bodyValue.get("cropper");
       published = bodyValue.get("published") ? true : false;
       data["file"] = file;
 
@@ -169,6 +171,18 @@ class EntityMiddleware extends MediaEntityMiddleware {
 
       if (!id && file) {
         await mediaHelper.deleteFile(file);
+      }
+
+      let cropperFiles: string[] | undefined;
+
+      if (!id && cropper) {
+        cropperFiles = await cropperImageHelper.getAllCropperFiles(cropper);
+      }
+
+      if (cropperFiles && cropperFiles.length > 0) {
+        cropperFiles.forEach(async (file) => {
+          await mediaHelper.deleteFile(file);
+        });
       }
 
       page = {
