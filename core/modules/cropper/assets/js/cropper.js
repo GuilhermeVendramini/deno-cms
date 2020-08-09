@@ -4,7 +4,10 @@ document.addEventListener('DOMContentLoaded', function () {
   let cropPreview = document.getElementById("cropPreview");
   let cropperField = document.querySelector("input#cropper");
   let cropperValues = {};
-  let cropperType = cropperOptions.querySelector('li.active a')?.getAttribute('data-aspect-ratio');
+  let cropperActiveOption = cropperOptions.querySelector('li.active a');
+  let cropperType = cropperActiveOption?.getAttribute('data-aspect-ratio');
+  let cropperWidth = cropperActiveOption?.getAttribute('data-width');
+  let cropperHeight = cropperActiveOption?.getAttribute('data-height');
   let cropperTypeValue;
   let cropper;
   let cropAlert = document.getElementById("crop-alert");
@@ -91,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
     e.preventDefault();
     loadFileName();
 
-    let cropperCanvas = cropper.getCroppedCanvas({ width: 160, height: 90 });
+    let cropperCanvas = cropper.getCroppedCanvas({ width: cropperWidth, height: cropperHeight });
     let preview = cropper.getData();
     let cleanCropperType = cropperType.replace(/[^\w\s]/gi, '_');
 
@@ -123,6 +126,9 @@ document.addEventListener('DOMContentLoaded', function () {
     active?.classList.remove("active");
     this.parentNode.className += ' active';
     cropperType = this.getAttribute('data-aspect-ratio');
+    cropperWidth = cropperActiveOption?.getAttribute('data-width');
+    cropperHeight = cropperActiveOption?.getAttribute('data-height');
+
     if (
       cropperValues[cropperType] &&
       cropperValues[cropperType]['preview']

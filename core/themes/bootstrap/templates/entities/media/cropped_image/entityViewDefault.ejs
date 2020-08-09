@@ -14,7 +14,7 @@
   <h1 class="text-center mb-4"><%= page.media.title %></h1>
     <div class="media text-center">
       <% if (page.media.data?.file) { %>
-        <img alt="<%= page.media.data?.alt %>" id="img-original" src="/<%= page.media.data.file %>">
+        <img alt="<%= page.media.data?.alt %>" src="/<%= page.media.data.file %>">
       <% } %>
     </div>
     <% if (page.media.data?.cropper) { 
@@ -22,9 +22,10 @@
     %>
       <fieldset class="border p-2 mt-2">
         <legend class="w-auto">Crops</legend>
-        <div class="mb-3">
+        <div class="mb-3 text-center">
           <% for (let c in cropper) { %>
             <div class="mb-2">
+              <img class="mw-100" alt="<%= page.media.data?.alt %>" src="/<%= cropper[c].cropped.crop.url %>">
             </div>
           <% } %>
         </div>

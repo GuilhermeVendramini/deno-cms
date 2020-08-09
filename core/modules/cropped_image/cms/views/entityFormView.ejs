@@ -38,15 +38,24 @@
     </div>
     <div class="form-group">
       <label for="file">Crops</label>
-      <ul id="cropperOptions" class="list-group list-group-horizontal-sm">
+      <ul id="cropperOptions" class="list-group list-group-horizontal-sm text-center">
         <li class="list-group-item active">
-          <a data-aspect-ratio="16/9" href="#">Crop 16/9</a>
+          <a data-aspect-ratio="16/9" data-width="1200" data-height="675" href="#">
+            Crop 16/9 <br>
+            <small>1200x675</small>
+          </a>
         </li>
         <li class="list-group-item">
-          <a data-aspect-ratio="4/3" href="#">Crop 4/3</a>
+          <a data-aspect-ratio="4/3" data-width="200" data-height="150" href="#">
+            Crop 4/3 <br>
+            <small>200x150</small>
+          </a>
         </li>
         <li class="list-group-item">
-          <a data-aspect-ratio="1/1" href="#">Crop 1/1</a>
+          <a data-aspect-ratio="1/1" data-width="100" data-height="100" href="#">
+            Crop 1/1 <br>
+            <small>100x100</small>
+          </a>
         </li>
       </ul>
       <div class="crop-preview mt-2" id="cropPreview"></div>

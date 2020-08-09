@@ -46,13 +46,15 @@
             <% } else if (references[i].entity.type == 'basic_block') { %>
               <div class="mb-4 bg-light p-5">
                 <h2 class="mb-3"><%= references[i].entity.title %></h2>
-                <%- references[i].entity.data?.body %>
+                <div class="px-5"><%- references[i].entity.data?.body %></div>
               </div>
             <% } else if (references[i].entity.type == 'basic_page') { %>
               <div class="mb-4 bg-light p-5">
                 <h2 class="mb-3"><%= references[i].entity.title %></h2>
-                <%- references[i].entity.data?.body.substring(0,200) %>
-                <a class="font-weight-bold" href="<%= references[i].entity.path %>">see more</a>
+                <div class="px-5">
+                  <%- references[i].entity.data?.body.substring(0,200) %>
+                  <a class="font-weight-bold" href="<%= references[i].entity.path %>">see more</a>
+                </div>
               </div>
             <% } %>
           <% } %>
