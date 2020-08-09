@@ -6,8 +6,15 @@
   </ol>
   <div class="carousel-inner">
     <% for(var i=0; i < items.length; i++) { %>
-      <div class="carousel-item <%- i == 0 ? 'active' : ''%>">
-        <img id="img-carousel-<%= i %>" src="/<%= items[i].entity.data.file %>" class="d-block w-100" alt="<%= items[i].entity.data?.alt %>">
+      <%
+        let file = items[i].entity.data.file;
+        if (items[i]?.entity?.data?.cropper) {
+          let cropper = JSON.parse(items[i].entity.data.cropper);
+          file = cropper['16/9']?.cropped?.crop?.url;
+        }
+      %>
+      <div class="carousel-item <%- i == 0 ? 'active' : '' %>">
+        <img id="img-carousel-<%= i %>" src="/<%= file %>" class="d-block w-100" alt="<%= items[i].entity.data?.alt %>">
       </div>
     <% } %>
   </div>
