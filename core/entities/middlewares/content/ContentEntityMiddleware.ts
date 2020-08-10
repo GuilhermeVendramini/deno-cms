@@ -1,12 +1,9 @@
-import {
-  ContentEntity,
-} from "../../src/ContentEntity.ts";
-import {
-  Status,
-} from "oak";
+import { ContentEntity } from "../../src/ContentEntity.ts";
+import { Status } from "oak";
 import vs from "value_schema";
 import pathauto from "../../../../shared/utils/pathauto/defaultPathauto.ts";
 import entityReferenceHelper from "../../../modules/entity_reference/helpers/entityReferenceHelper.ts";
+import cmsErrors from "../../../../shared/utils/errors/cms/cmsErrors.ts";
 
 export default abstract class ContentEntityMiddleware {
   protected entity: any;
@@ -19,10 +16,7 @@ export default abstract class ContentEntityMiddleware {
     entitySchema = entitySchema;
   }
 
-  async add(
-    context: Record<string, any>,
-    next: Function,
-  ) {
+  async add(context: Record<string, any>, next: Function) {
     try {
       let id: string = context.params?.id;
       let content: {} | undefined;
@@ -41,23 +35,12 @@ export default abstract class ContentEntityMiddleware {
       context["getPage"] = page;
       await next();
     } catch (error) {
-      console.log(error.message);
-
-      let page = {
-        content: false,
-        entity: this.entity,
-        error: true,
-        message: error.message,
-      };
-      context["getPage"] = page;
-      await next();
+      await cmsErrors.NotFoundError(context, Status.NotFound, error);
+      return;
     }
   }
 
-  async addPost(
-    context: Record<string, any>,
-    next: Function,
-  ) {
+  async addPost(context: Record<string, any>, next: Function) {
     let title: string;
     let published: boolean = false;
     let page: any;
@@ -90,7 +73,7 @@ export default abstract class ContentEntityMiddleware {
 
         let entities = await entityReferenceHelper.addEntityRelation(
           this.entity.references,
-          context,
+          context
         );
 
         Object.keys(entities).map((field) => {
@@ -99,10 +82,11 @@ export default abstract class ContentEntityMiddleware {
         });
       }
 
-      validated = vs.applySchemaObject(
-        this.entitySchema,
-        { title: title, data: data, published: published },
-      );
+      validated = vs.applySchemaObject(this.entitySchema, {
+        title: title,
+        data: data,
+        published: published,
+      });
 
       let path: string | undefined;
       let pathPattern: any[] = new Array();
@@ -117,11 +101,7 @@ export default abstract class ContentEntityMiddleware {
           pathPattern.push(p);
         });
 
-        path = await pathauto.generate(
-          this.entity.bundle,
-          pathPattern,
-          id,
-        );
+        path = await pathauto.generate(this.entity.bundle, pathPattern, id);
 
         content = new ContentEntity(
           validated.data,
@@ -130,7 +110,7 @@ export default abstract class ContentEntityMiddleware {
           currentUser,
           Date.now(),
           validated.published,
-          path,
+          path
         );
 
         if (id) {
@@ -166,9 +146,7 @@ export default abstract class ContentEntityMiddleware {
       console.log(error.message);
 
       if (id) {
-        content = await this.repository.findOneByID(
-          id,
-        ) as ContentEntity;
+        content = (await this.repository.findOneByID(id)) as ContentEntity;
       }
 
       page = {
@@ -184,17 +162,12 @@ export default abstract class ContentEntityMiddleware {
     }
   }
 
-  async view(
-    context: Record<string, any>,
-    next: Function,
-  ) {
+  async view(context: Record<string, any>, next: Function) {
     try {
       let path: string = context.request.url.pathname;
       let content: any | undefined;
 
-      content = await this.repository.findOneByFilters(
-        { path: path },
-      );
+      content = await this.repository.findOneByFilters({ path: path });
 
       if (content && Object.keys(content).length != 0) {
         let page = {
@@ -210,23 +183,12 @@ export default abstract class ContentEntityMiddleware {
       }
       context.throw(Status.NotFound, "NotFound");
     } catch (error) {
-      console.log(error.message);
-
-      let page = {
-        content: false,
-        entity: this.entity,
-        error: true,
-        message: error.message,
-      };
-      context["getPage"] = page;
-      await next();
+      await cmsErrors.NotFoundError(context, Status.NotFound, error);
+      return;
     }
   }
 
-  async delete(
-    context: Record<string, any>,
-    next: Function,
-  ) {
+  async delete(context: Record<string, any>, next: Function) {
     try {
       let id: string = context.params.id;
       let content: any | undefined;
@@ -246,23 +208,12 @@ export default abstract class ContentEntityMiddleware {
       }
       context.throw(Status.NotFound, "NotFound");
     } catch (error) {
-      console.log(error.message);
-
-      let page = {
-        content: false,
-        entity: this.entity,
-        error: true,
-        message: error.message,
-      };
-      context["getPage"] = page;
-      await next();
+      await cmsErrors.NotFoundError(context, Status.NotFound, error);
+      return;
     }
   }
 
-  async deletePost(
-    context: Record<string, any>,
-    next: Function,
-  ) {
+  async deletePost(context: Record<string, any>, next: Function) {
     let path = `/admin/${this.entity.bundle}`;
     let content: any | undefined;
     let id: string = "";
