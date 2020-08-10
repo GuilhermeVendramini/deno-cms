@@ -115,6 +115,23 @@ curl -H "Authorization: Bearer <LOGGED-USER-TOKEN>" http://localhost:8000/api/<B
 curl -H "Authorization: Bearer <LOGGED-USER-TOKEN>" http://localhost:8000/api/<BUNDLE>/<TYPE>/<CONTENT-ID>
 ```
 
+# SMTP
+
+#### Configuration
+
+Create the file "config.ts" inside *core/modules/smtp* with the following configuration structure:
+
+```ts
+const config = {
+  hostname: "smtp.123.com",
+  port: 25,
+  username: "username",
+  password: "password",
+};
+
+export default config;
+```
+
 ## TODO
 
  - [ ] Tests
