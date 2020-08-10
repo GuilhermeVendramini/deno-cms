@@ -101,7 +101,7 @@ Bundle | Types
 content | basic_page \| article \| landing_page
 media | image \| video \| cropped_image
 taxonomy | tags \| categories
-block | basic_block
+block | basic_block \| carousel
 menu_item | main_menu \| footer
 
 
