@@ -8,11 +8,6 @@ export default {
     try {
       let page = context.getPage;
 
-      if (page.error) {
-        await cmsErrors.NotFoundError(context, Status.NotFound, page.message);
-        return;
-      }
-
       context.response.body = await renderFileToString(
         `${Deno.cwd()}/core/modules/${
           page.entity.type
@@ -59,11 +54,6 @@ export default {
     try {
       let page = context.getPage;
 
-      if (page.error) {
-        await cmsErrors.NotFoundError(context, Status.NotFound, page.message);
-        return;
-      }
-
       context.response.body = await renderFileToString(
         `${Deno.cwd()}/core/modules/${
           page.entity.type
@@ -83,12 +73,6 @@ export default {
   async view(context: Record<string, any>) {
     try {
       let page = context.getPage;
-
-      if (page.error) {
-        await cmsErrors.NotFoundError(context, Status.NotFound, page.message);
-        return;
-      }
-
       let currentUser = await currentUserSession.get(context);
 
       context.response.body = await renderFileToString(
@@ -111,11 +95,6 @@ export default {
     try {
       let page = context.getPage;
 
-      if (page.error) {
-        await cmsErrors.NotFoundError(context, Status.NotFound, page.message);
-        return;
-      }
-
       context.response.body = await renderFileToString(
         `${Deno.cwd()}/core/modules/${
           page.entity.type
@@ -133,8 +112,13 @@ export default {
   },
 
   async deletePost(context: Record<string, any>) {
-    let path: string = context.getRedirect;
-    context.response.redirect(path);
-    return;
+    try {
+      let path: string = context.getRedirect;
+      context.response.redirect(path);
+      return;
+    } catch (error) {
+      await cmsErrors.NotFoundError(context, Status.NotFound, error);
+      return;
+    }
   },
 };

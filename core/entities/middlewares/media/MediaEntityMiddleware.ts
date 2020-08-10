@@ -1,13 +1,10 @@
-import {
-  MediaEntity,
-} from "../../src/MediaEntity.ts";
-import {
-  Status,
-} from "oak";
+import { MediaEntity } from "../../src/MediaEntity.ts";
+import { Status } from "oak";
 import vs from "value_schema";
 import pathauto from "../../../../shared/utils/pathauto/defaultPathauto.ts";
 import entityReferenceHelper from "../../../modules/entity_reference/helpers/entityReferenceHelper.ts";
 import mediaHelper from "../../../modules/media/helpers/mediaHelper.ts";
+import cmsErrors from "../../../../shared/utils/errors/cms/cmsErrors.ts";
 
 export default abstract class MediaEntityMiddleware {
   protected entity: any;
@@ -20,10 +17,7 @@ export default abstract class MediaEntityMiddleware {
     entitySchema = entitySchema;
   }
 
-  async list(
-    context: Record<string, any>,
-    next: Function,
-  ) {
+  async list(context: Record<string, any>, next: Function) {
     try {
       let media: [] | undefined;
       let pageNumber: number = 0;
@@ -45,7 +39,7 @@ export default abstract class MediaEntityMiddleware {
       }
 
       if (published === "true" || published === "false") {
-        published = (published === "true");
+        published = published === "true";
       } else {
         published = undefined;
       }
@@ -58,7 +52,7 @@ export default abstract class MediaEntityMiddleware {
         this.entity.type,
         published,
         skip,
-        limit,
+        limit
       );
 
       let page = {
@@ -79,25 +73,14 @@ export default abstract class MediaEntityMiddleware {
       context["getPage"] = page;
       await next();
     } catch (error) {
-      let page = {
-        media: false,
-        entity: this.entity,
-        error: true,
-        message: error.message,
-      };
-      context["getPage"] = page;
-      await next();
+      await cmsErrors.NotFoundError(context, Status.NotFound, error);
+      return;
     }
   }
 
-  async add(
-    context: Record<string, any>,
-    next: Function,
-  ) {
-    let id: string = "";
-
+  async add(context: Record<string, any>, next: Function) {
     try {
-      id = context.params?.id;
+      let id: string = context.params?.id;
       let media: {} | undefined;
 
       if (id) {
@@ -115,22 +98,12 @@ export default abstract class MediaEntityMiddleware {
       context["getPage"] = page;
       await next();
     } catch (error) {
-      let page = {
-        id: id,
-        media: false,
-        entity: this.entity,
-        error: true,
-        message: error.message,
-      };
-      context["getPage"] = page;
-      await next();
+      await cmsErrors.NotFoundError(context, Status.NotFound, error);
+      return;
     }
   }
 
-  async addPost(
-    context: Record<string, any>,
-    next: Function,
-  ) {
+  async addPost(context: Record<string, any>, next: Function) {
     let title: string;
     let published: boolean = false;
     let page: any;
@@ -163,7 +136,7 @@ export default abstract class MediaEntityMiddleware {
 
         let entities = await entityReferenceHelper.addEntityRelation(
           this.entity.references,
-          context,
+          context
         );
 
         Object.keys(entities).map((field) => {
@@ -172,10 +145,11 @@ export default abstract class MediaEntityMiddleware {
         });
       }
 
-      validated = vs.applySchemaObject(
-        this.entitySchema,
-        { title: title, data: data, published: published },
-      );
+      validated = vs.applySchemaObject(this.entitySchema, {
+        title: title,
+        data: data,
+        published: published,
+      });
 
       let path: string | undefined;
       let pathPattern: any[] = new Array();
@@ -190,11 +164,7 @@ export default abstract class MediaEntityMiddleware {
           pathPattern.push(p);
         });
 
-        path = await pathauto.generate(
-          this.entity.bundle,
-          pathPattern,
-          id,
-        );
+        path = await pathauto.generate(this.entity.bundle, pathPattern, id);
 
         media = new MediaEntity(
           validated.data,
@@ -203,7 +173,7 @@ export default abstract class MediaEntityMiddleware {
           currentUser,
           Date.now(),
           validated.published,
-          path,
+          path
         );
 
         let oldFile: string | undefined;
@@ -245,7 +215,7 @@ export default abstract class MediaEntityMiddleware {
       context.throw(Status.NotAcceptable, "Not Acceptable");
     } catch (error) {
       if (id) {
-        media = await this.repository.findOneByID(id) as MediaEntity;
+        media = (await this.repository.findOneByID(id)) as MediaEntity;
       }
 
       if (!id && file) {
@@ -265,10 +235,7 @@ export default abstract class MediaEntityMiddleware {
     }
   }
 
-  async view(
-    context: Record<string, any>,
-    next: Function,
-  ) {
+  async view(context: Record<string, any>, next: Function) {
     try {
       let path: string = context.request.url.pathname;
       let media: any | undefined;
@@ -288,25 +255,14 @@ export default abstract class MediaEntityMiddleware {
       }
       context.throw(Status.NotFound, "NotFound");
     } catch (error) {
-      let page = {
-        media: false,
-        entity: this.entity,
-        error: true,
-        message: error.message,
-      };
-      context["getPage"] = page;
-      await next();
+      await cmsErrors.NotFoundError(context, Status.NotFound, error);
+      return;
     }
   }
 
-  async delete(
-    context: Record<string, any>,
-    next: Function,
-  ) {
-    let id: string = "";
-
+  async delete(context: Record<string, any>, next: Function) {
     try {
-      id = context.params.id;
+      let id: string = context.params.id;
       let media: any | undefined;
       media = await this.repository.findOneByID(id);
 
@@ -325,22 +281,12 @@ export default abstract class MediaEntityMiddleware {
       }
       context.throw(Status.NotFound, "NotFound");
     } catch (error) {
-      let page = {
-        id: id,
-        media: false,
-        entity: this.entity,
-        error: true,
-        message: error.message,
-      };
-      context["getPage"] = page;
-      await next();
+      await cmsErrors.NotFoundError(context, Status.NotFound, error);
+      return;
     }
   }
 
-  async deletePost(
-    context: Record<string, any>,
-    next: Function,
-  ) {
+  async deletePost(context: Record<string, any>, next: Function) {
     let path = `/admin/${this.entity.bundle}/${this.entity.type}`;
     let media: any | undefined;
     let id: string = "";

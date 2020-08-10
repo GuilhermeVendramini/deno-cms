@@ -1,13 +1,10 @@
-import {
-  MenuItemEntity,
-} from "../../src/MenuItemEntity.ts";
-import {
-  Status,
-} from "oak";
+import { MenuItemEntity } from "../../src/MenuItemEntity.ts";
+import { Status } from "oak";
 import vs from "value_schema";
 import pathauto from "../../../../shared/utils/pathauto/defaultPathauto.ts";
 import entityReferenceHelper from "../../../modules/entity_reference/helpers/entityReferenceHelper.ts";
 import menuItemHelper from "../../helpers/menu_item/menuItemHelper.ts";
+import cmsErrors from "../../../../shared/utils/errors/cms/cmsErrors.ts";
 
 export default abstract class MenuItemEntityMiddleware {
   protected entity: any;
@@ -20,10 +17,7 @@ export default abstract class MenuItemEntityMiddleware {
     entitySchema = entitySchema;
   }
 
-  async list(
-    context: Record<string, any>,
-    next: Function,
-  ) {
+  async list(context: Record<string, any>, next: Function) {
     try {
       let menuItem: [] | undefined;
       let pageNumber: number = 0;
@@ -45,7 +39,7 @@ export default abstract class MenuItemEntityMiddleware {
       }
 
       if (published === "true" || published === "false") {
-        published = (published === "true");
+        published = published === "true";
       } else {
         published = undefined;
       }
@@ -58,7 +52,7 @@ export default abstract class MenuItemEntityMiddleware {
         this.entity.type,
         published,
         skip,
-        limit,
+        limit
       );
 
       menuItem?.sort((i1: any, i2: any) => {
@@ -71,9 +65,10 @@ export default abstract class MenuItemEntityMiddleware {
         error: false,
         message: false,
         pager: {
-          next: menuItem && menuItem.length >= limit
-            ? Number(pageNumber) + 1
-            : false,
+          next:
+            menuItem && menuItem.length >= limit
+              ? Number(pageNumber) + 1
+              : false,
           previous: pageNumber == 0 ? false : Number(pageNumber) - 1,
           current: pageNumber == 0 ? 1 : Number(pageNumber) + 1,
         },
@@ -85,31 +80,16 @@ export default abstract class MenuItemEntityMiddleware {
       context["getPage"] = page;
       await next();
     } catch (error) {
-      console.log(error.message);
-
-      let page = {
-        media: false,
-        entity: this.entity,
-        error: true,
-        message: error.message,
-      };
-      context["getPage"] = page;
-      await next();
+      await cmsErrors.NotFoundError(context, Status.NotFound, error);
+      return;
     }
   }
 
-  async add(
-    context: Record<string, any>,
-    next: Function,
-  ) {
-    let id: string = "";
-
+  async add(context: Record<string, any>, next: Function) {
     try {
-      id = context.params?.id;
+      let id: string = context.params?.id;
       let menuItem: any | undefined;
-      let menuTree: any[] = await menuItemHelper.getMenuTree(
-        this.entity.type,
-      );
+      let menuTree: any[] = await menuItemHelper.getMenuTree(this.entity.type);
 
       if (id) {
         menuItem = await this.repository.findOneByID(id);
@@ -127,22 +107,12 @@ export default abstract class MenuItemEntityMiddleware {
       context["getPage"] = page;
       await next();
     } catch (error) {
-      let page = {
-        id: id,
-        menuItem: false,
-        entity: this.entity,
-        error: true,
-        message: error.message,
-      };
-      context["getPage"] = page;
-      await next();
+      await cmsErrors.NotFoundError(context, Status.NotFound, error);
+      return;
     }
   }
 
-  async addPost(
-    context: Record<string, any>,
-    next: Function,
-  ) {
+  async addPost(context: Record<string, any>, next: Function) {
     let title: string;
     let url: string;
     let parent: string;
@@ -179,7 +149,7 @@ export default abstract class MenuItemEntityMiddleware {
 
         let entities = await entityReferenceHelper.addEntityRelation(
           this.entity.references,
-          context,
+          context
         );
 
         Object.keys(entities).map((field) => {
@@ -188,16 +158,13 @@ export default abstract class MenuItemEntityMiddleware {
         });
       }
 
-      validated = vs.applySchemaObject(
-        this.entitySchema,
-        {
-          title: title,
-          url: url,
-          parent: parent,
-          data: data,
-          published: published,
-        },
-      );
+      validated = vs.applySchemaObject(this.entitySchema, {
+        title: title,
+        url: url,
+        parent: parent,
+        data: data,
+        published: published,
+      });
 
       let path: string | undefined;
       let pathPattern: any[] = new Array();
@@ -212,11 +179,7 @@ export default abstract class MenuItemEntityMiddleware {
           pathPattern.push(p);
         });
 
-        path = await pathauto.generate(
-          this.entity.bundle,
-          pathPattern,
-          id,
-        );
+        path = await pathauto.generate(this.entity.bundle, pathPattern, id);
 
         menuItem = new MenuItemEntity(
           validated.data,
@@ -227,7 +190,7 @@ export default abstract class MenuItemEntityMiddleware {
           currentUser,
           Date.now(),
           validated.published,
-          path,
+          path
         );
 
         if (id) {
@@ -261,7 +224,7 @@ export default abstract class MenuItemEntityMiddleware {
       context.throw(Status.NotAcceptable, "Not Acceptable");
     } catch (error) {
       if (id) {
-        menuItem = await this.repository.findOneByID(id) as MenuItemEntity;
+        menuItem = (await this.repository.findOneByID(id)) as MenuItemEntity;
       }
 
       page = {
@@ -277,10 +240,7 @@ export default abstract class MenuItemEntityMiddleware {
     }
   }
 
-  async view(
-    context: Record<string, any>,
-    next: Function,
-  ) {
+  async view(context: Record<string, any>, next: Function) {
     try {
       let path: string = context.request.url.pathname;
       let menuItem: any | undefined;
@@ -300,25 +260,14 @@ export default abstract class MenuItemEntityMiddleware {
       }
       context.throw(Status.NotFound, "NotFound");
     } catch (error) {
-      let page = {
-        menuItem: false,
-        entity: this.entity,
-        error: true,
-        message: error.message,
-      };
-      context["getPage"] = page;
-      await next();
+      await cmsErrors.NotFoundError(context, Status.NotFound, error);
+      return;
     }
   }
 
-  async delete(
-    context: Record<string, any>,
-    next: Function,
-  ) {
-    let id: string = "";
-
+  async delete(context: Record<string, any>, next: Function) {
     try {
-      id = context.params.id;
+      let id: string = context.params.id;
       let menuItem: any | undefined;
       menuItem = await this.repository.findOneByID(id);
 
@@ -337,23 +286,12 @@ export default abstract class MenuItemEntityMiddleware {
       }
       context.throw(Status.NotFound, "NotFound");
     } catch (error) {
-      let page = {
-        id: id,
-        menuItem: false,
-        entity: this.entity,
-        error: true,
-        message: error.message,
-      };
-      context["getPage"] = page;
-      context["getPage"] = page;
-      await next();
+      await cmsErrors.NotFoundError(context, Status.NotFound, error);
+      return;
     }
   }
 
-  async deletePost(
-    context: Record<string, any>,
-    next: Function,
-  ) {
+  async deletePost(context: Record<string, any>, next: Function) {
     let path = `/admin/${this.entity.bundle}/${this.entity.type}`;
     let menuItem: any | undefined;
     let id: string = "";

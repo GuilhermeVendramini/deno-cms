@@ -1,12 +1,9 @@
-import {
-  BlockEntity,
-} from "../../src/BlockEntity.ts";
-import {
-  Status,
-} from "oak";
+import { BlockEntity } from "../../src/BlockEntity.ts";
+import { Status } from "oak";
 import vs from "value_schema";
 import pathauto from "../../../../shared/utils/pathauto/defaultPathauto.ts";
 import entityReferenceHelper from "../../../modules/entity_reference/helpers/entityReferenceHelper.ts";
+import cmsErrors from "../../../../shared/utils/errors/cms/cmsErrors.ts";
 
 export default abstract class BlockEntityMiddleware {
   protected entity: any;
@@ -19,10 +16,7 @@ export default abstract class BlockEntityMiddleware {
     entitySchema = entitySchema;
   }
 
-  async list(
-    context: Record<string, any>,
-    next: Function,
-  ) {
+  async list(context: Record<string, any>, next: Function) {
     try {
       let block: any[] | undefined;
       let pageNumber: number = 0;
@@ -44,7 +38,7 @@ export default abstract class BlockEntityMiddleware {
       }
 
       if (published === "true" || published === "false") {
-        published = (published === "true");
+        published = published === "true";
       } else {
         published = undefined;
       }
@@ -57,7 +51,7 @@ export default abstract class BlockEntityMiddleware {
         this.entity.type,
         published,
         skip,
-        limit,
+        limit
       );
 
       let page = {
@@ -78,27 +72,14 @@ export default abstract class BlockEntityMiddleware {
       context["getPage"] = page;
       await next();
     } catch (error) {
-      console.log(error.message);
-
-      let page = {
-        block: false,
-        entity: this.entity,
-        error: true,
-        message: error.message,
-      };
-      context["getPage"] = page;
-      await next();
+      await cmsErrors.NotFoundError(context, Status.NotFound, error);
+      return;
     }
   }
 
-  async add(
-    context: Record<string, any>,
-    next: Function,
-  ) {
-    let id: string = "";
-
+  async add(context: Record<string, any>, next: Function) {
     try {
-      id = context.params?.id;
+      let id: string = context.params?.id;
       let block: {} | undefined;
 
       if (id) {
@@ -116,24 +97,12 @@ export default abstract class BlockEntityMiddleware {
       context["getPage"] = page;
       await next();
     } catch (error) {
-      console.log(error.message);
-
-      let page = {
-        id: id,
-        block: false,
-        entity: this.entity,
-        error: true,
-        message: error.message,
-      };
-      context["getPage"] = page;
-      await next();
+      await cmsErrors.NotFoundError(context, Status.NotFound, error);
+      return;
     }
   }
 
-  async addPost(
-    context: Record<string, any>,
-    next: Function,
-  ) {
+  async addPost(context: Record<string, any>, next: Function) {
     let title: string;
     let published: boolean = false;
     let page: any;
@@ -165,7 +134,7 @@ export default abstract class BlockEntityMiddleware {
 
         let entities = await entityReferenceHelper.addEntityRelation(
           this.entity.references,
-          context,
+          context
         );
 
         Object.keys(entities).map((field) => {
@@ -174,10 +143,11 @@ export default abstract class BlockEntityMiddleware {
         });
       }
 
-      validated = vs.applySchemaObject(
-        this.entitySchema,
-        { title: title, data: data, published: published },
-      );
+      validated = vs.applySchemaObject(this.entitySchema, {
+        title: title,
+        data: data,
+        published: published,
+      });
 
       let path: string | undefined;
       let pathPattern: any[] = new Array();
@@ -192,11 +162,7 @@ export default abstract class BlockEntityMiddleware {
           pathPattern.push(p);
         });
 
-        path = await pathauto.generate(
-          this.entity.bundle,
-          pathPattern,
-          id,
-        );
+        path = await pathauto.generate(this.entity.bundle, pathPattern, id);
 
         block = new BlockEntity(
           validated.data,
@@ -205,7 +171,7 @@ export default abstract class BlockEntityMiddleware {
           currentUser,
           Date.now(),
           validated.published,
-          path,
+          path
         );
 
         if (id) {
@@ -241,9 +207,7 @@ export default abstract class BlockEntityMiddleware {
       console.log(error.message);
 
       if (id) {
-        block = await this.repository.findOneByID(
-          id,
-        ) as BlockEntity;
+        block = (await this.repository.findOneByID(id)) as BlockEntity;
       }
 
       page = {
@@ -259,16 +223,11 @@ export default abstract class BlockEntityMiddleware {
     }
   }
 
-  async view(
-    context: Record<string, any>,
-    next: Function,
-  ) {
+  async view(context: Record<string, any>, next: Function) {
     try {
       let path: string = context.request.url.pathname;
       let block: any | undefined;
-      block = await this.repository.findOneByFilters(
-        { path: path },
-      );
+      block = await this.repository.findOneByFilters({ path: path });
 
       if (block && Object.keys(block).length != 0) {
         let page = {
@@ -284,28 +243,15 @@ export default abstract class BlockEntityMiddleware {
       }
       context.throw(Status.NotFound, "NotFound");
     } catch (error) {
-      console.log(error.message);
-
-      let page = {
-        block: false,
-        entity: this.entity,
-        error: true,
-        message: error.message,
-      };
-      context["getPage"] = page;
-      await next();
+      await cmsErrors.NotFoundError(context, Status.NotFound, error);
+      return;
     }
   }
 
-  async delete(
-    context: Record<string, any>,
-    next: Function,
-  ) {
-    let id: string = "";
-    let block: any | undefined;
-
+  async delete(context: Record<string, any>, next: Function) {
     try {
-      id = context.params.id;
+      let id: string = context.params.id;
+      let block: any | undefined;
       block = await this.repository.findOneByID(id);
 
       if (block && Object.keys(block).length != 0) {
@@ -323,24 +269,12 @@ export default abstract class BlockEntityMiddleware {
       }
       context.throw(Status.NotFound, "NotFound");
     } catch (error) {
-      console.log(error.message);
-
-      let page = {
-        id: id,
-        block: false,
-        entity: this.entity,
-        error: true,
-        message: error.message,
-      };
-      context["getPage"] = page;
-      await next();
+      await cmsErrors.NotFoundError(context, Status.NotFound, error);
+      return;
     }
   }
 
-  async deletePost(
-    context: Record<string, any>,
-    next: Function,
-  ) {
+  async deletePost(context: Record<string, any>, next: Function) {
     let path = `/admin/${this.entity.bundle}/${this.entity.type}`;
     let id: string = "";
     let block: any | undefined;
