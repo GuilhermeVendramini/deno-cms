@@ -36,7 +36,6 @@ export default {
 
       let bodyValue = await body.value;
       let email = bodyValue.get("email");
-
       let emailAlreadyExists = await userRepository.findOneByEmail(email);
 
       if (Object.keys(emailAlreadyExists).length !== 0) {
@@ -88,7 +87,7 @@ export default {
         await userRepository.insertOne(user);
 
         context.response.body = await renderFileToString(
-          `${Deno.cwd()}/core/modules/auth/login/cms/views/loginView.ejs`,
+          `${Deno.cwd()}${Deno.env.get("THEME")}templates/auth/loginView.ejs`,
           {
             message: "User created successfully.",
           }

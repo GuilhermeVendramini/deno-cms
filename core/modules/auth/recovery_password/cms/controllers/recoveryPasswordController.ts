@@ -38,9 +38,7 @@ export default {
 
       let bodyValue = await body.value;
       let email = bodyValue.get("email");
-
       let user = await userRepository.findOneByEmail(email);
-
       let result: any;
 
       if (Object.keys(user).length !== 0) {
