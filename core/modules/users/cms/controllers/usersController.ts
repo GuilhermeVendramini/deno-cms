@@ -1,8 +1,6 @@
 import { renderFileToString } from "dejs";
 import userRepository from "../../../../../repositories/mongodb/user/userRepository.ts";
-import {
-  Status,
-} from "oak";
+import { Status } from "oak";
 import { UserBaseEntity } from "../../entities/UserBaseEntity.ts";
 import vs from "value_schema";
 import userSchema from "../../schemas/userSchema.ts";
@@ -33,7 +31,7 @@ export default {
       }
 
       if (status === "true" || status === "false") {
-        status = (status === "true");
+        status = status === "true";
       } else {
         status = undefined;
       }
@@ -41,12 +39,7 @@ export default {
       if (!Number(pageNumber)) pageNumber = 0;
 
       skip = pageNumber * limit;
-      users = await userRepository.search(
-        name,
-        status,
-        skip,
-        limit,
-      );
+      users = await userRepository.search(name, status, skip, limit);
 
       let page = {
         users: users,
@@ -68,11 +61,9 @@ export default {
         {
           currentUser: context.getCurrentUser,
           page: page,
-        },
+        }
       );
     } catch (error) {
-      console.log(error.message);
-
       let page = {
         users: false,
         error: true,
@@ -86,14 +77,12 @@ export default {
         {
           currentUser: context.getCurrentUser,
           page: page,
-        },
+        }
       );
     }
   },
 
-  async add(
-    context: Record<string, any>,
-  ) {
+  async add(context: Record<string, any>) {
     let id: string = "";
     let currentUser = context.getCurrentUser;
 
@@ -126,12 +115,10 @@ export default {
         {
           currentUser: currentUser,
           page: page,
-        },
+        }
       );
       return;
     } catch (error) {
-      console.log(error.message);
-
       let page = {
         id: id,
         user: false,
@@ -143,14 +130,12 @@ export default {
         {
           currentUser: currentUser,
           page: page,
-        },
+        }
       );
     }
   },
 
-  async addPost(
-    context: Record<string, any>,
-  ) {
+  async addPost(context: Record<string, any>) {
     let name: string = "";
     let email: string = "";
     let password: string = "";
@@ -184,9 +169,7 @@ export default {
       }
 
       let duplicatedEmail = false;
-      let userByEmail: any = await userRepository.findOneByEmail(
-        email,
-      );
+      let userByEmail: any = await userRepository.findOneByEmail(email);
 
       if (Object.keys(userByEmail).length !== 0) {
         duplicatedEmail = true;
@@ -197,16 +180,14 @@ export default {
         oldUserData = await userRepository.findOneByID(id);
       }
 
-      if (
-        oldUserData && oldUserData.email == userByEmail.email
-      ) {
+      if (oldUserData && oldUserData.email == userByEmail.email) {
         duplicatedEmail = false;
       }
 
       if (duplicatedEmail) {
         context.throw(
           Status.NotAcceptable,
-          "We already have a user with this email",
+          "We already have a user with this email"
         );
       }
 
@@ -224,16 +205,13 @@ export default {
         roles = oldUserData.roles;
       }
 
-      validated = vs.applySchemaObject(
-        userSchema,
-        {
-          name: name,
-          email: email,
-          password: password,
-          roles: roles,
-          status: status,
-        },
-      );
+      validated = vs.applySchemaObject(userSchema, {
+        name: name,
+        email: email,
+        password: password,
+        roles: roles,
+        status: status,
+      });
 
       if (!oldPasswordSetted) {
         password = await hash.bcrypt(validated.password);
@@ -246,7 +224,7 @@ export default {
           password,
           validated.roles,
           Date.now(),
-          validated.status,
+          validated.status
         );
 
         if (id) {
@@ -269,7 +247,7 @@ export default {
       context.throw(Status.NotAcceptable, "Not Acceptable");
     } catch (error) {
       if (id) {
-        user = await userRepository.findOneByID(id) as UserBaseEntity;
+        user = (await userRepository.findOneByID(id)) as UserBaseEntity;
       } else {
         user = new UserBaseEntity(
           name,
@@ -277,7 +255,7 @@ export default {
           password,
           roles,
           Date.now(),
-          status,
+          status
         );
       }
 
@@ -288,21 +266,17 @@ export default {
         message: error.message,
       };
 
-      console.log(error.message);
-
       context.response.body = await renderFileToString(
         `${Deno.cwd()}/core/modules/users/cms/views/userFormView.ejs`,
         {
           currentUser: currentUser,
           page: page,
-        },
+        }
       );
     }
   },
 
-  async view(
-    context: Record<string, any>,
-  ) {
+  async view(context: Record<string, any>) {
     try {
       let id = context.params.id;
       let user: any | undefined;
@@ -320,7 +294,7 @@ export default {
           {
             currentUser: context.getCurrentUser,
             page: page,
-          },
+          }
         );
         return;
       }
@@ -331,9 +305,7 @@ export default {
     }
   },
 
-  async delete(
-    context: Record<string, any>,
-  ) {
+  async delete(context: Record<string, any>) {
     let id: string = "";
 
     try {
@@ -354,7 +326,7 @@ export default {
           {
             currentUser: context.getCurrentUser,
             page: page,
-          },
+          }
         );
         return;
       }
@@ -365,9 +337,7 @@ export default {
     }
   },
 
-  async deletePost(
-    context: Record<string, any>,
-  ) {
+  async deletePost(context: Record<string, any>) {
     let user: any | undefined;
     let id: string = "";
 

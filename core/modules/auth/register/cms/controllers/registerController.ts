@@ -3,20 +3,24 @@ import userRepository from "../../../../../../repositories/mongodb/user/userRepo
 import hash from "../../../../../../shared/utils/hashes/bcryptHash.ts";
 import registerSchema from "../../schemas/registerSchema.ts";
 import vs from "value_schema";
-import {
-  Status,
-} from "oak";
+import { Status } from "oak";
 import { UserBaseEntity } from "../../../../users/entities/UserBaseEntity.ts";
 import { UserRoles } from "../../../../users/roles/UserRoles.ts";
+import cmsErrors from "../../../../../../shared/utils/errors/cms/cmsErrors.ts";
 
 export default {
   async register(context: Record<string, any>) {
-    context.response.body = await renderFileToString(
-      `${Deno.cwd()}${Deno.env.get('THEME')}templates/auth/registerView.ejs`,
-      {
-        message: "",
-      },
-    );
+    try {
+      context.response.body = await renderFileToString(
+        `${Deno.cwd()}${Deno.env.get("THEME")}templates/auth/registerView.ejs`,
+        {
+          message: "",
+        }
+      );
+    } catch (error) {
+      await cmsErrors.NotFoundError(context, Status.NotFound, error);
+      return;
+    }
   },
   async registerPost(context: Record<string, any>) {
     try {
@@ -25,7 +29,7 @@ export default {
       }
 
       let body = await context.request.body();
-      
+
       if (body.type !== "form") {
         context.throw(Status.BadRequest, "Bad Request");
       }
@@ -33,16 +37,16 @@ export default {
       let bodyValue = await body.value;
       let email = bodyValue.get("email");
 
-      let emailAlreadyExists = await userRepository.findOneByEmail(
-        email,
-      );
+      let emailAlreadyExists = await userRepository.findOneByEmail(email);
 
       if (Object.keys(emailAlreadyExists).length !== 0) {
         context.response.body = await renderFileToString(
-          `${Deno.cwd()}${Deno.env.get('THEME')}templates/auth/registerView.ejs`,
+          `${Deno.cwd()}${Deno.env.get(
+            "THEME"
+          )}templates/auth/registerView.ejs`,
           {
             message: "We already have a user with this email",
-          },
+          }
         );
         return;
       }
@@ -55,18 +59,21 @@ export default {
 
       if (password != password_confirm) {
         context.response.body = await renderFileToString(
-          `${Deno.cwd()}${Deno.env.get('THEME')}templates/auth/registerView.ejs`,
+          `${Deno.cwd()}${Deno.env.get(
+            "THEME"
+          )}templates/auth/registerView.ejs`,
           {
             message: "Passwords do not match",
-          },
+          }
         );
         return;
       }
 
-      validated = vs.applySchemaObject(
-        registerSchema,
-        { name, email, password },
-      );
+      validated = vs.applySchemaObject(registerSchema, {
+        name,
+        email,
+        password,
+      });
 
       if (validated) {
         validated.password = await hash.bcrypt(validated.password);
@@ -75,7 +82,7 @@ export default {
           validated.email,
           validated.password,
           [UserRoles.writer],
-          Date.now(),
+          Date.now()
         );
 
         await userRepository.insertOne(user);
@@ -84,24 +91,24 @@ export default {
           `${Deno.cwd()}/core/modules/auth/login/cms/views/loginView.ejs`,
           {
             message: "User created successfully.",
-          },
+          }
         );
         return;
       }
       context.response.body = await renderFileToString(
-        `${Deno.cwd()}${Deno.env.get('THEME')}templates/auth/registerView.ejs`,
+        `${Deno.cwd()}${Deno.env.get("THEME")}templates/auth/registerView.ejs`,
         {
           message: "Error submitting the form. Please try again.",
-        },
+        }
       );
       return;
     } catch (error) {
       console.log(error.message);
       context.response.body = await renderFileToString(
-        `${Deno.cwd()}${Deno.env.get('THEME')}templates/auth/registerView.ejs`,
+        `${Deno.cwd()}${Deno.env.get("THEME")}templates/auth/registerView.ejs`,
         {
           message: error.message,
-        },
+        }
       );
     }
   },

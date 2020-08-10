@@ -1,22 +1,26 @@
 import { renderFileToString } from "dejs";
 import vs from "value_schema";
 import loginSchema from "../../schemas/loginSchema.ts";
-import {
-  Status,
-} from "oak";
+import { Status } from "oak";
 import userToken from "../../../../../../shared/utils/tokens/userToken.ts";
 import hash from "../../../../../../shared/utils/hashes/bcryptHash.ts";
 import userService from "../../../../../../repositories/mongodb/user/userRepository.ts";
 import currentUserSession from "../../../../../../shared/utils/sessions/currentUserSession.ts";
+import cmsErrors from "../../../../../../shared/utils/errors/cms/cmsErrors.ts";
 
 export default {
   async login(context: Record<string, any>) {
-    context.response.body = await renderFileToString(
-      `${Deno.cwd()}${Deno.env.get('THEME')}templates/auth/loginView.ejs`,
-      {
-        message: "",
-      },
-    );
+    try {
+      context.response.body = await renderFileToString(
+        `${Deno.cwd()}${Deno.env.get("THEME")}templates/auth/loginView.ejs`,
+        {
+          message: "",
+        }
+      );
+    } catch (error) {
+      await cmsErrors.NotFoundError(context, Status.NotFound, error);
+      return;
+    }
   },
 
   async loginPost(context: Record<string, any>) {
@@ -37,10 +41,7 @@ export default {
       let email = bodyValue.get("email");
       let password = bodyValue.get("password");
 
-      validated = vs.applySchemaObject(
-        loginSchema,
-        { email, password },
-      );
+      validated = vs.applySchemaObject(loginSchema, { email, password });
 
       let user: any | undefined;
 
@@ -48,10 +49,7 @@ export default {
         user = await userService.findOneByEmail(validated.email);
 
         if (user && user.status) {
-          logged = await hash.verify(
-            user.password,
-            validated.password,
-          );
+          logged = await hash.verify(user.password, validated.password);
         }
       }
 
@@ -65,27 +63,32 @@ export default {
       }
 
       context.response.body = await renderFileToString(
-        `${Deno.cwd()}${Deno.env.get('THEME')}templates/auth/loginView.ejs`,
+        `${Deno.cwd()}${Deno.env.get("THEME")}templates/auth/loginView.ejs`,
         {
           message: "Wrong login or email.",
-        },
+        }
       );
       return;
     } catch (error) {
-      console.log(error.message);
       context.response.body = await renderFileToString(
-        `${Deno.cwd()}${Deno.env.get('THEME')}templates/auth/loginView.ejs`,
+        `${Deno.cwd()}${Deno.env.get("THEME")}templates/auth/loginView.ejs`,
         {
           message: error.message,
-        },
+        }
       );
       return;
     }
   },
 
   async logout(context: Record<string, any>) {
-    context.cookies.delete("jwt");
-    await currentUserSession.reset(context);
-    context.response.redirect("/");
+    try {
+      context.cookies.delete("jwt");
+      await currentUserSession.reset(context);
+      context.response.redirect("/");
+      return;
+    } catch (error) {
+      await cmsErrors.NotFoundError(context, Status.NotFound, error);
+      return;
+    }
   },
 };

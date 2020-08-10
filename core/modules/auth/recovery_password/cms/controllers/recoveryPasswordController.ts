@@ -1,8 +1,6 @@
 import { renderFileToString } from "dejs";
 import smtpClient from "../../../../smtp/smtpClient.ts";
-import {
-  Status,
-} from "oak";
+import { Status } from "oak";
 import userRepository from "../../../../../../repositories/mongodb/user/userRepository.ts";
 import recoveryPasswordHelper from "../../helpers/recoveryPasswordHelper.ts";
 import cmsErrors from "../../../../../../shared/utils/errors/cms/cmsErrors.ts";
@@ -11,15 +9,20 @@ import currentUserSession from "../../../../../../shared/utils/sessions/currentU
 
 export default {
   async recoveryPassword(context: Record<string, any>) {
-    context.response.body = await renderFileToString(
-      `${Deno.cwd()}${
-        Deno.env.get("THEME")
-      }templates/auth/recoveryPasswordView.ejs`,
-      {
-        message: false,
-        error: false,
-      },
-    );
+    try {
+      context.response.body = await renderFileToString(
+        `${Deno.cwd()}${Deno.env.get(
+          "THEME"
+        )}templates/auth/recoveryPasswordView.ejs`,
+        {
+          message: false,
+          error: false,
+        }
+      );
+    } catch (error) {
+      await cmsErrors.NotFoundError(context, Status.NotFound, error);
+      return;
+    }
   },
   async recoveryPasswordPost(context: Record<string, any>) {
     try {
@@ -36,15 +39,13 @@ export default {
       let bodyValue = await body.value;
       let email = bodyValue.get("email");
 
-      let user = await userRepository.findOneByEmail(
-        email,
-      );
+      let user = await userRepository.findOneByEmail(email);
 
-      let result : any;
+      let result: any;
 
       if (Object.keys(user).length !== 0) {
         let hash = await recoveryPasswordHelper.generateRecoveryPasswordLink(
-          user,
+          user
         );
 
         let link: string = "/recovery-password/login/" + hash;
@@ -70,23 +71,23 @@ export default {
       }
 
       context.response.body = await renderFileToString(
-        `${Deno.cwd()}${
-          Deno.env.get("THEME")
-        }templates/auth/recoveryPasswordView.ejs`,
+        `${Deno.cwd()}${Deno.env.get(
+          "THEME"
+        )}templates/auth/recoveryPasswordView.ejs`,
         {
           message: result.message,
           error: result.error,
-        },
+        }
       );
     } catch (error) {
       context.response.body = await renderFileToString(
-        `${Deno.cwd()}${
-          Deno.env.get("THEME")
-        }templates/auth/recoveryPasswordView.ejs`,
+        `${Deno.cwd()}${Deno.env.get(
+          "THEME"
+        )}templates/auth/recoveryPasswordView.ejs`,
         {
           message: error.message,
           error: true,
-        },
+        }
       );
     }
   },
