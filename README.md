@@ -51,6 +51,7 @@ deno run --allow-env --allow-write --allow-read --allow-net --allow-plugin --all
     * Categories (CRUD)
 * **Block type**
     * Basic block (CRUD)
+    * Carousel (CRUD)
 * **Media type**
     * Image (CRUD)
     * Cropped Image (CRUD)
