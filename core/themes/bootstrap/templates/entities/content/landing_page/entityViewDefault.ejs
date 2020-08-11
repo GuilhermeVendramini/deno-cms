@@ -38,7 +38,7 @@
                 <img class="img-fluid border border-dark" src="/<%= references[i].entity.data.file %>">
               </div>
             <% } else if (references[i].entity.type == 'video') { %>
-              <div class="mb-4">
+              <div class="mb-4 d-inline-flex w-75">
                 <video class="img-fluid" height="300" controls="controls">
                   <source src="/<%= references[i].entity.data.file %>">
                 </video>
