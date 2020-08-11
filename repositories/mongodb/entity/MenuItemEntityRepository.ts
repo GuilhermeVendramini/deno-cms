@@ -15,7 +15,7 @@ class MenuItemEntityRepository extends EntityRepository {
         $set: {
           data: entity.data,
           url: entity.url,
-          relatives: entity.relatives,
+          parent: entity.parent,
           title: entity.title,
           updated: entity.updated,
           published: entity.published,
