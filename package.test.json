@@ -1,0 +1,17 @@
+{
+  "imports": {
+    "oak": "https://deno.land/x/oak@v6.0.1/mod.ts",
+    "dotenv": "https://deno.land/x/dotenv@v0.5.0/mod.ts",
+    "dotenv/load": "https://deno.land/x/dotenv@v0.5.0/load.ts",
+    "value_schema": "https://deno.land/x/value_schema/mod.ts",
+    "mongo": "https://deno.land/x/mongo@v0.9.1/mod.ts",
+    "bcrypt": "https://deno.land/x/bcrypt@v0.2.4/mod.ts",
+    "djwt/validate": "https://deno.land/x/djwt@v1.1/validate.ts",
+    "djwt/create": "https://deno.land/x/djwt@v1.1/create.ts",
+    "dejs": "https://deno.land/x/dejs@0.8.0/mod.ts",
+    "session": "https://deno.land/x/session@1.1.0/mod.ts",
+    "smtp": "https://deno.land/x/smtp@v0.5.1/mod.ts",
+    "smtpConfig": "https://deno.land/x/smtp@v0.5.1/config.ts",
+    "testing": "https://deno.land/std@0.64.0/testing/asserts.ts"
+  }
+}
